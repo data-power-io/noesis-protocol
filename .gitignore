@@ -1,0 +1,24 @@
+# Generated code
+languages/go/datapower/
+languages/java/src/main/java/io/
+
+# Build artifacts
+languages/java/target/
+languages/go/go.sum
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Buf
+buf.lock
+
+# Temporary files
+*.tmp
+*.temp

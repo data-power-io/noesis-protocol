@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "io.datapower.noesis.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+
+// RawDataService provides access to RAW zone data for enrichment
+service RawDataService {
+  // GetRowById retrieves a specific row by ID
+  rpc GetRowById(RowLookupRequest) returns (RowLookupResponse);
+
+  // Search performs a search query on RAW data
+  rpc Search(SearchRequest) returns (SearchResponse);
+
+  // BatchLookup retrieves multiple rows in a single request
+  rpc BatchLookup(BatchLookupRequest) returns (BatchLookupResponse);
+}
+
+message RowLookupRequest {
+  string table = 1;
+  string id = 2;
+  repeated string fields = 3; // Optional: specific fields to return
+}
+
+message RowLookupResponse {
+  bool found = 1;
+  google.protobuf.Struct data = 2;
+  string error = 3;
+}
+
+message SearchRequest {
+  string table = 1;
+  map<string, string> filters = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+  repeated string fields = 5;
+}
+
+message SearchResponse {
+  repeated google.protobuf.Struct results = 1;
+  int32 total_count = 2;
+  string error = 3;
+}
+
+message BatchLookupRequest {
+  string table = 1;
+  repeated string ids = 2;
+  repeated string fields = 3;
+}
+
+message BatchLookupResponse {
+  map<string, google.protobuf.Struct> results = 1;
+  repeated string not_found = 2;
+  string error = 3;
+}
+
+// EnrichmentService provides custom business logic enrichment
+service EnrichmentService {
+  // EnrichRecord applies business rules and enrichment logic
+  rpc EnrichRecord(EnrichmentRequest) returns (EnrichmentResponse);
+
+  // ValidateRecord performs validation checks
+  rpc ValidateRecord(ValidationRequest) returns (ValidationResponse);
+}
+
+message EnrichmentRequest {
+  string table = 1;
+  google.protobuf.Struct record = 2;
+  map<string, string> context = 3;
+  repeated string requested_fields = 4;  // Optional: specific fields to enrich
+}
+
+message EnrichmentResponse {
+  google.protobuf.Struct enriched_record = 1;
+  map<string, string> added_fields = 2;
+  string error = 3;
+}
+
+message ValidationRequest {
+  string table = 1;
+  google.protobuf.Struct record = 2;
+  repeated string rules = 3;
+}
+
+message ValidationResponse {
+  bool valid = 1;
+  repeated ValidationError errors = 2;
+}
+
+message ValidationError {
+  string field = 1;
+  string rule = 2;
+  string message = 3;
+}

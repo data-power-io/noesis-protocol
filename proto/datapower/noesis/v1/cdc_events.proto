@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "io.datapower.noesis.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+// CDCEvent represents a Change Data Capture event
+message CDCEvent {
+  // Operation type
+  CDCOperation operation = 1;
+
+  // Session ID for tracking
+  string session_id = 2;
+
+  // Table or entity name
+  string table = 3;
+
+  // Unique record identifier
+  string record_id = 4;
+
+  // Values before the change (null for CREATE operations)
+  google.protobuf.Struct before_values = 5;
+
+  // Values after the change (null for DELETE operations)
+  google.protobuf.Struct after_values = 6;
+
+  // List of columns that changed (for UPDATE operations)
+  repeated string changed_columns = 7;
+
+  // Optional transformation ID if this came from a transformation
+  string transformation_id = 8;
+
+  // Timestamp of the event
+  google.protobuf.Timestamp timestamp = 9;
+
+  // Optional metadata for extensibility
+  map<string, string> metadata = 10;
+}
+
+// CDC Operation types
+enum CDCOperation {
+  CDC_OPERATION_UNSPECIFIED = 0;
+  CDC_OPERATION_CREATE = 1;
+  CDC_OPERATION_UPDATE = 2;
+  CDC_OPERATION_DELETE = 3;
+  CDC_OPERATION_SNAPSHOT = 4;  // For initial loads
+}
+
+// CDCImportRequest represents a request to import based on CDC event
+message CDCImportRequest {
+  CDCEvent event = 1;
+
+  // Import configuration
+  ImportConfig config = 2;
+}
+
+// ImportConfig contains configuration for the import
+message ImportConfig {
+  // Target platform/system
+  string target_platform = 1;
+
+  // Import mode (upsert, insert, update, etc.)
+  string mode = 2;
+
+  // ID columns for matching
+  repeated string id_columns = 3;
+
+  // Whether to check dependencies
+  bool check_dependencies = 4;
+
+  // Batch size for bulk operations
+  int32 batch_size = 5;
+
+  // Additional configuration
+  map<string, string> options = 6;
+}
+
+// CDCImportResult represents the result of a CDC import operation
+message CDCImportResult {
+  bool success = 1;
+
+  // Error message if failed
+  string error_message = 2;
+
+  // Number of records affected
+  int32 records_affected = 3;
+
+  // Whether this was a partial import
+  bool partial_import = 4;
+
+  // Execution time in milliseconds
+  int64 execution_time_ms = 5;
+
+  // Additional result metadata
+  map<string, string> metadata = 6;
+}
+
+// CDCBatch represents a batch of CDC events for bulk processing
+message CDCBatch {
+  string session_id = 1;
+  string table = 2;
+  repeated CDCEvent events = 3;
+  google.protobuf.Timestamp created_at = 4;
+  int32 batch_size = 5;
+}
+
+// CDCStats for monitoring
+message CDCStats {
+  string table = 1;
+  int64 creates_count = 2;
+  int64 updates_count = 3;
+  int64 deletes_count = 4;
+  int64 unchanged_count = 5;
+  google.protobuf.Timestamp period_start = 6;
+  google.protobuf.Timestamp period_end = 7;
+}

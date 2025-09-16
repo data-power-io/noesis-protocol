@@ -1,0 +1,85 @@
+name: Release Java JAR
+
+on:
+  push:
+    tags:
+      - 'languages/java/v*'
+
+jobs:
+  release-java:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Generate Java code
+        run: buf generate
+
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/languages/java/v}" >> $GITHUB_OUTPUT
+
+      - name: Update POM version
+        working-directory: languages/java
+        run: |
+          mvn versions:set -DnewVersion=${{ steps.version.outputs.version }}
+          mvn versions:commit
+
+      - name: Build and test
+        working-directory: languages/java
+        run: mvn clean compile test-compile
+
+      - name: Deploy to GitHub Packages
+        working-directory: languages/java
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn deploy -P github
+
+      # Uncomment when ready to publish to Maven Central
+      # - name: Deploy to Maven Central
+      #   working-directory: languages/java
+      #   env:
+      #     MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      #     OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      #     OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+      #   run: |
+      #     echo "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}" | gpg --dearmor > ~/.gnupg/secring.gpg
+      #     mvn deploy -P ossrh
+
+      - name: Create Java release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Java JAR ${{ steps.version.outputs.version }}
+          body: |
+            Java JAR release for Noesis Protocol ${{ steps.version.outputs.version }}
+
+            ## Installation
+
+            ### Maven
+            ```xml
+            <dependency>
+                <groupId>io.datapower</groupId>
+                <artifactId>noesis-protocol</artifactId>
+                <version>${{ steps.version.outputs.version }}</version>
+            </dependency>
+            ```
+
+            ### Gradle
+            ```gradle
+            implementation 'io.datapower:noesis-protocol:${{ steps.version.outputs.version }}'
+            ```
+          draft: false
+          prerelease: false

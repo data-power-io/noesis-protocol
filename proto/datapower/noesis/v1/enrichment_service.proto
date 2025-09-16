@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+import "google/protobuf/struct.proto";
+import "datapower/noesis/v1/services.proto";
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_multiple_files = true;
+option java_package = "io.datapower.noesis.v1";
+option java_outer_classname = "FlinkEnrichmentServiceProto";
+
+// Service for enriching records (Flink-specific implementation)
+service FlinkEnrichmentService {
+  // Enrich a single record
+  rpc EnrichRecord (EnrichmentRequest) returns (FlinkEnrichmentResponse);
+
+  // Batch enrich multiple records
+  rpc BatchEnrichRecords (BatchFlinkEnrichmentRequest) returns (BatchFlinkEnrichmentResponse);
+}
+
+// Service for accessing RAW data (Flink-specific implementation)
+service FlinkRawDataService {
+  // Get a row by ID from RAW storage
+  rpc GetRowById (RowLookupRequest) returns (RowLookupResponse);
+
+  // Search for rows in RAW storage
+  rpc Search (SearchRequest) returns (SearchResponse);
+
+  // Get historical data for a record
+  rpc GetHistory (FlinkHistoryRequest) returns (FlinkHistoryResponse);
+}
+
+// Flink-specific enrichment response with additional timing information
+message FlinkEnrichmentResponse {
+  google.protobuf.Struct enriched_record = 1;
+  map<string, string> added_fields = 2;
+  repeated string errors = 3;
+  int64 processing_time_ms = 4;  // Flink-specific timing
+  string flink_task_id = 5;      // Flink task identifier
+}
+
+// Batch enrichment request for Flink
+message BatchFlinkEnrichmentRequest {
+  repeated EnrichmentRequest requests = 1;
+  int32 batch_id = 2;            // Flink batch identifier
+}
+
+// Batch enrichment response for Flink
+message BatchFlinkEnrichmentResponse {
+  repeated FlinkEnrichmentResponse responses = 1;
+  int64 total_processing_time_ms = 2;  // Total batch processing time
+}
+
+// Flink-specific history request with temporal queries
+message FlinkHistoryRequest {
+  string table = 1;
+  string id = 2;
+  string start_date = 3;
+  string end_date = 4;
+  repeated string fields = 5;
+  bool include_watermarks = 6;   // Flink-specific: include event time watermarks
+}
+
+// Flink-specific history response
+message FlinkHistoryResponse {
+  repeated FlinkHistoricalRecord records = 1;
+  string error = 2;
+  int64 query_time_ms = 3;       // Flink query execution time
+}
+
+// Historical record with Flink-specific metadata
+message FlinkHistoricalRecord {
+  google.protobuf.Struct data = 1;
+  string valid_from = 2;
+  string valid_to = 3;
+  string change_type = 4;
+  int64 event_time = 5;          // Flink event time
+  int64 processing_time = 6;     // Flink processing time
+  string watermark = 7;          // Flink watermark information
+}

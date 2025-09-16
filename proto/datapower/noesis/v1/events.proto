@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "io.datapower.noesis.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+// ExtractionEvent represents events in the extraction-events topic
+message ExtractionEvent {
+  oneof event {
+    StartExtraction start = 1;
+    ExtractionData data = 2;
+    EndExtraction end = 3;
+  }
+}
+
+// StartExtraction signals the beginning of an extraction session
+message StartExtraction {
+  string session_id = 1;
+  string table = 2;
+  string date = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  map<string, string> metadata = 5;
+}
+
+// ExtractionData contains the actual extracted record
+message ExtractionData {
+  string session_id = 1;
+  string table = 2;
+  google.protobuf.Struct data = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  string record_id = 5; // Unique identifier for the record (e.g., primary key values)
+  string pipeline_name = 6; // Name of the pipeline processing this data
+}
+
+// EndExtraction signals the completion of an extraction session
+message EndExtraction {
+  string session_id = 1;
+  string table = 2;
+  string date = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  int64 record_count = 5;
+  ExtractionStatus status = 6;
+  string pipeline_name = 7; // Name of the pipeline that completed extraction
+}
+
+enum ExtractionStatus {
+  EXTRACTION_STATUS_UNSPECIFIED = 0;
+  EXTRACTION_STATUS_SUCCESS = 1;
+  EXTRACTION_STATUS_PARTIAL = 2;
+  EXTRACTION_STATUS_FAILED = 3;
+}
+
+// TransformedEvent represents events in the import-events topic
+message TransformedEvent {
+  google.protobuf.Struct data = 1;
+  MetaInfo meta = 2;
+}
+
+// MetaInfo contains metadata about the transformed record
+message MetaInfo {
+  string session_id = 1;
+  map<string, int32> columns_ready = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string table = 4;
+  string record_id = 5;
+  string pipeline_name = 6;
+  string transformation_id = 7;
+}
+
+// ImportResult represents success/blocked import events
+message ImportResult {
+  string session_id = 1;
+  string table = 2;
+  string record_id = 3;
+  ImportStatus status = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated string unmet_dependencies = 6;
+  string error_message = 7;
+}
+
+enum ImportStatus {
+  IMPORT_STATUS_UNSPECIFIED = 0;
+  IMPORT_STATUS_SUCCESS = 1;
+  IMPORT_STATUS_BLOCKED = 2;
+  IMPORT_STATUS_FAILED = 3;
+  IMPORT_STATUS_PARTIAL = 4;
+}

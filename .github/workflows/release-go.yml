@@ -1,0 +1,53 @@
+name: Release Go Module
+
+on:
+  push:
+    tags:
+      - 'languages/go/v*'
+
+jobs:
+  release-go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Generate Go code
+        run: buf generate
+
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/languages/go/}" >> $GITHUB_OUTPUT
+
+      - name: Build and test Go module
+        working-directory: languages/go
+        run: |
+          go mod tidy
+          go build ./...
+          go test ./...
+
+      - name: Create Go release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Go Module ${{ steps.version.outputs.version }}
+          body: |
+            Go module release for Noesis Protocol ${{ steps.version.outputs.version }}
+
+            ## Installation
+            ```bash
+            go get github.com/data-power-io/noesis-protocol/languages/go@${{ steps.version.outputs.version }}
+            ```
+          draft: false
+          prerelease: false
