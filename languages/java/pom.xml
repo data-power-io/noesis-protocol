@@ -120,11 +120,14 @@
                 </configuration>
             </plugin>
 
-            <!-- GPG Plugin for signing artifacts (for Maven Central) -->
+            <!-- GPG Plugin for signing artifacts (only for Maven Central) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>3.1.0</version>
+                <configuration>
+                    <skip>true</skip> <!-- Skip by default -->
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -179,6 +182,22 @@
                     <url>https://maven.pkg.github.com/data-power-io/noesis-protocol</url>
                 </repository>
             </distributionManagement>
+        </profile>
+
+        <!-- Maven Central Profile with GPG signing -->
+        <profile>
+            <id>ossrh</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip> <!-- Enable GPG signing for Maven Central -->
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
