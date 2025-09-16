@@ -145,18 +145,6 @@
                 </executions>
             </plugin>
 
-            <!-- Nexus Staging Plugin (for Maven Central) -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -184,7 +172,7 @@
             </distributionManagement>
         </profile>
 
-        <!-- Maven Central Profile with GPG signing -->
+        <!-- Maven Central Profile with GPG signing and Nexus -->
         <profile>
             <id>ossrh</id>
             <build>
@@ -194,6 +182,17 @@
                         <artifactId>maven-gpg-plugin</artifactId>
                         <configuration>
                             <skip>false</skip> <!-- Enable GPG signing for Maven Central -->
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -21,6 +21,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Generate Java code
         run: buf generate
@@ -42,6 +45,7 @@ jobs:
       - name: Deploy to GitHub Packages
         working-directory: languages/java
         env:
+          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn deploy -P github
 
