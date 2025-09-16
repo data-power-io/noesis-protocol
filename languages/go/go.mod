@@ -1,4 +1,4 @@
-module github.com/data-power-io/noesis-protocol/languages/go
+module github.com/data-power-io/noesis-protocol
 
 go 1.24.0
 
