@@ -6,6 +6,10 @@ plugins:
     out: languages/go
     opt:
       - paths=source_relative
+  - remote: buf.build/grpc/go
+    out: languages/go
+    opt:
+      - paths=source_relative
   - remote: buf.build/protocolbuffers/java:v23.4
     out: languages/java/src/main/java
   - remote: buf.build/grpc/java:v1.53.0

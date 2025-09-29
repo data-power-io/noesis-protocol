@@ -72,7 +72,8 @@ message EntityDescriptor {
   string display_name = 3;              // Human-friendly label
   string description = 4;               // Optional docs
 
-  SchemaDescriptor schema = 5;          // The entity's schema and schema_id/version.
+  // Schema in structured format
+  StructuredSchemaDescriptor schema = 5;
 
   // Keys & relational hints.
   repeated string primary_key = 6;      // ["id"] or a composite key
@@ -100,13 +101,102 @@ enum EntityKind {
   LINK = 2;
 }
 
-message SchemaDescriptor {
-  string schema_id = 1;                 // Logical version, e.g. "part_v3"
-  oneof spec {
-    bytes arrow = 2;                    // Apache Arrow IPC schema (recommended)
-    string json = 3;                    // JSON Schema or Avro schema as JSON
-  }
+// Field type enumeration for common database types
+enum FieldType {
+  FIELD_TYPE_UNSPECIFIED = 0;
+  FIELD_TYPE_STRING = 1;
+  FIELD_TYPE_INTEGER = 2;
+  FIELD_TYPE_BIGINT = 3;
+  FIELD_TYPE_SMALLINT = 4;
+  FIELD_TYPE_DECIMAL = 5;
+  FIELD_TYPE_FLOAT = 6;
+  FIELD_TYPE_DOUBLE = 7;
+  FIELD_TYPE_BOOLEAN = 8;
+  FIELD_TYPE_DATE = 9;
+  FIELD_TYPE_TIME = 10;
+  FIELD_TYPE_TIMESTAMP = 11;
+  FIELD_TYPE_TIMESTAMP_WITH_TZ = 12;
+  FIELD_TYPE_JSON = 13;
+  FIELD_TYPE_JSONB = 14;
+  FIELD_TYPE_UUID = 15;
+  FIELD_TYPE_BINARY = 16;
+  FIELD_TYPE_TEXT = 17;
+  FIELD_TYPE_ENUM = 18;
+  FIELD_TYPE_ARRAY = 19;
 }
+
+// Individual field/column descriptor
+message FieldDescriptor {
+  string name = 1;                          // Field name
+  FieldType type = 2;                       // Field type
+  bool nullable = 3;                        // Whether field can be NULL
+  string default_value = 4;                 // Default value as string
+  string documentation = 5;                 // Field documentation/comment
+
+  // Type-specific attributes
+  int32 max_length = 6;                     // For STRING/VARCHAR types
+  int32 precision = 7;                      // For DECIMAL types
+  int32 scale = 8;                          // For DECIMAL types
+  repeated string enum_values = 9;          // For ENUM types
+  FieldType array_element_type = 10;        // For ARRAY types
+
+  // Position and ordering
+  int32 ordinal_position = 11;              // Position in table
+
+  // Metadata
+  map<string, string> attributes = 12;      // Connector-specific attributes
+}
+
+// Constraint types
+enum ConstraintType {
+  CONSTRAINT_TYPE_UNSPECIFIED = 0;
+  PRIMARY_KEY = 1;
+  FOREIGN_KEY = 2;
+  UNIQUE = 3;
+  CHECK = 4;
+  NOT_NULL = 5;
+}
+
+// Constraint descriptor
+message ConstraintDescriptor {
+  string name = 1;                          // Constraint name
+  ConstraintType type = 2;                  // Constraint type
+  repeated string columns = 3;              // Columns involved
+
+  // Foreign key specific
+  string referenced_table = 4;              // For FK constraints
+  repeated string referenced_columns = 5;   // For FK constraints
+  string on_delete = 6;                     // CASCADE, SET NULL, etc.
+  string on_update = 7;                     // CASCADE, SET NULL, etc.
+
+  // Check constraint specific
+  string check_expression = 8;              // For CHECK constraints
+
+  // Metadata
+  string documentation = 9;                 // Constraint documentation
+  map<string, string> attributes = 10;      // Connector-specific attributes
+}
+
+// Index descriptor
+message IndexDescriptor {
+  string name = 1;                          // Index name
+  repeated string columns = 2;              // Indexed columns
+  bool unique = 3;                          // Whether index is unique
+  string type = 4;                          // BTREE, HASH, GIN, etc.
+  string condition = 5;                     // Partial index condition
+  string documentation = 6;                 // Index documentation
+  map<string, string> attributes = 7;       // Connector-specific attributes
+}
+
+// Enhanced schema descriptor with structured fields
+message StructuredSchemaDescriptor {
+  string schema_id = 1;                     // Schema version identifier
+  repeated FieldDescriptor fields = 2;      // Field definitions
+  repeated ConstraintDescriptor constraints = 3; // Constraints
+  repeated IndexDescriptor indexes = 4;     // Indexes
+  map<string, string> attributes = 5;       // Table-level attributes
+}
+
 
 message UniqueKey { repeated string columns = 1; }
 
@@ -234,7 +324,7 @@ enum Op {
 message RecordMsg {
   string entity = 1;                    // e.g., "Part" or "BOMLink"
   string key = 2;                       // Primary key serialized (unique within entity)
-  bytes payload = 3;                    // Row payload (Arrow/Avro/JSON — choice must match SchemaDescriptor)
+  bytes payload = 3;                    // Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
   string schema_id = 4;                 // Version to validate reader compatibility
   Op op = 5;                            // UPSERT/DELETE
   string group_id = 6;                  // For subgraph: group all records belonging to the same head
@@ -307,11 +397,7 @@ enum TraversalDirection { TRAV_DIR_UNSPECIFIED = 0; OUTBOUND = 1; INBOUND = 2; B
 // Optional schema re-broadcast during Read (e.g., on evolution or first message per entity).
 message SchemaMsg {
   string entity = 1;
-  string schema_id = 2;
-  oneof spec {
-    bytes arrow = 3;
-    string json = 4;
-  }
+  StructuredSchemaDescriptor schema = 2;
 }
 
 // Basic structured logs and lightweight metrics to help with observability.
