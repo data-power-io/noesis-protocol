@@ -61,12 +61,9 @@ jobs:
       #     mvn deploy -P ossrh
 
       - name: Create Java release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Java JAR ${{ steps.version.outputs.version }}
+          name: Java JAR ${{ steps.version.outputs.version }}
           body: |
             Java JAR release for Noesis Protocol ${{ steps.version.outputs.version }}
 
@@ -85,5 +82,7 @@ jobs:
             ```gradle
             implementation 'com.github.data-power-io:noesis-protocol:${{ steps.version.outputs.version }}'
             ```
+          files: |
+            languages/java/target/*.jar
           draft: false
           prerelease: false
