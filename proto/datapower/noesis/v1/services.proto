@@ -3,7 +3,7 @@ syntax = "proto3";
 package datapower.noesis.v1;
 
 option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
-option java_package = "io.datapower.noesis.v1";
+option java_package = "datapower.noesis.v1";
 option java_multiple_files = true;
 
 import "google/protobuf/struct.proto";
