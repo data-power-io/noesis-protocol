@@ -1,4 +1,0 @@
-before_install:
-  - cd languages/java
-install:
-  - mvn clean install -DskipTests

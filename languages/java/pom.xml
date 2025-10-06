@@ -6,9 +6,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.datapower</groupId>
-    <artifactId>noesis-protocol</artifactId>
-    <version>1.0.0</version>
+    <parent>
+        <groupId>com.github.data-power-io</groupId>
+        <artifactId>noesis-protocol</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>noesis-protocol-java</artifactId>
     <packaging>jar</packaging>
 
     <name>Noesis Protocol</name>
