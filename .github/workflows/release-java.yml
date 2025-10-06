@@ -40,7 +40,7 @@ jobs:
 
       - name: Build and test
         working-directory: languages/java
-        run: mvn clean compile test-compile
+        run: mvn clean verify
 
       - name: Deploy to GitHub Packages
         working-directory: languages/java
