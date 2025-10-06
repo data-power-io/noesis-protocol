@@ -3,7 +3,7 @@ name: Release Java JAR
 on:
   push:
     tags:
-      - 'languages/java/v*'
+      - 'languages-java-v*'
 
 jobs:
   release-java:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "version=${GITHUB_REF#refs/tags/languages/java/v}" >> $GITHUB_OUTPUT
+        run: echo "version=${GITHUB_REF#refs/tags/languages-java-v}" >> $GITHUB_OUTPUT
 
       - name: Update POM version
         working-directory: languages/java
@@ -75,7 +75,7 @@ jobs:
             ### Maven
             ```xml
             <dependency>
-                <groupId>io.datapower</groupId>
+                <groupId>com.github.data-power-io</groupId>
                 <artifactId>noesis-protocol</artifactId>
                 <version>${{ steps.version.outputs.version }}</version>
             </dependency>
@@ -83,7 +83,7 @@ jobs:
 
             ### Gradle
             ```gradle
-            implementation 'io.datapower:noesis-protocol:${{ steps.version.outputs.version }}'
+            implementation 'com.github.data-power-io:noesis-protocol:${{ steps.version.outputs.version }}'
             ```
           draft: false
           prerelease: false
