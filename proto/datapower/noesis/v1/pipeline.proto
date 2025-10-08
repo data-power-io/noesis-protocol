@@ -1,0 +1,226 @@
+// Pipeline Definition Protocol
+// ---------------------------
+// Defines the declarative YAML structure for data pipelines in the Iceberg-Parquet-Flink architecture.
+// This proto matches the YAML format that users write to define their pipelines.
+//
+// Key Concepts:
+// - Sources: Data inputs (batch Iceberg tables or streaming Kafka topics)
+// - Sinks: Output destinations (Kafka topics for transformed events)
+// - Target Schema: The contract for the final transformed data
+// - Query: The SQL transformation logic
+//
+// The pipeline definition is parsed, validated, and used to generate an ExecutionPlan.
+
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "datapower.noesis.v1";
+option java_multiple_files = true;
+
+// PipelineDefinition represents the complete declarative pipeline specification
+// This matches the YAML structure that users define
+message PipelineDefinition {
+  // Unique pipeline identifier (must be DNS-safe)
+  string pipeline_name = 1;
+
+  // Cron schedule expression for batch execution (e.g., "0 2 * * *" for daily at 2 AM)
+  string schedule = 2;
+
+  // All data sources for this pipeline
+  repeated Source sources = 3;
+
+  // Output sinks (typically Kafka topics)
+  repeated Sink sinks = 4;
+
+  // Schema definition for the final transformed data
+  TargetSchema target_schema = 5;
+
+  // The SQL query that transforms sources into the target schema
+  Query query = 6;
+
+  // Optional: Pipeline metadata
+  map<string, string> metadata = 7;
+}
+
+// Source represents an input data source
+message Source {
+  // Alias used to reference this source in SQL queries
+  string alias = 1;
+
+  // Type of source (iceberg_table or kafka_topic)
+  SourceType type = 2;
+
+  // Fully qualified name (e.g., "raw.customers_db" for Iceberg, "raw-orders-events" for Kafka)
+  string name = 3;
+
+  // For Iceberg tables that are fed by streaming sources
+  // This indicates the table has real-time updates
+  StreamingSource streaming_source = 4;
+
+  // Schema definition for this source
+  repeated SchemaField schema = 5;
+
+  // Optional: Partitioning information for optimization
+  repeated string partition_keys = 6;
+}
+
+enum SourceType {
+  SOURCE_TYPE_UNSPECIFIED = 0;
+  ICEBERG_TABLE = 1;
+  KAFKA_TOPIC = 2;
+}
+
+// StreamingSource indicates that an Iceberg table is continuously updated from a stream
+message StreamingSource {
+  // Type of streaming source (currently only "kafka_topic")
+  string type = 1;
+
+  // Topic name (e.g., "raw-orders-events")
+  string name = 2;
+
+  // Consumer group for reading (optional)
+  string consumer_group = 3;
+
+  // Starting offset strategy (latest, earliest, specific timestamp)
+  string start_offset = 4;
+}
+
+// SchemaField defines a single field in a source or target schema
+message SchemaField {
+  // Field name
+  string name = 1;
+
+  // Data type (STRING, LONG, INTEGER, DOUBLE, DECIMAL, BOOLEAN, DATE, TIMESTAMP, ARRAY, STRUCT)
+  string type = 2;
+
+  // Whether this field can be null
+  bool nullable = 3;
+
+  // Optional: Default value
+  string default_value = 4;
+
+  // Optional: Field documentation
+  string description = 5;
+
+  // For DECIMAL types: precision and scale
+  int32 precision = 6;
+  int32 scale = 7;
+
+  // For ARRAY types: element type
+  string element_type = 8;
+
+  // For nested types: sub-fields
+  repeated SchemaField fields = 9;
+}
+
+// Sink represents an output destination
+message Sink {
+  // Alias used to reference this sink in the query
+  string alias = 1;
+
+  // Type of sink (currently only "kafka_topic")
+  string type = 2;
+
+  // Topic name where transformed events will be written
+  string name = 3;
+
+  // Optional: Partitioning key for the sink topic
+  string partition_key = 4;
+
+  // Optional: Serialization format (json, avro, protobuf)
+  string format = 5;
+}
+
+// TargetSchema defines the contract for the transformed output data
+message TargetSchema {
+  // Name of the target entity (e.g., "Customer360")
+  string name = 1;
+
+  // Primary key field name
+  string primary_key = 2;
+
+  // All fields in the target schema
+  repeated TargetField fields = 3;
+
+  // Optional: Composite primary key (if primary_key is not set)
+  repeated string primary_key_fields = 4;
+}
+
+// TargetField defines a field in the target schema with mutability semantics
+message TargetField {
+  // Field name
+  string name = 1;
+
+  // Data type
+  string type = 2;
+
+  // Mutability flag: determines processing strategy
+  // - mutable: false -> computed in batch, immutable once created
+  // - mutable: true -> can be updated by streaming jobs, subject to change
+  bool mutable = 3;
+
+  // Whether this field can be null
+  bool nullable = 4;
+
+  // Optional: Field description
+  string description = 5;
+
+  // For DECIMAL types
+  int32 precision = 6;
+  int32 scale = 7;
+}
+
+// Query defines the SQL transformation logic
+message Query {
+  // Reference to the sink alias where results are written
+  string target = 1;
+
+  // SQL query that transforms source data into target schema
+  // This SQL is analyzed to determine execution strategy
+  string sql = 2;
+
+  // Optional: Query type hint (join, aggregation, window, etc.)
+  string query_type = 3;
+
+  // Optional: Optimization hints
+  map<string, string> hints = 4;
+}
+
+// PipelineValidationResult represents the result of pipeline definition validation
+message PipelineValidationResult {
+  // Whether validation passed
+  bool valid = 1;
+
+  // Validation errors (if any)
+  repeated PipelineValidationError errors = 2;
+
+  // Validation warnings (non-blocking issues)
+  repeated PipelineValidationWarning warnings = 3;
+}
+
+message PipelineValidationError {
+  // Error code (e.g., "SCHEMA_MISMATCH", "INVALID_SQL")
+  string code = 1;
+
+  // Human-readable error message
+  string message = 2;
+
+  // Location in YAML where error occurred (e.g., "sources[0].schema")
+  string location = 3;
+
+  // Suggestion for fixing the error
+  string suggestion = 4;
+}
+
+message PipelineValidationWarning {
+  // Warning code
+  string code = 1;
+
+  // Warning message
+  string message = 2;
+
+  // Location in YAML
+  string location = 3;
+}

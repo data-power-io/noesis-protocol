@@ -1,0 +1,314 @@
+// Transform Events Protocol
+// --------------------------
+// Defines event structures produced by Flink streaming and batch jobs.
+// These events flow through Kafka topics and are consumed by the CDC Generator service.
+//
+// Event Types:
+// - ATTRIBUTE_PATCH: Incremental updates from streaming jobs (only changed fields)
+// - FULL_STATE: Complete records from batch reconciliation jobs (all fields)
+//
+// The CDC Generator consumes these events, maintains state, and produces CDC events
+// for downstream systems.
+
+syntax = "proto3";
+
+package datapower.noesis.v1;
+
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "datapower.noesis.v1";
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+// TransformEvent is the top-level message written to transform-events Kafka topics
+// All Flink jobs (streaming and batch) produce events in this format
+message TransformEvent {
+  // Event type discriminator
+  EventType event_type = 1;
+
+  // JSON-encoded payload (either AttributePatch or FullState)
+  string payload = 2;
+
+  // Event metadata
+  EventMetadata metadata = 3;
+
+  // Optional: Schema version for payload
+  string schema_version = 4;
+}
+
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+
+  // Incremental update from a streaming job
+  // Contains only the primary key + changed mutable fields
+  ATTRIBUTE_PATCH = 1;
+
+  // Full record from a batch reconciliation job
+  // Contains the primary key + all fields
+  FULL_STATE = 2;
+
+  // Tombstone event (for deletions)
+  RECORD_DELETE = 3;
+}
+
+// EventMetadata provides context about the event
+message EventMetadata {
+  // Pipeline that produced this event
+  string pipeline_name = 1;
+
+  // Job that produced this event (streaming or batch job name)
+  string job_name = 2;
+
+  // Job type (streaming or batch)
+  JobType job_type = 3;
+
+  // When the event was produced (Flink processing time)
+  google.protobuf.Timestamp produced_at = 4;
+
+  // Event time (for streaming events, based on source data timestamp)
+  google.protobuf.Timestamp event_time = 5;
+
+  // Watermark (for streaming events)
+  google.protobuf.Timestamp watermark = 6;
+
+  // Execution ID (workflow run ID that produced this event)
+  string execution_id = 7;
+
+  // Kafka partition this event was written to
+  int32 kafka_partition = 8;
+
+  // Kafka offset
+  int64 kafka_offset = 9;
+}
+
+enum JobType {
+  JOB_TYPE_UNSPECIFIED = 0;
+  STREAMING = 1;
+  BATCH = 2;
+}
+
+// AttributePatch represents an incremental update to mutable fields
+// Produced by Flink streaming jobs
+//
+// Example JSON payload:
+// {
+//   "primary_key": "customer_id",
+//   "primary_key_value": "c-123",
+//   "changes": {
+//     "total_order_count": 6,
+//     "lifetime_value": 175.50,
+//     "latest_loyalty_status": "gold"
+//   }
+// }
+message AttributePatch {
+  // Primary key field name (e.g., "customer_id")
+  string primary_key = 1;
+
+  // Primary key value (e.g., "c-123")
+  string primary_key_value = 2;
+
+  // Changed attributes (field name -> new value)
+  // Only includes fields that have changed
+  map<string, google.protobuf.Value> changes = 3;
+
+  // Previous values (optional, for debugging)
+  map<string, google.protobuf.Value> previous_values = 4;
+
+  // Source information (which streaming source triggered this update)
+  SourceInfo source = 5;
+}
+
+// FullState represents a complete record
+// Produced by Flink batch reconciliation jobs
+//
+// Example JSON payload:
+// {
+//   "primary_key": "customer_id",
+//   "primary_key_value": "c-123",
+//   "attributes": {
+//     "customer_id": "c-123",
+//     "signup_date": "2024-01-15",
+//     "latest_loyalty_status": "gold",
+//     "total_order_count": 6,
+//     "lifetime_value": 175.50
+//   }
+// }
+message FullState {
+  // Primary key field name
+  string primary_key = 1;
+
+  // Primary key value
+  string primary_key_value = 2;
+
+  // All attributes (both mutable and immutable)
+  map<string, google.protobuf.Value> attributes = 3;
+
+  // Batch run information
+  BatchRunInfo batch_run = 4;
+}
+
+// SourceInfo identifies which streaming source triggered an update
+message SourceInfo {
+  // Source alias from pipeline definition
+  string source_alias = 1;
+
+  // Original event timestamp from source
+  google.protobuf.Timestamp source_timestamp = 2;
+
+  // Source record key/ID
+  string source_record_id = 3;
+
+  // Additional source metadata
+  map<string, string> metadata = 4;
+}
+
+// BatchRunInfo provides context about the batch run
+message BatchRunInfo {
+  // Batch run ID
+  string run_id = 1;
+
+  // When the batch started
+  google.protobuf.Timestamp started_at = 2;
+
+  // Batch execution mode
+  string execution_mode = 3;
+}
+
+// DeleteEvent represents a record deletion
+message DeleteEvent {
+  // Primary key field name
+  string primary_key = 1;
+
+  // Primary key value of deleted record
+  string primary_key_value = 2;
+
+  // Deletion timestamp
+  google.protobuf.Timestamp deleted_at = 3;
+
+  // Reason for deletion (soft delete, hard delete, retention policy)
+  string deletion_reason = 4;
+}
+
+// TransformEventBatch is used for batch processing of events
+// Useful for bulk operations and optimization
+message TransformEventBatch {
+  // Batch ID
+  string batch_id = 1;
+
+  // Pipeline name
+  string pipeline_name = 2;
+
+  // All events in this batch
+  repeated TransformEvent events = 3;
+
+  // Batch metadata
+  BatchMetadata metadata = 4;
+}
+
+message BatchMetadata {
+  // Number of events in batch
+  int32 event_count = 1;
+
+  // Batch creation time
+  google.protobuf.Timestamp created_at = 2;
+
+  // First event timestamp in batch
+  google.protobuf.Timestamp first_event_time = 3;
+
+  // Last event timestamp in batch
+  google.protobuf.Timestamp last_event_time = 4;
+
+  // Batch size in bytes
+  int64 batch_size_bytes = 5;
+}
+
+// EventStatistics provides metrics about transform events
+// Used for monitoring and observability
+message EventStatistics {
+  // Pipeline name
+  string pipeline_name = 1;
+
+  // Time window for these statistics
+  google.protobuf.Timestamp window_start = 2;
+  google.protobuf.Timestamp window_end = 3;
+
+  // Event counts by type
+  int64 attribute_patch_count = 4;
+  int64 full_state_count = 5;
+  int64 delete_count = 6;
+
+  // Total events
+  int64 total_events = 7;
+
+  // Bytes processed
+  int64 total_bytes = 8;
+
+  // Events per second
+  double events_per_second = 9;
+
+  // Bytes per second
+  double bytes_per_second = 10;
+
+  // Per-job statistics
+  map<string, JobStatistics> job_stats = 11;
+}
+
+message JobStatistics {
+  string job_name = 1;
+  JobType job_type = 2;
+  int64 events_produced = 3;
+  int64 bytes_produced = 4;
+  google.protobuf.Timestamp last_event_time = 5;
+}
+
+// EventValidationResult for validating transform events
+message EventValidationResult {
+  // Whether the event is valid
+  bool valid = 1;
+
+  // Validation errors
+  repeated string errors = 2;
+
+  // Validation warnings
+  repeated string warnings = 3;
+
+  // Schema violations
+  repeated SchemaViolation schema_violations = 4;
+}
+
+message SchemaViolation {
+  // Field that violated schema
+  string field = 1;
+
+  // Expected type
+  string expected_type = 2;
+
+  // Actual type
+  string actual_type = 3;
+
+  // Error message
+  string message = 4;
+}
+
+// TransformEventFilter for filtering events (used by consumers)
+message TransformEventFilter {
+  // Filter by event types
+  repeated EventType event_types = 1;
+
+  // Filter by pipeline names
+  repeated string pipeline_names = 2;
+
+  // Filter by job names
+  repeated string job_names = 3;
+
+  // Time range filter
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+
+  // Filter by primary key values (useful for debugging specific records)
+  repeated string primary_key_values = 6;
+
+  // Custom filter expression (optional, implementation-specific)
+  string filter_expression = 7;
+}
