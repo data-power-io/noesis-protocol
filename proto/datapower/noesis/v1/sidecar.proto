@@ -1,0 +1,166 @@
+// Sidecar API (gRPC) — Parquetizer Service
+// ------------------------------------------
+// Goal:
+// - Provide a lightweight service that runs alongside connectors in the same pod
+// - Receives streaming data from connectors over localhost
+// - Writes data to Parquet format with efficient compression
+// - Uploads completed Parquet files to object storage
+//
+// Usage:
+// - Connector extracts data and streams it to sidecar via StreamData RPC
+// - Sidecar buffers data, writes Parquet files, and uploads to S3/GCS
+// - Sidecar notifies connector when upload is complete
+//
+// Benefits:
+// - Separation of concerns: connector focuses on extraction, sidecar handles serialization
+// - Reusable: same sidecar can work with any connector
+// - Efficient: streaming reduces memory footprint
+
+syntax = "proto3";
+
+package datapower.noesis.v1;
+option go_package = "github.com/data-power-io/noesis-protocol/languages/go/datapower/noesis/v1;noesisv1";
+option java_package = "datapower.noesis.v1";
+option java_multiple_files = true;
+
+import "datapower/noesis/v1/connector.proto";
+
+// ===========================
+//         SERVICE
+// ===========================
+
+service Sidecar {
+  // Initialize a new extraction session with schema and output configuration.
+  rpc InitSession(InitSessionRequest) returns (InitSessionResponse);
+
+  // Stream data records to be written to Parquet.
+  // The connector calls this repeatedly with batches of records.
+  rpc StreamData(stream DataBatch) returns (StreamDataResponse);
+
+  // Finalize the session and trigger final file uploads.
+  rpc FinalizeSession(FinalizeSessionRequest) returns (FinalizeSessionResponse);
+
+  // Get current session status and statistics.
+  rpc GetSessionStatus(GetSessionStatusRequest) returns (GetSessionStatusResponse);
+}
+
+// ===========================
+//      INIT SESSION
+// ===========================
+
+message InitSessionRequest {
+  string session_id = 1;                // Unique session identifier
+  string entity = 2;                    // Entity being extracted (e.g., "customers")
+  StructuredSchemaDescriptor schema = 3;// Schema for the data
+  StorageConfig storage = 4;            // Where to upload Parquet files
+  ParquetConfig parquet_config = 5;     // Parquet file settings
+  string split_id = 6;                  // Optional: split identifier for this extraction
+}
+
+message StorageConfig {
+  StorageType type = 1;                 // S3, GCS, MinIO, etc.
+  string bucket = 2;                    // Bucket/container name
+  string path_prefix = 3;               // Path prefix for uploaded files (e.g., "staging/customers/run-123/")
+  map<string, string> credentials = 4;  // Storage credentials (access keys, service account, etc.)
+  string endpoint = 5;                  // Optional: custom endpoint (for MinIO, etc.)
+  bool use_ssl = 6;                     // Whether to use SSL/TLS
+}
+
+enum StorageType {
+  STORAGE_TYPE_UNSPECIFIED = 0;
+  S3 = 1;
+  GCS = 2;
+  AZURE_BLOB = 3;
+  MINIO = 4;
+}
+
+message ParquetConfig {
+  CompressionCodec compression = 1;     // Compression algorithm
+  int32 row_group_size = 2;             // Rows per row group (default 100k)
+  int64 max_file_size_bytes = 3;        // Max file size before rotation (default 128MB)
+  int32 page_size = 4;                  // Page size in bytes (default 1MB)
+  map<string, string> metadata = 5;     // Custom file metadata
+}
+
+enum CompressionCodec {
+  COMPRESSION_UNSPECIFIED = 0;
+  NONE = 1;
+  SNAPPY = 2;
+  GZIP = 3;
+  LZ4 = 4;
+  ZSTD = 5;
+}
+
+message InitSessionResponse {
+  bool success = 1;
+  string message = 2;                   // Error message if success=false
+  string session_id = 3;                // Echo back session ID
+}
+
+// ===========================
+//      STREAM DATA
+// ===========================
+
+// A batch of records to write.
+// The connector sends multiple DataBatch messages in a stream.
+message DataBatch {
+  string session_id = 1;                // Must match InitSession
+  repeated RecordMsg records = 2;       // Batch of records (reuse RecordMsg from connector.proto)
+  int64 batch_seq = 3;                  // Monotonically increasing batch sequence number
+  bool is_last_batch = 4;               // True if this is the final batch in the stream
+}
+
+message StreamDataResponse {
+  bool success = 1;
+  string message = 2;                   // Error message if success=false
+  int64 records_written = 3;            // Total records written so far
+  int64 bytes_written = 4;              // Total bytes written so far
+  int32 files_uploaded = 5;             // Number of Parquet files uploaded so far
+}
+
+// ===========================
+//    FINALIZE SESSION
+// ===========================
+
+message FinalizeSessionRequest {
+  string session_id = 1;
+  bool force_flush = 2;                 // Force flush any buffered data
+}
+
+message FinalizeSessionResponse {
+  bool success = 1;
+  string message = 2;
+  SessionStats stats = 3;
+}
+
+message SessionStats {
+  int64 total_records_written = 1;
+  int64 total_bytes_written = 2;
+  int32 total_files_uploaded = 3;
+  repeated string file_paths = 4;       // List of uploaded file paths
+  int64 duration_ms = 5;                // Total session duration
+}
+
+// ===========================
+//      SESSION STATUS
+// ===========================
+
+message GetSessionStatusRequest {
+  string session_id = 1;
+}
+
+message GetSessionStatusResponse {
+  SessionState state = 1;
+  SessionStats stats = 2;
+  string current_file = 3;              // Currently writing to this file
+  int64 current_file_records = 4;       // Records in current file
+}
+
+enum SessionState {
+  SESSION_STATE_UNSPECIFIED = 0;
+  INITIALIZING = 1;
+  WRITING = 2;
+  UPLOADING = 3;
+  FINALIZED = 4;
+  ERROR = 5;
+}

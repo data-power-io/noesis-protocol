@@ -82,6 +82,37 @@ public final class ConnectorGrpc {
     return getDiscoverMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<datapower.noesis.v1.PlanExtractionRequest,
+      datapower.noesis.v1.PlanExtractionResponse> getPlanExtractionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "PlanExtraction",
+      requestType = datapower.noesis.v1.PlanExtractionRequest.class,
+      responseType = datapower.noesis.v1.PlanExtractionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<datapower.noesis.v1.PlanExtractionRequest,
+      datapower.noesis.v1.PlanExtractionResponse> getPlanExtractionMethod() {
+    io.grpc.MethodDescriptor<datapower.noesis.v1.PlanExtractionRequest, datapower.noesis.v1.PlanExtractionResponse> getPlanExtractionMethod;
+    if ((getPlanExtractionMethod = ConnectorGrpc.getPlanExtractionMethod) == null) {
+      synchronized (ConnectorGrpc.class) {
+        if ((getPlanExtractionMethod = ConnectorGrpc.getPlanExtractionMethod) == null) {
+          ConnectorGrpc.getPlanExtractionMethod = getPlanExtractionMethod =
+              io.grpc.MethodDescriptor.<datapower.noesis.v1.PlanExtractionRequest, datapower.noesis.v1.PlanExtractionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "PlanExtraction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  datapower.noesis.v1.PlanExtractionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  datapower.noesis.v1.PlanExtractionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new ConnectorMethodDescriptorSupplier("PlanExtraction"))
+              .build();
+        }
+      }
+    }
+    return getPlanExtractionMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<datapower.noesis.v1.OpenRequest,
       datapower.noesis.v1.OpenResponse> getOpenMethod;
 
@@ -142,6 +173,37 @@ public final class ConnectorGrpc {
       }
     }
     return getReadMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<datapower.noesis.v1.ReadSplitRequest,
+      datapower.noesis.v1.ReadMessage> getReadSplitMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ReadSplit",
+      requestType = datapower.noesis.v1.ReadSplitRequest.class,
+      responseType = datapower.noesis.v1.ReadMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<datapower.noesis.v1.ReadSplitRequest,
+      datapower.noesis.v1.ReadMessage> getReadSplitMethod() {
+    io.grpc.MethodDescriptor<datapower.noesis.v1.ReadSplitRequest, datapower.noesis.v1.ReadMessage> getReadSplitMethod;
+    if ((getReadSplitMethod = ConnectorGrpc.getReadSplitMethod) == null) {
+      synchronized (ConnectorGrpc.class) {
+        if ((getReadSplitMethod = ConnectorGrpc.getReadSplitMethod) == null) {
+          ConnectorGrpc.getReadSplitMethod = getReadSplitMethod =
+              io.grpc.MethodDescriptor.<datapower.noesis.v1.ReadSplitRequest, datapower.noesis.v1.ReadMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ReadSplit"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  datapower.noesis.v1.ReadSplitRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  datapower.noesis.v1.ReadMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new ConnectorMethodDescriptorSupplier("ReadSplit"))
+              .build();
+        }
+      }
+    }
+    return getReadSplitMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<datapower.noesis.v1.CloseRequest,
@@ -251,6 +313,17 @@ public final class ConnectorGrpc {
 
     /**
      * <pre>
+     * *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+     * Returns a list of splits that can be processed independently for batch sources.
+     * </pre>
+     */
+    public void planExtraction(datapower.noesis.v1.PlanExtractionRequest request,
+        io.grpc.stub.StreamObserver<datapower.noesis.v1.PlanExtractionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPlanExtractionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
      * </pre>
      */
@@ -267,6 +340,16 @@ public final class ConnectorGrpc {
     public void read(datapower.noesis.v1.ReadRequest request,
         io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Read a specific extraction split (for parallel batch extraction).
+     * </pre>
+     */
+    public void readSplit(datapower.noesis.v1.ReadSplitRequest request,
+        io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadSplitMethod(), responseObserver);
     }
 
     /**
@@ -296,6 +379,13 @@ public final class ConnectorGrpc {
                 datapower.noesis.v1.DiscoverResponse>(
                   this, METHODID_DISCOVER)))
           .addMethod(
+            getPlanExtractionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                datapower.noesis.v1.PlanExtractionRequest,
+                datapower.noesis.v1.PlanExtractionResponse>(
+                  this, METHODID_PLAN_EXTRACTION)))
+          .addMethod(
             getOpenMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
@@ -309,6 +399,13 @@ public final class ConnectorGrpc {
                 datapower.noesis.v1.ReadRequest,
                 datapower.noesis.v1.ReadMessage>(
                   this, METHODID_READ)))
+          .addMethod(
+            getReadSplitMethod(),
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+              new MethodHandlers<
+                datapower.noesis.v1.ReadSplitRequest,
+                datapower.noesis.v1.ReadMessage>(
+                  this, METHODID_READ_SPLIT)))
           .addMethod(
             getCloseMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -364,6 +461,18 @@ public final class ConnectorGrpc {
 
     /**
      * <pre>
+     * *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+     * Returns a list of splits that can be processed independently for batch sources.
+     * </pre>
+     */
+    public void planExtraction(datapower.noesis.v1.PlanExtractionRequest request,
+        io.grpc.stub.StreamObserver<datapower.noesis.v1.PlanExtractionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getPlanExtractionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      * Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
      * </pre>
      */
@@ -382,6 +491,17 @@ public final class ConnectorGrpc {
         io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage> responseObserver) {
       io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getReadMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Read a specific extraction split (for parallel batch extraction).
+     * </pre>
+     */
+    public void readSplit(datapower.noesis.v1.ReadSplitRequest request,
+        io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+          getChannel().newCall(getReadSplitMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -438,6 +558,17 @@ public final class ConnectorGrpc {
 
     /**
      * <pre>
+     * *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+     * Returns a list of splits that can be processed independently for batch sources.
+     * </pre>
+     */
+    public datapower.noesis.v1.PlanExtractionResponse planExtraction(datapower.noesis.v1.PlanExtractionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPlanExtractionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
      * </pre>
      */
@@ -455,6 +586,17 @@ public final class ConnectorGrpc {
         datapower.noesis.v1.ReadRequest request) {
       return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getReadMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Read a specific extraction split (for parallel batch extraction).
+     * </pre>
+     */
+    public java.util.Iterator<datapower.noesis.v1.ReadMessage> readSplit(
+        datapower.noesis.v1.ReadSplitRequest request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+          getChannel(), getReadSplitMethod(), getCallOptions(), request);
     }
 
     /**
@@ -512,6 +654,18 @@ public final class ConnectorGrpc {
 
     /**
      * <pre>
+     * *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+     * Returns a list of splits that can be processed independently for batch sources.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<datapower.noesis.v1.PlanExtractionResponse> planExtraction(
+        datapower.noesis.v1.PlanExtractionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getPlanExtractionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
      * </pre>
      */
@@ -535,9 +689,11 @@ public final class ConnectorGrpc {
 
   private static final int METHODID_CHECK = 0;
   private static final int METHODID_DISCOVER = 1;
-  private static final int METHODID_OPEN = 2;
-  private static final int METHODID_READ = 3;
-  private static final int METHODID_CLOSE = 4;
+  private static final int METHODID_PLAN_EXTRACTION = 2;
+  private static final int METHODID_OPEN = 3;
+  private static final int METHODID_READ = 4;
+  private static final int METHODID_READ_SPLIT = 5;
+  private static final int METHODID_CLOSE = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -564,12 +720,20 @@ public final class ConnectorGrpc {
           serviceImpl.discover((datapower.noesis.v1.DiscoverRequest) request,
               (io.grpc.stub.StreamObserver<datapower.noesis.v1.DiscoverResponse>) responseObserver);
           break;
+        case METHODID_PLAN_EXTRACTION:
+          serviceImpl.planExtraction((datapower.noesis.v1.PlanExtractionRequest) request,
+              (io.grpc.stub.StreamObserver<datapower.noesis.v1.PlanExtractionResponse>) responseObserver);
+          break;
         case METHODID_OPEN:
           serviceImpl.open((datapower.noesis.v1.OpenRequest) request,
               (io.grpc.stub.StreamObserver<datapower.noesis.v1.OpenResponse>) responseObserver);
           break;
         case METHODID_READ:
           serviceImpl.read((datapower.noesis.v1.ReadRequest) request,
+              (io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage>) responseObserver);
+          break;
+        case METHODID_READ_SPLIT:
+          serviceImpl.readSplit((datapower.noesis.v1.ReadSplitRequest) request,
               (io.grpc.stub.StreamObserver<datapower.noesis.v1.ReadMessage>) responseObserver);
           break;
         case METHODID_CLOSE:
@@ -639,8 +803,10 @@ public final class ConnectorGrpc {
               .setSchemaDescriptor(new ConnectorFileDescriptorSupplier())
               .addMethod(getCheckMethod())
               .addMethod(getDiscoverMethod())
+              .addMethod(getPlanExtractionMethod())
               .addMethod(getOpenMethod())
               .addMethod(getReadMethod())
+              .addMethod(getReadSplitMethod())
               .addMethod(getCloseMethod())
               .build();
         }

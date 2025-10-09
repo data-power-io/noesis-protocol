@@ -33,11 +33,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Connector_Check_FullMethodName    = "/datapower.noesis.v1.Connector/Check"
-	Connector_Discover_FullMethodName = "/datapower.noesis.v1.Connector/Discover"
-	Connector_Open_FullMethodName     = "/datapower.noesis.v1.Connector/Open"
-	Connector_Read_FullMethodName     = "/datapower.noesis.v1.Connector/Read"
-	Connector_Close_FullMethodName    = "/datapower.noesis.v1.Connector/Close"
+	Connector_Check_FullMethodName          = "/datapower.noesis.v1.Connector/Check"
+	Connector_Discover_FullMethodName       = "/datapower.noesis.v1.Connector/Discover"
+	Connector_PlanExtraction_FullMethodName = "/datapower.noesis.v1.Connector/PlanExtraction"
+	Connector_Open_FullMethodName           = "/datapower.noesis.v1.Connector/Open"
+	Connector_Read_FullMethodName           = "/datapower.noesis.v1.Connector/Read"
+	Connector_ReadSplit_FullMethodName      = "/datapower.noesis.v1.Connector/ReadSplit"
+	Connector_Close_FullMethodName          = "/datapower.noesis.v1.Connector/Close"
 )
 
 // ConnectorClient is the client API for Connector service.
@@ -55,10 +57,15 @@ type ConnectorClient interface {
 	// *** Discovery ***: describe the platform and all available entities, their schemas,
 	// keys, and which extraction modes each entity supports.
 	Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error)
+	// *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+	// Returns a list of splits that can be processed independently for batch sources.
+	PlanExtraction(ctx context.Context, in *PlanExtractionRequest, opts ...grpc.CallOption) (*PlanExtractionResponse, error)
 	// Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
 	Open(ctx context.Context, in *OpenRequest, opts ...grpc.CallOption) (*OpenResponse, error)
 	// Start streaming data according to a plan (full table / change stream / subgraph).
 	Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ReadMessage], error)
+	// Read a specific extraction split (for parallel batch extraction).
+	ReadSplit(ctx context.Context, in *ReadSplitRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ReadMessage], error)
 	// Close the session cleanly.
 	Close(ctx context.Context, in *CloseRequest, opts ...grpc.CallOption) (*CloseResponse, error)
 }
@@ -85,6 +92,16 @@ func (c *connectorClient) Discover(ctx context.Context, in *DiscoverRequest, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DiscoverResponse)
 	err := c.cc.Invoke(ctx, Connector_Discover_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectorClient) PlanExtraction(ctx context.Context, in *PlanExtractionRequest, opts ...grpc.CallOption) (*PlanExtractionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlanExtractionResponse)
+	err := c.cc.Invoke(ctx, Connector_PlanExtraction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,6 +137,25 @@ func (c *connectorClient) Read(ctx context.Context, in *ReadRequest, opts ...grp
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Connector_ReadClient = grpc.ServerStreamingClient[ReadMessage]
 
+func (c *connectorClient) ReadSplit(ctx context.Context, in *ReadSplitRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ReadMessage], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Connector_ServiceDesc.Streams[1], Connector_ReadSplit_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[ReadSplitRequest, ReadMessage]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Connector_ReadSplitClient = grpc.ServerStreamingClient[ReadMessage]
+
 func (c *connectorClient) Close(ctx context.Context, in *CloseRequest, opts ...grpc.CallOption) (*CloseResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CloseResponse)
@@ -145,10 +181,15 @@ type ConnectorServer interface {
 	// *** Discovery ***: describe the platform and all available entities, their schemas,
 	// keys, and which extraction modes each entity supports.
 	Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error)
+	// *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+	// Returns a list of splits that can be processed independently for batch sources.
+	PlanExtraction(context.Context, *PlanExtractionRequest) (*PlanExtractionResponse, error)
 	// Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
 	Open(context.Context, *OpenRequest) (*OpenResponse, error)
 	// Start streaming data according to a plan (full table / change stream / subgraph).
 	Read(*ReadRequest, grpc.ServerStreamingServer[ReadMessage]) error
+	// Read a specific extraction split (for parallel batch extraction).
+	ReadSplit(*ReadSplitRequest, grpc.ServerStreamingServer[ReadMessage]) error
 	// Close the session cleanly.
 	Close(context.Context, *CloseRequest) (*CloseResponse, error)
 	mustEmbedUnimplementedConnectorServer()
@@ -167,11 +208,17 @@ func (UnimplementedConnectorServer) Check(context.Context, *CheckRequest) (*Chec
 func (UnimplementedConnectorServer) Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Discover not implemented")
 }
+func (UnimplementedConnectorServer) PlanExtraction(context.Context, *PlanExtractionRequest) (*PlanExtractionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PlanExtraction not implemented")
+}
 func (UnimplementedConnectorServer) Open(context.Context, *OpenRequest) (*OpenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Open not implemented")
 }
 func (UnimplementedConnectorServer) Read(*ReadRequest, grpc.ServerStreamingServer[ReadMessage]) error {
 	return status.Errorf(codes.Unimplemented, "method Read not implemented")
+}
+func (UnimplementedConnectorServer) ReadSplit(*ReadSplitRequest, grpc.ServerStreamingServer[ReadMessage]) error {
+	return status.Errorf(codes.Unimplemented, "method ReadSplit not implemented")
 }
 func (UnimplementedConnectorServer) Close(context.Context, *CloseRequest) (*CloseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Close not implemented")
@@ -233,6 +280,24 @@ func _Connector_Discover_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Connector_PlanExtraction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlanExtractionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectorServer).PlanExtraction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Connector_PlanExtraction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectorServer).PlanExtraction(ctx, req.(*PlanExtractionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Connector_Open_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OpenRequest)
 	if err := dec(in); err != nil {
@@ -261,6 +326,17 @@ func _Connector_Read_Handler(srv interface{}, stream grpc.ServerStream) error {
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Connector_ReadServer = grpc.ServerStreamingServer[ReadMessage]
+
+func _Connector_ReadSplit_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ReadSplitRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ConnectorServer).ReadSplit(m, &grpc.GenericServerStream[ReadSplitRequest, ReadMessage]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Connector_ReadSplitServer = grpc.ServerStreamingServer[ReadMessage]
 
 func _Connector_Close_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CloseRequest)
@@ -296,6 +372,10 @@ var Connector_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Connector_Discover_Handler,
 		},
 		{
+			MethodName: "PlanExtraction",
+			Handler:    _Connector_PlanExtraction_Handler,
+		},
+		{
 			MethodName: "Open",
 			Handler:    _Connector_Open_Handler,
 		},
@@ -308,6 +388,11 @@ var Connector_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Read",
 			Handler:       _Connector_Read_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "ReadSplit",
+			Handler:       _Connector_ReadSplit_Handler,
 			ServerStreams: true,
 		},
 	},

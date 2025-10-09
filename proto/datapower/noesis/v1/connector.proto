@@ -30,11 +30,18 @@ service Connector {
   // keys, and which extraction modes each entity supports.
   rpc Discover(DiscoverRequest) returns (DiscoverResponse);
 
+  // *** Plan Extraction ***: generate extraction splits for parallel data extraction.
+  // Returns a list of splits that can be processed independently for batch sources.
+  rpc PlanExtraction(PlanExtractionRequest) returns (PlanExtractionResponse);
+
   // Open a logical reading session (optional; good place to validate config, pin snapshots, warm caches).
   rpc Open(OpenRequest) returns (OpenResponse);
 
   // Start streaming data according to a plan (full table / change stream / subgraph).
   rpc Read(ReadRequest) returns (stream ReadMessage);
+
+  // Read a specific extraction split (for parallel batch extraction).
+  rpc ReadSplit(ReadSplitRequest) returns (stream ReadMessage);
 
   // Close the session cleanly.
   rpc Close(CloseRequest) returns (CloseResponse);
@@ -263,6 +270,48 @@ message OpenResponse {
 
 message CloseRequest { string session_id = 1; }
 message CloseResponse {}
+
+// ===========================
+//    PLAN EXTRACTION
+// ===========================
+
+// Plan parallel extraction for a batch source entity.
+// The connector analyzes the entity and returns N independent splits
+// that can be extracted in parallel for optimal throughput.
+message PlanExtractionRequest {
+  string tenant_id = 1;                 // For multi-tenant scoping
+  string entity = 2;                    // Entity to extract (e.g., "customers")
+  int32 desired_parallelism = 3;        // Hint: how many splits to generate (connector may adjust)
+  map<string, string> config = 4;       // Source connection configuration
+  Filter filter = 5;                    // Optional: global filter to apply to all splits
+  SnapshotOptions snapshot = 6;         // Consistency requirements
+}
+
+message PlanExtractionResponse {
+  repeated ExtractionSplit splits = 1;  // List of independent extraction splits
+  string snapshot_id = 2;               // Optional: snapshot identifier for consistency
+  int64 total_estimated_rows = 3;       // Total estimated rows across all splits
+}
+
+// Represents an independent unit of work for parallel extraction.
+// The split token is opaque and connector-specific (could encode key ranges,
+// partition IDs, file paths, etc.)
+message ExtractionSplit {
+  string split_id = 1;                  // Unique identifier for this split (e.g., "split-0001")
+  bytes split_token = 2;                // Opaque connector-specific split metadata
+  int64 estimated_rows = 3;             // Estimated rows in this split (0 if unknown)
+  map<string, string> metadata = 4;     // Optional split metadata (for logging/debugging)
+}
+
+// Read a specific extraction split (for parallel batch extraction).
+message ReadSplitRequest {
+  string tenant_id = 1;                 // For multi-tenant scoping
+  string entity = 2;                    // Entity being extracted
+  ExtractionSplit split = 3;            // The split to read
+  string snapshot_id = 4;               // Optional: from PlanExtractionResponse
+  Projection projection = 5;            // Optional: subset of fields
+  RateLimit rate_limit = 6;             // Optional: QPS/parallelism limits
+}
 
 // ===========================
 //           READ
