@@ -348,6 +348,50 @@ func (Op) EnumDescriptor() ([]byte, []int) {
 	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{4}
 }
 
+// Null marker
+type NullValue int32
+
+const (
+	NullValue_NULL_VALUE NullValue = 0
+)
+
+// Enum value maps for NullValue.
+var (
+	NullValue_name = map[int32]string{
+		0: "NULL_VALUE",
+	}
+	NullValue_value = map[string]int32{
+		"NULL_VALUE": 0,
+	}
+)
+
+func (x NullValue) Enum() *NullValue {
+	p := new(NullValue)
+	*p = x
+	return p
+}
+
+func (x NullValue) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NullValue) Descriptor() protoreflect.EnumDescriptor {
+	return file_datapower_noesis_v1_connector_proto_enumTypes[5].Descriptor()
+}
+
+func (NullValue) Type() protoreflect.EnumType {
+	return &file_datapower_noesis_v1_connector_proto_enumTypes[5]
+}
+
+func (x NullValue) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NullValue.Descriptor instead.
+func (NullValue) EnumDescriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{5}
+}
+
 type Direction int32
 
 const (
@@ -381,11 +425,11 @@ func (x Direction) String() string {
 }
 
 func (Direction) Descriptor() protoreflect.EnumDescriptor {
-	return file_datapower_noesis_v1_connector_proto_enumTypes[5].Descriptor()
+	return file_datapower_noesis_v1_connector_proto_enumTypes[6].Descriptor()
 }
 
 func (Direction) Type() protoreflect.EnumType {
-	return &file_datapower_noesis_v1_connector_proto_enumTypes[5]
+	return &file_datapower_noesis_v1_connector_proto_enumTypes[6]
 }
 
 func (x Direction) Number() protoreflect.EnumNumber {
@@ -394,7 +438,7 @@ func (x Direction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Direction.Descriptor instead.
 func (Direction) EnumDescriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{5}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{6}
 }
 
 type ConsistencyMode int32
@@ -433,11 +477,11 @@ func (x ConsistencyMode) String() string {
 }
 
 func (ConsistencyMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_datapower_noesis_v1_connector_proto_enumTypes[6].Descriptor()
+	return file_datapower_noesis_v1_connector_proto_enumTypes[7].Descriptor()
 }
 
 func (ConsistencyMode) Type() protoreflect.EnumType {
-	return &file_datapower_noesis_v1_connector_proto_enumTypes[6]
+	return &file_datapower_noesis_v1_connector_proto_enumTypes[7]
 }
 
 func (x ConsistencyMode) Number() protoreflect.EnumNumber {
@@ -446,7 +490,7 @@ func (x ConsistencyMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConsistencyMode.Descriptor instead.
 func (ConsistencyMode) EnumDescriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{6}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{7}
 }
 
 type TraversalDirection int32
@@ -485,11 +529,11 @@ func (x TraversalDirection) String() string {
 }
 
 func (TraversalDirection) Descriptor() protoreflect.EnumDescriptor {
-	return file_datapower_noesis_v1_connector_proto_enumTypes[7].Descriptor()
+	return file_datapower_noesis_v1_connector_proto_enumTypes[8].Descriptor()
 }
 
 func (TraversalDirection) Type() protoreflect.EnumType {
-	return &file_datapower_noesis_v1_connector_proto_enumTypes[7]
+	return &file_datapower_noesis_v1_connector_proto_enumTypes[8]
 }
 
 func (x TraversalDirection) Number() protoreflect.EnumNumber {
@@ -498,7 +542,7 @@ func (x TraversalDirection) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TraversalDirection.Descriptor instead.
 func (TraversalDirection) EnumDescriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{7}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{8}
 }
 
 type DiscoverRequest struct {
@@ -2656,15 +2700,16 @@ func (*ReadMessage_Log) isReadMessage_Msg() {}
 
 func (*ReadMessage_Metric) isReadMessage_Msg() {}
 
+// Storage-agnostic record representation.
+// Simple typed structure that can be written to Parquet, Iceberg, Delta Lake, etc.
 type RecordMsg struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entity        string                 `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`                      // e.g., "Part" or "BOMLink"
-	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`                            // Primary key serialized (unique within entity)
-	Payload       []byte                 `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`                    // Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
-	SchemaId      string                 `protobuf:"bytes,4,opt,name=schema_id,json=schemaId,proto3" json:"schema_id,omitempty"`  // Version to validate reader compatibility
-	Op            Op                     `protobuf:"varint,5,opt,name=op,proto3,enum=datapower.noesis.v1.Op" json:"op,omitempty"` // UPSERT/DELETE
-	GroupId       string                 `protobuf:"bytes,6,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`     // For subgraph: group all records belonging to the same head
-	TsEvent       int64                  `protobuf:"varint,7,opt,name=ts_event,json=tsEvent,proto3" json:"ts_event,omitempty"`    // Logical event time (watermark) in epoch millis
+	Entity        string                 `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`                                 // e.g., "Part" or "BOMLink"
+	Data          *Row                   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                                     // The actual row data (typed columns)
+	Op            Op                     `protobuf:"varint,3,opt,name=op,proto3,enum=datapower.noesis.v1.Op" json:"op,omitempty"`            // UPSERT/DELETE
+	EventTimeMs   int64                  `protobuf:"varint,4,opt,name=event_time_ms,json=eventTimeMs,proto3" json:"event_time_ms,omitempty"` // Source event timestamp (epoch millis)
+	SchemaId      string                 `protobuf:"bytes,5,opt,name=schema_id,json=schemaId,proto3" json:"schema_id,omitempty"`             // Schema version identifier
+	GroupId       string                 `protobuf:"bytes,6,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                // For subgraph: group all records belonging to the same head
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2706,25 +2751,11 @@ func (x *RecordMsg) GetEntity() string {
 	return ""
 }
 
-func (x *RecordMsg) GetKey() string {
+func (x *RecordMsg) GetData() *Row {
 	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-func (x *RecordMsg) GetPayload() []byte {
-	if x != nil {
-		return x.Payload
+		return x.Data
 	}
 	return nil
-}
-
-func (x *RecordMsg) GetSchemaId() string {
-	if x != nil {
-		return x.SchemaId
-	}
-	return ""
 }
 
 func (x *RecordMsg) GetOp() Op {
@@ -2734,6 +2765,20 @@ func (x *RecordMsg) GetOp() Op {
 	return Op_OP_UNSPECIFIED
 }
 
+func (x *RecordMsg) GetEventTimeMs() int64 {
+	if x != nil {
+		return x.EventTimeMs
+	}
+	return 0
+}
+
+func (x *RecordMsg) GetSchemaId() string {
+	if x != nil {
+		return x.SchemaId
+	}
+	return ""
+}
+
 func (x *RecordMsg) GetGroupId() string {
 	if x != nil {
 		return x.GroupId
@@ -2741,11 +2786,465 @@ func (x *RecordMsg) GetGroupId() string {
 	return ""
 }
 
-func (x *RecordMsg) GetTsEvent() int64 {
+// Simple row representation - maps directly to storage formats.
+// Each column is a named, typed value.
+type Row struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Columns       map[string]*Value      `protobuf:"bytes,1,rep,name=columns,proto3" json:"columns,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // Column name -> typed value
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Row) Reset() {
+	*x = Row{}
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Row) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Row) ProtoMessage() {}
+
+func (x *Row) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[29]
 	if x != nil {
-		return x.TsEvent
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Row.ProtoReflect.Descriptor instead.
+func (*Row) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *Row) GetColumns() map[string]*Value {
+	if x != nil {
+		return x.Columns
+	}
+	return nil
+}
+
+// Typed value supporting common database types.
+// Designed to map cleanly to Parquet, Arrow, and SQL types.
+type Value struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Kind:
+	//
+	//	*Value_StringVal
+	//	*Value_Int64Val
+	//	*Value_Int32Val
+	//	*Value_DoubleVal
+	//	*Value_FloatVal
+	//	*Value_BoolVal
+	//	*Value_BytesVal
+	//	*Value_TimestampMicros
+	//	*Value_DateDays
+	//	*Value_TimeMicros
+	//	*Value_NullVal
+	//	*Value_StructVal
+	//	*Value_ListVal
+	//	*Value_MapVal
+	Kind          isValue_Kind `protobuf_oneof:"kind"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Value) Reset() {
+	*x = Value{}
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Value) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Value) ProtoMessage() {}
+
+func (x *Value) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Value.ProtoReflect.Descriptor instead.
+func (*Value) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *Value) GetKind() isValue_Kind {
+	if x != nil {
+		return x.Kind
+	}
+	return nil
+}
+
+func (x *Value) GetStringVal() string {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_StringVal); ok {
+			return x.StringVal
+		}
+	}
+	return ""
+}
+
+func (x *Value) GetInt64Val() int64 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_Int64Val); ok {
+			return x.Int64Val
+		}
 	}
 	return 0
+}
+
+func (x *Value) GetInt32Val() int32 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_Int32Val); ok {
+			return x.Int32Val
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetDoubleVal() float64 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_DoubleVal); ok {
+			return x.DoubleVal
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetFloatVal() float32 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_FloatVal); ok {
+			return x.FloatVal
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetBoolVal() bool {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_BoolVal); ok {
+			return x.BoolVal
+		}
+	}
+	return false
+}
+
+func (x *Value) GetBytesVal() []byte {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_BytesVal); ok {
+			return x.BytesVal
+		}
+	}
+	return nil
+}
+
+func (x *Value) GetTimestampMicros() int64 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_TimestampMicros); ok {
+			return x.TimestampMicros
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetDateDays() int32 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_DateDays); ok {
+			return x.DateDays
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetTimeMicros() int64 {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_TimeMicros); ok {
+			return x.TimeMicros
+		}
+	}
+	return 0
+}
+
+func (x *Value) GetNullVal() NullValue {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_NullVal); ok {
+			return x.NullVal
+		}
+	}
+	return NullValue_NULL_VALUE
+}
+
+func (x *Value) GetStructVal() *StructValue {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_StructVal); ok {
+			return x.StructVal
+		}
+	}
+	return nil
+}
+
+func (x *Value) GetListVal() *ListValue {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_ListVal); ok {
+			return x.ListVal
+		}
+	}
+	return nil
+}
+
+func (x *Value) GetMapVal() *MapValue {
+	if x != nil {
+		if x, ok := x.Kind.(*Value_MapVal); ok {
+			return x.MapVal
+		}
+	}
+	return nil
+}
+
+type isValue_Kind interface {
+	isValue_Kind()
+}
+
+type Value_StringVal struct {
+	// Primitive types
+	StringVal string `protobuf:"bytes,1,opt,name=string_val,json=stringVal,proto3,oneof"`
+}
+
+type Value_Int64Val struct {
+	Int64Val int64 `protobuf:"varint,2,opt,name=int64_val,json=int64Val,proto3,oneof"`
+}
+
+type Value_Int32Val struct {
+	Int32Val int32 `protobuf:"varint,3,opt,name=int32_val,json=int32Val,proto3,oneof"`
+}
+
+type Value_DoubleVal struct {
+	DoubleVal float64 `protobuf:"fixed64,4,opt,name=double_val,json=doubleVal,proto3,oneof"`
+}
+
+type Value_FloatVal struct {
+	FloatVal float32 `protobuf:"fixed32,5,opt,name=float_val,json=floatVal,proto3,oneof"`
+}
+
+type Value_BoolVal struct {
+	BoolVal bool `protobuf:"varint,6,opt,name=bool_val,json=boolVal,proto3,oneof"`
+}
+
+type Value_BytesVal struct {
+	BytesVal []byte `protobuf:"bytes,7,opt,name=bytes_val,json=bytesVal,proto3,oneof"`
+}
+
+type Value_TimestampMicros struct {
+	// Temporal types (microseconds precision)
+	TimestampMicros int64 `protobuf:"varint,10,opt,name=timestamp_micros,json=timestampMicros,proto3,oneof"` // Timestamp: microseconds since Unix epoch
+}
+
+type Value_DateDays struct {
+	DateDays int32 `protobuf:"varint,11,opt,name=date_days,json=dateDays,proto3,oneof"` // Date: days since Unix epoch (1970-01-01)
+}
+
+type Value_TimeMicros struct {
+	TimeMicros int64 `protobuf:"varint,12,opt,name=time_micros,json=timeMicros,proto3,oneof"` // Time: microseconds since midnight
+}
+
+type Value_NullVal struct {
+	// Special values
+	NullVal NullValue `protobuf:"varint,20,opt,name=null_val,json=nullVal,proto3,enum=datapower.noesis.v1.NullValue,oneof"`
+}
+
+type Value_StructVal struct {
+	// Nested types (for complex schemas)
+	StructVal *StructValue `protobuf:"bytes,21,opt,name=struct_val,json=structVal,proto3,oneof"` // Nested struct/object
+}
+
+type Value_ListVal struct {
+	ListVal *ListValue `protobuf:"bytes,22,opt,name=list_val,json=listVal,proto3,oneof"` // Array/list
+}
+
+type Value_MapVal struct {
+	MapVal *MapValue `protobuf:"bytes,23,opt,name=map_val,json=mapVal,proto3,oneof"` // Map/dictionary
+}
+
+func (*Value_StringVal) isValue_Kind() {}
+
+func (*Value_Int64Val) isValue_Kind() {}
+
+func (*Value_Int32Val) isValue_Kind() {}
+
+func (*Value_DoubleVal) isValue_Kind() {}
+
+func (*Value_FloatVal) isValue_Kind() {}
+
+func (*Value_BoolVal) isValue_Kind() {}
+
+func (*Value_BytesVal) isValue_Kind() {}
+
+func (*Value_TimestampMicros) isValue_Kind() {}
+
+func (*Value_DateDays) isValue_Kind() {}
+
+func (*Value_TimeMicros) isValue_Kind() {}
+
+func (*Value_NullVal) isValue_Kind() {}
+
+func (*Value_StructVal) isValue_Kind() {}
+
+func (*Value_ListVal) isValue_Kind() {}
+
+func (*Value_MapVal) isValue_Kind() {}
+
+// Struct/object value (nested fields)
+type StructValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Fields        map[string]*Value      `protobuf:"bytes,1,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StructValue) Reset() {
+	*x = StructValue{}
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StructValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StructValue) ProtoMessage() {}
+
+func (x *StructValue) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StructValue.ProtoReflect.Descriptor instead.
+func (*StructValue) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *StructValue) GetFields() map[string]*Value {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+// List/array value (repeated elements)
+type ListValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Elements      []*Value               `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListValue) Reset() {
+	*x = ListValue{}
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListValue) ProtoMessage() {}
+
+func (x *ListValue) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListValue.ProtoReflect.Descriptor instead.
+func (*ListValue) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ListValue) GetElements() []*Value {
+	if x != nil {
+		return x.Elements
+	}
+	return nil
+}
+
+// Map/dictionary value (key-value pairs)
+type MapValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entries       map[string]*Value      `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MapValue) Reset() {
+	*x = MapValue{}
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MapValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MapValue) ProtoMessage() {}
+
+func (x *MapValue) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MapValue.ProtoReflect.Descriptor instead.
+func (*MapValue) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *MapValue) GetEntries() map[string]*Value {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
 }
 
 type StateMsg struct {
@@ -2759,7 +3258,7 @@ type StateMsg struct {
 
 func (x *StateMsg) Reset() {
 	*x = StateMsg{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[29]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2771,7 +3270,7 @@ func (x *StateMsg) String() string {
 func (*StateMsg) ProtoMessage() {}
 
 func (x *StateMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[29]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2784,7 +3283,7 @@ func (x *StateMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StateMsg.ProtoReflect.Descriptor instead.
 func (*StateMsg) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{29}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *StateMsg) GetCursor() *Cursor {
@@ -2817,7 +3316,7 @@ type Projection struct {
 
 func (x *Projection) Reset() {
 	*x = Projection{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[30]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2829,7 +3328,7 @@ func (x *Projection) String() string {
 func (*Projection) ProtoMessage() {}
 
 func (x *Projection) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[30]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2842,7 +3341,7 @@ func (x *Projection) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Projection.ProtoReflect.Descriptor instead.
 func (*Projection) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{30}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *Projection) GetColumns() []string {
@@ -2865,7 +3364,7 @@ type Filter struct {
 
 func (x *Filter) Reset() {
 	*x = Filter{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[31]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2877,7 +3376,7 @@ func (x *Filter) String() string {
 func (*Filter) ProtoMessage() {}
 
 func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[31]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2890,7 +3389,7 @@ func (x *Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filter.ProtoReflect.Descriptor instead.
 func (*Filter) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{31}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *Filter) GetExpression() string {
@@ -2918,7 +3417,7 @@ type Predicate struct {
 
 func (x *Predicate) Reset() {
 	*x = Predicate{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[32]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2930,7 +3429,7 @@ func (x *Predicate) String() string {
 func (*Predicate) ProtoMessage() {}
 
 func (x *Predicate) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[32]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2943,7 +3442,7 @@ func (x *Predicate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Predicate.ProtoReflect.Descriptor instead.
 func (*Predicate) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{32}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *Predicate) GetField() string {
@@ -2976,7 +3475,7 @@ type Ordering struct {
 
 func (x *Ordering) Reset() {
 	*x = Ordering{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[33]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2988,7 +3487,7 @@ func (x *Ordering) String() string {
 func (*Ordering) ProtoMessage() {}
 
 func (x *Ordering) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[33]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3001,7 +3500,7 @@ func (x *Ordering) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Ordering.ProtoReflect.Descriptor instead.
 func (*Ordering) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{33}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *Ordering) GetBy() []*OrderBy {
@@ -3021,7 +3520,7 @@ type OrderBy struct {
 
 func (x *OrderBy) Reset() {
 	*x = OrderBy{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[34]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3033,7 +3532,7 @@ func (x *OrderBy) String() string {
 func (*OrderBy) ProtoMessage() {}
 
 func (x *OrderBy) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[34]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3046,7 +3545,7 @@ func (x *OrderBy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderBy.ProtoReflect.Descriptor instead.
 func (*OrderBy) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{34}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *OrderBy) GetColumn() string {
@@ -3074,7 +3573,7 @@ type SnapshotOptions struct {
 
 func (x *SnapshotOptions) Reset() {
 	*x = SnapshotOptions{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[35]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3086,7 +3585,7 @@ func (x *SnapshotOptions) String() string {
 func (*SnapshotOptions) ProtoMessage() {}
 
 func (x *SnapshotOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[35]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3099,7 +3598,7 @@ func (x *SnapshotOptions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotOptions.ProtoReflect.Descriptor instead.
 func (*SnapshotOptions) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{35}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *SnapshotOptions) GetMode() ConsistencyMode {
@@ -3125,7 +3624,7 @@ type Cursor struct {
 
 func (x *Cursor) Reset() {
 	*x = Cursor{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[36]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3137,7 +3636,7 @@ func (x *Cursor) String() string {
 func (*Cursor) ProtoMessage() {}
 
 func (x *Cursor) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[36]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3150,7 +3649,7 @@ func (x *Cursor) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Cursor.ProtoReflect.Descriptor instead.
 func (*Cursor) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{36}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *Cursor) GetToken() []byte {
@@ -3170,7 +3669,7 @@ type RateLimit struct {
 
 func (x *RateLimit) Reset() {
 	*x = RateLimit{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[37]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3182,7 +3681,7 @@ func (x *RateLimit) String() string {
 func (*RateLimit) ProtoMessage() {}
 
 func (x *RateLimit) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[37]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3195,7 +3694,7 @@ func (x *RateLimit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RateLimit.ProtoReflect.Descriptor instead.
 func (*RateLimit) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{37}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *RateLimit) GetQps() int32 {
@@ -3226,7 +3725,7 @@ type Traversal struct {
 
 func (x *Traversal) Reset() {
 	*x = Traversal{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[38]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3238,7 +3737,7 @@ func (x *Traversal) String() string {
 func (*Traversal) ProtoMessage() {}
 
 func (x *Traversal) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[38]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3251,7 +3750,7 @@ func (x *Traversal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Traversal.ProtoReflect.Descriptor instead.
 func (*Traversal) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{38}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *Traversal) GetAllowedLinkEntities() []string {
@@ -3300,7 +3799,7 @@ type SchemaMsg struct {
 
 func (x *SchemaMsg) Reset() {
 	*x = SchemaMsg{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[39]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3312,7 +3811,7 @@ func (x *SchemaMsg) String() string {
 func (*SchemaMsg) ProtoMessage() {}
 
 func (x *SchemaMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[39]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3325,7 +3824,7 @@ func (x *SchemaMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SchemaMsg.ProtoReflect.Descriptor instead.
 func (*SchemaMsg) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{39}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *SchemaMsg) GetEntity() string {
@@ -3354,7 +3853,7 @@ type LogMsg struct {
 
 func (x *LogMsg) Reset() {
 	*x = LogMsg{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[40]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3366,7 +3865,7 @@ func (x *LogMsg) String() string {
 func (*LogMsg) ProtoMessage() {}
 
 func (x *LogMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[40]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3379,7 +3878,7 @@ func (x *LogMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogMsg.ProtoReflect.Descriptor instead.
 func (*LogMsg) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{40}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *LogMsg) GetLevel() string {
@@ -3414,7 +3913,7 @@ type MetricMsg struct {
 
 func (x *MetricMsg) Reset() {
 	*x = MetricMsg{}
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[41]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3426,7 +3925,7 @@ func (x *MetricMsg) String() string {
 func (*MetricMsg) ProtoMessage() {}
 
 func (x *MetricMsg) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[41]
+	mi := &file_datapower_noesis_v1_connector_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3439,7 +3938,7 @@ func (x *MetricMsg) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetricMsg.ProtoReflect.Descriptor instead.
 func (*MetricMsg) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{41}
+	return file_datapower_noesis_v1_connector_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *MetricMsg) GetName() string {
@@ -3688,15 +4187,52 @@ const file_datapower_noesis_v1_connector_proto_rawDesc = "" +
 	"\x05state\x18\x03 \x01(\v2\x1d.datapower.noesis.v1.StateMsgH\x00R\x05state\x12/\n" +
 	"\x03log\x18\x04 \x01(\v2\x1b.datapower.noesis.v1.LogMsgH\x00R\x03log\x128\n" +
 	"\x06metric\x18\x05 \x01(\v2\x1e.datapower.noesis.v1.MetricMsgH\x00R\x06metricB\x05\n" +
-	"\x03msg\"\xcb\x01\n" +
+	"\x03msg\"\xd6\x01\n" +
 	"\tRecordMsg\x12\x16\n" +
-	"\x06entity\x18\x01 \x01(\tR\x06entity\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\x12\x18\n" +
-	"\apayload\x18\x03 \x01(\fR\apayload\x12\x1b\n" +
-	"\tschema_id\x18\x04 \x01(\tR\bschemaId\x12'\n" +
-	"\x02op\x18\x05 \x01(\x0e2\x17.datapower.noesis.v1.OpR\x02op\x12\x19\n" +
-	"\bgroup_id\x18\x06 \x01(\tR\agroupId\x12\x19\n" +
-	"\bts_event\x18\a \x01(\x03R\atsEvent\"x\n" +
+	"\x06entity\x18\x01 \x01(\tR\x06entity\x12,\n" +
+	"\x04data\x18\x02 \x01(\v2\x18.datapower.noesis.v1.RowR\x04data\x12'\n" +
+	"\x02op\x18\x03 \x01(\x0e2\x17.datapower.noesis.v1.OpR\x02op\x12\"\n" +
+	"\revent_time_ms\x18\x04 \x01(\x03R\veventTimeMs\x12\x1b\n" +
+	"\tschema_id\x18\x05 \x01(\tR\bschemaId\x12\x19\n" +
+	"\bgroup_id\x18\x06 \x01(\tR\agroupId\"\x9e\x01\n" +
+	"\x03Row\x12?\n" +
+	"\acolumns\x18\x01 \x03(\v2%.datapower.noesis.v1.Row.ColumnsEntryR\acolumns\x1aV\n" +
+	"\fColumnsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x120\n" +
+	"\x05value\x18\x02 \x01(\v2\x1a.datapower.noesis.v1.ValueR\x05value:\x028\x01\"\xd0\x04\n" +
+	"\x05Value\x12\x1f\n" +
+	"\n" +
+	"string_val\x18\x01 \x01(\tH\x00R\tstringVal\x12\x1d\n" +
+	"\tint64_val\x18\x02 \x01(\x03H\x00R\bint64Val\x12\x1d\n" +
+	"\tint32_val\x18\x03 \x01(\x05H\x00R\bint32Val\x12\x1f\n" +
+	"\n" +
+	"double_val\x18\x04 \x01(\x01H\x00R\tdoubleVal\x12\x1d\n" +
+	"\tfloat_val\x18\x05 \x01(\x02H\x00R\bfloatVal\x12\x1b\n" +
+	"\bbool_val\x18\x06 \x01(\bH\x00R\aboolVal\x12\x1d\n" +
+	"\tbytes_val\x18\a \x01(\fH\x00R\bbytesVal\x12+\n" +
+	"\x10timestamp_micros\x18\n" +
+	" \x01(\x03H\x00R\x0ftimestampMicros\x12\x1d\n" +
+	"\tdate_days\x18\v \x01(\x05H\x00R\bdateDays\x12!\n" +
+	"\vtime_micros\x18\f \x01(\x03H\x00R\n" +
+	"timeMicros\x12;\n" +
+	"\bnull_val\x18\x14 \x01(\x0e2\x1e.datapower.noesis.v1.NullValueH\x00R\anullVal\x12A\n" +
+	"\n" +
+	"struct_val\x18\x15 \x01(\v2 .datapower.noesis.v1.StructValueH\x00R\tstructVal\x12;\n" +
+	"\blist_val\x18\x16 \x01(\v2\x1e.datapower.noesis.v1.ListValueH\x00R\alistVal\x128\n" +
+	"\amap_val\x18\x17 \x01(\v2\x1d.datapower.noesis.v1.MapValueH\x00R\x06mapValB\x06\n" +
+	"\x04kind\"\xaa\x01\n" +
+	"\vStructValue\x12D\n" +
+	"\x06fields\x18\x01 \x03(\v2,.datapower.noesis.v1.StructValue.FieldsEntryR\x06fields\x1aU\n" +
+	"\vFieldsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x120\n" +
+	"\x05value\x18\x02 \x01(\v2\x1a.datapower.noesis.v1.ValueR\x05value:\x028\x01\"C\n" +
+	"\tListValue\x126\n" +
+	"\belements\x18\x01 \x03(\v2\x1a.datapower.noesis.v1.ValueR\belements\"\xa8\x01\n" +
+	"\bMapValue\x12D\n" +
+	"\aentries\x18\x01 \x03(\v2*.datapower.noesis.v1.MapValue.EntriesEntryR\aentries\x1aV\n" +
+	"\fEntriesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x120\n" +
+	"\x05value\x18\x02 \x01(\v2\x1a.datapower.noesis.v1.ValueR\x05value:\x028\x01\"x\n" +
 	"\bStateMsg\x123\n" +
 	"\x06cursor\x18\x01 \x01(\v2\x1b.datapower.noesis.v1.CursorR\x06cursor\x12\x1c\n" +
 	"\twatermark\x18\x02 \x01(\x03R\twatermark\x12\x19\n" +
@@ -3799,7 +4335,10 @@ const file_datapower_noesis_v1_connector_proto_rawDesc = "" +
 	"\n" +
 	"\x06UPSERT\x10\x01\x12\n" +
 	"\n" +
-	"\x06DELETE\x10\x02*3\n" +
+	"\x06DELETE\x10\x02*\x1b\n" +
+	"\tNullValue\x12\x0e\n" +
+	"\n" +
+	"NULL_VALUE\x10\x00*3\n" +
 	"\tDirection\x12\x13\n" +
 	"\x0fDIR_UNSPECIFIED\x10\x00\x12\a\n" +
 	"\x03ASC\x10\x01\x12\b\n" +
@@ -3836,154 +4375,175 @@ func file_datapower_noesis_v1_connector_proto_rawDescGZIP() []byte {
 	return file_datapower_noesis_v1_connector_proto_rawDescData
 }
 
-var file_datapower_noesis_v1_connector_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
-var file_datapower_noesis_v1_connector_proto_msgTypes = make([]protoimpl.MessageInfo, 54)
+var file_datapower_noesis_v1_connector_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
+var file_datapower_noesis_v1_connector_proto_msgTypes = make([]protoimpl.MessageInfo, 62)
 var file_datapower_noesis_v1_connector_proto_goTypes = []any{
 	(EntityKind)(0),                    // 0: datapower.noesis.v1.EntityKind
 	(FieldType)(0),                     // 1: datapower.noesis.v1.FieldType
 	(ConstraintType)(0),                // 2: datapower.noesis.v1.ConstraintType
 	(CursorType)(0),                    // 3: datapower.noesis.v1.CursorType
 	(Op)(0),                            // 4: datapower.noesis.v1.Op
-	(Direction)(0),                     // 5: datapower.noesis.v1.Direction
-	(ConsistencyMode)(0),               // 6: datapower.noesis.v1.ConsistencyMode
-	(TraversalDirection)(0),            // 7: datapower.noesis.v1.TraversalDirection
-	(*DiscoverRequest)(nil),            // 8: datapower.noesis.v1.DiscoverRequest
-	(*DiscoverResponse)(nil),           // 9: datapower.noesis.v1.DiscoverResponse
-	(*PlatformInfo)(nil),               // 10: datapower.noesis.v1.PlatformInfo
-	(*EntityDescriptor)(nil),           // 11: datapower.noesis.v1.EntityDescriptor
-	(*FieldDescriptor)(nil),            // 12: datapower.noesis.v1.FieldDescriptor
-	(*ConstraintDescriptor)(nil),       // 13: datapower.noesis.v1.ConstraintDescriptor
-	(*IndexDescriptor)(nil),            // 14: datapower.noesis.v1.IndexDescriptor
-	(*StructuredSchemaDescriptor)(nil), // 15: datapower.noesis.v1.StructuredSchemaDescriptor
-	(*UniqueKey)(nil),                  // 16: datapower.noesis.v1.UniqueKey
-	(*LinkEndpoint)(nil),               // 17: datapower.noesis.v1.LinkEndpoint
-	(*CursorField)(nil),                // 18: datapower.noesis.v1.CursorField
-	(*ExtractionCapabilities)(nil),     // 19: datapower.noesis.v1.ExtractionCapabilities
-	(*CheckRequest)(nil),               // 20: datapower.noesis.v1.CheckRequest
-	(*CheckResponse)(nil),              // 21: datapower.noesis.v1.CheckResponse
-	(*OpenRequest)(nil),                // 22: datapower.noesis.v1.OpenRequest
-	(*OpenResponse)(nil),               // 23: datapower.noesis.v1.OpenResponse
-	(*CloseRequest)(nil),               // 24: datapower.noesis.v1.CloseRequest
-	(*CloseResponse)(nil),              // 25: datapower.noesis.v1.CloseResponse
-	(*PlanExtractionRequest)(nil),      // 26: datapower.noesis.v1.PlanExtractionRequest
-	(*PlanExtractionResponse)(nil),     // 27: datapower.noesis.v1.PlanExtractionResponse
-	(*ExtractionSplit)(nil),            // 28: datapower.noesis.v1.ExtractionSplit
-	(*ReadSplitRequest)(nil),           // 29: datapower.noesis.v1.ReadSplitRequest
-	(*ReadRequest)(nil),                // 30: datapower.noesis.v1.ReadRequest
-	(*FullTableScan)(nil),              // 31: datapower.noesis.v1.FullTableScan
-	(*ChangeStream)(nil),               // 32: datapower.noesis.v1.ChangeStream
-	(*SubgraphRead)(nil),               // 33: datapower.noesis.v1.SubgraphRead
-	(*Head)(nil),                       // 34: datapower.noesis.v1.Head
-	(*ReadMessage)(nil),                // 35: datapower.noesis.v1.ReadMessage
-	(*RecordMsg)(nil),                  // 36: datapower.noesis.v1.RecordMsg
-	(*StateMsg)(nil),                   // 37: datapower.noesis.v1.StateMsg
-	(*Projection)(nil),                 // 38: datapower.noesis.v1.Projection
-	(*Filter)(nil),                     // 39: datapower.noesis.v1.Filter
-	(*Predicate)(nil),                  // 40: datapower.noesis.v1.Predicate
-	(*Ordering)(nil),                   // 41: datapower.noesis.v1.Ordering
-	(*OrderBy)(nil),                    // 42: datapower.noesis.v1.OrderBy
-	(*SnapshotOptions)(nil),            // 43: datapower.noesis.v1.SnapshotOptions
-	(*Cursor)(nil),                     // 44: datapower.noesis.v1.Cursor
-	(*RateLimit)(nil),                  // 45: datapower.noesis.v1.RateLimit
-	(*Traversal)(nil),                  // 46: datapower.noesis.v1.Traversal
-	(*SchemaMsg)(nil),                  // 47: datapower.noesis.v1.SchemaMsg
-	(*LogMsg)(nil),                     // 48: datapower.noesis.v1.LogMsg
-	(*MetricMsg)(nil),                  // 49: datapower.noesis.v1.MetricMsg
-	nil,                                // 50: datapower.noesis.v1.PlatformInfo.TagsEntry
-	nil,                                // 51: datapower.noesis.v1.FieldDescriptor.AttributesEntry
-	nil,                                // 52: datapower.noesis.v1.ConstraintDescriptor.AttributesEntry
-	nil,                                // 53: datapower.noesis.v1.IndexDescriptor.AttributesEntry
-	nil,                                // 54: datapower.noesis.v1.StructuredSchemaDescriptor.AttributesEntry
-	nil,                                // 55: datapower.noesis.v1.CheckRequest.ConfigEntry
-	nil,                                // 56: datapower.noesis.v1.CheckResponse.DetailsEntry
-	nil,                                // 57: datapower.noesis.v1.OpenRequest.ConfigEntry
-	nil,                                // 58: datapower.noesis.v1.PlanExtractionRequest.ConfigEntry
-	nil,                                // 59: datapower.noesis.v1.ExtractionSplit.MetadataEntry
-	nil,                                // 60: datapower.noesis.v1.LogMsg.KvEntry
-	nil,                                // 61: datapower.noesis.v1.MetricMsg.TagsEntry
+	(NullValue)(0),                     // 5: datapower.noesis.v1.NullValue
+	(Direction)(0),                     // 6: datapower.noesis.v1.Direction
+	(ConsistencyMode)(0),               // 7: datapower.noesis.v1.ConsistencyMode
+	(TraversalDirection)(0),            // 8: datapower.noesis.v1.TraversalDirection
+	(*DiscoverRequest)(nil),            // 9: datapower.noesis.v1.DiscoverRequest
+	(*DiscoverResponse)(nil),           // 10: datapower.noesis.v1.DiscoverResponse
+	(*PlatformInfo)(nil),               // 11: datapower.noesis.v1.PlatformInfo
+	(*EntityDescriptor)(nil),           // 12: datapower.noesis.v1.EntityDescriptor
+	(*FieldDescriptor)(nil),            // 13: datapower.noesis.v1.FieldDescriptor
+	(*ConstraintDescriptor)(nil),       // 14: datapower.noesis.v1.ConstraintDescriptor
+	(*IndexDescriptor)(nil),            // 15: datapower.noesis.v1.IndexDescriptor
+	(*StructuredSchemaDescriptor)(nil), // 16: datapower.noesis.v1.StructuredSchemaDescriptor
+	(*UniqueKey)(nil),                  // 17: datapower.noesis.v1.UniqueKey
+	(*LinkEndpoint)(nil),               // 18: datapower.noesis.v1.LinkEndpoint
+	(*CursorField)(nil),                // 19: datapower.noesis.v1.CursorField
+	(*ExtractionCapabilities)(nil),     // 20: datapower.noesis.v1.ExtractionCapabilities
+	(*CheckRequest)(nil),               // 21: datapower.noesis.v1.CheckRequest
+	(*CheckResponse)(nil),              // 22: datapower.noesis.v1.CheckResponse
+	(*OpenRequest)(nil),                // 23: datapower.noesis.v1.OpenRequest
+	(*OpenResponse)(nil),               // 24: datapower.noesis.v1.OpenResponse
+	(*CloseRequest)(nil),               // 25: datapower.noesis.v1.CloseRequest
+	(*CloseResponse)(nil),              // 26: datapower.noesis.v1.CloseResponse
+	(*PlanExtractionRequest)(nil),      // 27: datapower.noesis.v1.PlanExtractionRequest
+	(*PlanExtractionResponse)(nil),     // 28: datapower.noesis.v1.PlanExtractionResponse
+	(*ExtractionSplit)(nil),            // 29: datapower.noesis.v1.ExtractionSplit
+	(*ReadSplitRequest)(nil),           // 30: datapower.noesis.v1.ReadSplitRequest
+	(*ReadRequest)(nil),                // 31: datapower.noesis.v1.ReadRequest
+	(*FullTableScan)(nil),              // 32: datapower.noesis.v1.FullTableScan
+	(*ChangeStream)(nil),               // 33: datapower.noesis.v1.ChangeStream
+	(*SubgraphRead)(nil),               // 34: datapower.noesis.v1.SubgraphRead
+	(*Head)(nil),                       // 35: datapower.noesis.v1.Head
+	(*ReadMessage)(nil),                // 36: datapower.noesis.v1.ReadMessage
+	(*RecordMsg)(nil),                  // 37: datapower.noesis.v1.RecordMsg
+	(*Row)(nil),                        // 38: datapower.noesis.v1.Row
+	(*Value)(nil),                      // 39: datapower.noesis.v1.Value
+	(*StructValue)(nil),                // 40: datapower.noesis.v1.StructValue
+	(*ListValue)(nil),                  // 41: datapower.noesis.v1.ListValue
+	(*MapValue)(nil),                   // 42: datapower.noesis.v1.MapValue
+	(*StateMsg)(nil),                   // 43: datapower.noesis.v1.StateMsg
+	(*Projection)(nil),                 // 44: datapower.noesis.v1.Projection
+	(*Filter)(nil),                     // 45: datapower.noesis.v1.Filter
+	(*Predicate)(nil),                  // 46: datapower.noesis.v1.Predicate
+	(*Ordering)(nil),                   // 47: datapower.noesis.v1.Ordering
+	(*OrderBy)(nil),                    // 48: datapower.noesis.v1.OrderBy
+	(*SnapshotOptions)(nil),            // 49: datapower.noesis.v1.SnapshotOptions
+	(*Cursor)(nil),                     // 50: datapower.noesis.v1.Cursor
+	(*RateLimit)(nil),                  // 51: datapower.noesis.v1.RateLimit
+	(*Traversal)(nil),                  // 52: datapower.noesis.v1.Traversal
+	(*SchemaMsg)(nil),                  // 53: datapower.noesis.v1.SchemaMsg
+	(*LogMsg)(nil),                     // 54: datapower.noesis.v1.LogMsg
+	(*MetricMsg)(nil),                  // 55: datapower.noesis.v1.MetricMsg
+	nil,                                // 56: datapower.noesis.v1.PlatformInfo.TagsEntry
+	nil,                                // 57: datapower.noesis.v1.FieldDescriptor.AttributesEntry
+	nil,                                // 58: datapower.noesis.v1.ConstraintDescriptor.AttributesEntry
+	nil,                                // 59: datapower.noesis.v1.IndexDescriptor.AttributesEntry
+	nil,                                // 60: datapower.noesis.v1.StructuredSchemaDescriptor.AttributesEntry
+	nil,                                // 61: datapower.noesis.v1.CheckRequest.ConfigEntry
+	nil,                                // 62: datapower.noesis.v1.CheckResponse.DetailsEntry
+	nil,                                // 63: datapower.noesis.v1.OpenRequest.ConfigEntry
+	nil,                                // 64: datapower.noesis.v1.PlanExtractionRequest.ConfigEntry
+	nil,                                // 65: datapower.noesis.v1.ExtractionSplit.MetadataEntry
+	nil,                                // 66: datapower.noesis.v1.Row.ColumnsEntry
+	nil,                                // 67: datapower.noesis.v1.StructValue.FieldsEntry
+	nil,                                // 68: datapower.noesis.v1.MapValue.EntriesEntry
+	nil,                                // 69: datapower.noesis.v1.LogMsg.KvEntry
+	nil,                                // 70: datapower.noesis.v1.MetricMsg.TagsEntry
 }
 var file_datapower_noesis_v1_connector_proto_depIdxs = []int32{
-	10, // 0: datapower.noesis.v1.DiscoverResponse.platform:type_name -> datapower.noesis.v1.PlatformInfo
-	11, // 1: datapower.noesis.v1.DiscoverResponse.entities:type_name -> datapower.noesis.v1.EntityDescriptor
-	50, // 2: datapower.noesis.v1.PlatformInfo.tags:type_name -> datapower.noesis.v1.PlatformInfo.TagsEntry
+	11, // 0: datapower.noesis.v1.DiscoverResponse.platform:type_name -> datapower.noesis.v1.PlatformInfo
+	12, // 1: datapower.noesis.v1.DiscoverResponse.entities:type_name -> datapower.noesis.v1.EntityDescriptor
+	56, // 2: datapower.noesis.v1.PlatformInfo.tags:type_name -> datapower.noesis.v1.PlatformInfo.TagsEntry
 	0,  // 3: datapower.noesis.v1.EntityDescriptor.kind:type_name -> datapower.noesis.v1.EntityKind
-	15, // 4: datapower.noesis.v1.EntityDescriptor.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
-	16, // 5: datapower.noesis.v1.EntityDescriptor.unique_keys:type_name -> datapower.noesis.v1.UniqueKey
-	17, // 6: datapower.noesis.v1.EntityDescriptor.src:type_name -> datapower.noesis.v1.LinkEndpoint
-	17, // 7: datapower.noesis.v1.EntityDescriptor.dst:type_name -> datapower.noesis.v1.LinkEndpoint
-	18, // 8: datapower.noesis.v1.EntityDescriptor.cursors:type_name -> datapower.noesis.v1.CursorField
-	19, // 9: datapower.noesis.v1.EntityDescriptor.capabilities:type_name -> datapower.noesis.v1.ExtractionCapabilities
+	16, // 4: datapower.noesis.v1.EntityDescriptor.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
+	17, // 5: datapower.noesis.v1.EntityDescriptor.unique_keys:type_name -> datapower.noesis.v1.UniqueKey
+	18, // 6: datapower.noesis.v1.EntityDescriptor.src:type_name -> datapower.noesis.v1.LinkEndpoint
+	18, // 7: datapower.noesis.v1.EntityDescriptor.dst:type_name -> datapower.noesis.v1.LinkEndpoint
+	19, // 8: datapower.noesis.v1.EntityDescriptor.cursors:type_name -> datapower.noesis.v1.CursorField
+	20, // 9: datapower.noesis.v1.EntityDescriptor.capabilities:type_name -> datapower.noesis.v1.ExtractionCapabilities
 	1,  // 10: datapower.noesis.v1.FieldDescriptor.type:type_name -> datapower.noesis.v1.FieldType
 	1,  // 11: datapower.noesis.v1.FieldDescriptor.array_element_type:type_name -> datapower.noesis.v1.FieldType
-	51, // 12: datapower.noesis.v1.FieldDescriptor.attributes:type_name -> datapower.noesis.v1.FieldDescriptor.AttributesEntry
+	57, // 12: datapower.noesis.v1.FieldDescriptor.attributes:type_name -> datapower.noesis.v1.FieldDescriptor.AttributesEntry
 	2,  // 13: datapower.noesis.v1.ConstraintDescriptor.type:type_name -> datapower.noesis.v1.ConstraintType
-	52, // 14: datapower.noesis.v1.ConstraintDescriptor.attributes:type_name -> datapower.noesis.v1.ConstraintDescriptor.AttributesEntry
-	53, // 15: datapower.noesis.v1.IndexDescriptor.attributes:type_name -> datapower.noesis.v1.IndexDescriptor.AttributesEntry
-	12, // 16: datapower.noesis.v1.StructuredSchemaDescriptor.fields:type_name -> datapower.noesis.v1.FieldDescriptor
-	13, // 17: datapower.noesis.v1.StructuredSchemaDescriptor.constraints:type_name -> datapower.noesis.v1.ConstraintDescriptor
-	14, // 18: datapower.noesis.v1.StructuredSchemaDescriptor.indexes:type_name -> datapower.noesis.v1.IndexDescriptor
-	54, // 19: datapower.noesis.v1.StructuredSchemaDescriptor.attributes:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor.AttributesEntry
+	58, // 14: datapower.noesis.v1.ConstraintDescriptor.attributes:type_name -> datapower.noesis.v1.ConstraintDescriptor.AttributesEntry
+	59, // 15: datapower.noesis.v1.IndexDescriptor.attributes:type_name -> datapower.noesis.v1.IndexDescriptor.AttributesEntry
+	13, // 16: datapower.noesis.v1.StructuredSchemaDescriptor.fields:type_name -> datapower.noesis.v1.FieldDescriptor
+	14, // 17: datapower.noesis.v1.StructuredSchemaDescriptor.constraints:type_name -> datapower.noesis.v1.ConstraintDescriptor
+	15, // 18: datapower.noesis.v1.StructuredSchemaDescriptor.indexes:type_name -> datapower.noesis.v1.IndexDescriptor
+	60, // 19: datapower.noesis.v1.StructuredSchemaDescriptor.attributes:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor.AttributesEntry
 	3,  // 20: datapower.noesis.v1.CursorField.type:type_name -> datapower.noesis.v1.CursorType
-	55, // 21: datapower.noesis.v1.CheckRequest.config:type_name -> datapower.noesis.v1.CheckRequest.ConfigEntry
-	56, // 22: datapower.noesis.v1.CheckResponse.details:type_name -> datapower.noesis.v1.CheckResponse.DetailsEntry
-	57, // 23: datapower.noesis.v1.OpenRequest.config:type_name -> datapower.noesis.v1.OpenRequest.ConfigEntry
-	58, // 24: datapower.noesis.v1.PlanExtractionRequest.config:type_name -> datapower.noesis.v1.PlanExtractionRequest.ConfigEntry
-	39, // 25: datapower.noesis.v1.PlanExtractionRequest.filter:type_name -> datapower.noesis.v1.Filter
-	43, // 26: datapower.noesis.v1.PlanExtractionRequest.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
-	28, // 27: datapower.noesis.v1.PlanExtractionResponse.splits:type_name -> datapower.noesis.v1.ExtractionSplit
-	59, // 28: datapower.noesis.v1.ExtractionSplit.metadata:type_name -> datapower.noesis.v1.ExtractionSplit.MetadataEntry
-	28, // 29: datapower.noesis.v1.ReadSplitRequest.split:type_name -> datapower.noesis.v1.ExtractionSplit
-	38, // 30: datapower.noesis.v1.ReadSplitRequest.projection:type_name -> datapower.noesis.v1.Projection
-	45, // 31: datapower.noesis.v1.ReadSplitRequest.rate_limit:type_name -> datapower.noesis.v1.RateLimit
-	31, // 32: datapower.noesis.v1.ReadRequest.full_table:type_name -> datapower.noesis.v1.FullTableScan
-	32, // 33: datapower.noesis.v1.ReadRequest.change_stream:type_name -> datapower.noesis.v1.ChangeStream
-	33, // 34: datapower.noesis.v1.ReadRequest.subgraph:type_name -> datapower.noesis.v1.SubgraphRead
-	38, // 35: datapower.noesis.v1.ReadRequest.projection:type_name -> datapower.noesis.v1.Projection
-	45, // 36: datapower.noesis.v1.ReadRequest.rate_limit:type_name -> datapower.noesis.v1.RateLimit
-	44, // 37: datapower.noesis.v1.FullTableScan.resume_from:type_name -> datapower.noesis.v1.Cursor
-	39, // 38: datapower.noesis.v1.FullTableScan.filter:type_name -> datapower.noesis.v1.Filter
-	41, // 39: datapower.noesis.v1.FullTableScan.ordering:type_name -> datapower.noesis.v1.Ordering
-	43, // 40: datapower.noesis.v1.FullTableScan.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
-	44, // 41: datapower.noesis.v1.ChangeStream.from:type_name -> datapower.noesis.v1.Cursor
-	39, // 42: datapower.noesis.v1.ChangeStream.filter:type_name -> datapower.noesis.v1.Filter
-	34, // 43: datapower.noesis.v1.SubgraphRead.heads:type_name -> datapower.noesis.v1.Head
-	46, // 44: datapower.noesis.v1.SubgraphRead.traversal:type_name -> datapower.noesis.v1.Traversal
-	43, // 45: datapower.noesis.v1.SubgraphRead.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
-	44, // 46: datapower.noesis.v1.SubgraphRead.resume_from:type_name -> datapower.noesis.v1.Cursor
-	47, // 47: datapower.noesis.v1.ReadMessage.schema:type_name -> datapower.noesis.v1.SchemaMsg
-	36, // 48: datapower.noesis.v1.ReadMessage.record:type_name -> datapower.noesis.v1.RecordMsg
-	37, // 49: datapower.noesis.v1.ReadMessage.state:type_name -> datapower.noesis.v1.StateMsg
-	48, // 50: datapower.noesis.v1.ReadMessage.log:type_name -> datapower.noesis.v1.LogMsg
-	49, // 51: datapower.noesis.v1.ReadMessage.metric:type_name -> datapower.noesis.v1.MetricMsg
-	4,  // 52: datapower.noesis.v1.RecordMsg.op:type_name -> datapower.noesis.v1.Op
-	44, // 53: datapower.noesis.v1.StateMsg.cursor:type_name -> datapower.noesis.v1.Cursor
-	40, // 54: datapower.noesis.v1.Filter.predicates:type_name -> datapower.noesis.v1.Predicate
-	42, // 55: datapower.noesis.v1.Ordering.by:type_name -> datapower.noesis.v1.OrderBy
-	5,  // 56: datapower.noesis.v1.OrderBy.direction:type_name -> datapower.noesis.v1.Direction
-	6,  // 57: datapower.noesis.v1.SnapshotOptions.mode:type_name -> datapower.noesis.v1.ConsistencyMode
-	7,  // 58: datapower.noesis.v1.Traversal.direction:type_name -> datapower.noesis.v1.TraversalDirection
-	15, // 59: datapower.noesis.v1.SchemaMsg.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
-	60, // 60: datapower.noesis.v1.LogMsg.kv:type_name -> datapower.noesis.v1.LogMsg.KvEntry
-	61, // 61: datapower.noesis.v1.MetricMsg.tags:type_name -> datapower.noesis.v1.MetricMsg.TagsEntry
-	20, // 62: datapower.noesis.v1.Connector.Check:input_type -> datapower.noesis.v1.CheckRequest
-	8,  // 63: datapower.noesis.v1.Connector.Discover:input_type -> datapower.noesis.v1.DiscoverRequest
-	26, // 64: datapower.noesis.v1.Connector.PlanExtraction:input_type -> datapower.noesis.v1.PlanExtractionRequest
-	22, // 65: datapower.noesis.v1.Connector.Open:input_type -> datapower.noesis.v1.OpenRequest
-	30, // 66: datapower.noesis.v1.Connector.Read:input_type -> datapower.noesis.v1.ReadRequest
-	29, // 67: datapower.noesis.v1.Connector.ReadSplit:input_type -> datapower.noesis.v1.ReadSplitRequest
-	24, // 68: datapower.noesis.v1.Connector.Close:input_type -> datapower.noesis.v1.CloseRequest
-	21, // 69: datapower.noesis.v1.Connector.Check:output_type -> datapower.noesis.v1.CheckResponse
-	9,  // 70: datapower.noesis.v1.Connector.Discover:output_type -> datapower.noesis.v1.DiscoverResponse
-	27, // 71: datapower.noesis.v1.Connector.PlanExtraction:output_type -> datapower.noesis.v1.PlanExtractionResponse
-	23, // 72: datapower.noesis.v1.Connector.Open:output_type -> datapower.noesis.v1.OpenResponse
-	35, // 73: datapower.noesis.v1.Connector.Read:output_type -> datapower.noesis.v1.ReadMessage
-	35, // 74: datapower.noesis.v1.Connector.ReadSplit:output_type -> datapower.noesis.v1.ReadMessage
-	25, // 75: datapower.noesis.v1.Connector.Close:output_type -> datapower.noesis.v1.CloseResponse
-	69, // [69:76] is the sub-list for method output_type
-	62, // [62:69] is the sub-list for method input_type
-	62, // [62:62] is the sub-list for extension type_name
-	62, // [62:62] is the sub-list for extension extendee
-	0,  // [0:62] is the sub-list for field type_name
+	61, // 21: datapower.noesis.v1.CheckRequest.config:type_name -> datapower.noesis.v1.CheckRequest.ConfigEntry
+	62, // 22: datapower.noesis.v1.CheckResponse.details:type_name -> datapower.noesis.v1.CheckResponse.DetailsEntry
+	63, // 23: datapower.noesis.v1.OpenRequest.config:type_name -> datapower.noesis.v1.OpenRequest.ConfigEntry
+	64, // 24: datapower.noesis.v1.PlanExtractionRequest.config:type_name -> datapower.noesis.v1.PlanExtractionRequest.ConfigEntry
+	45, // 25: datapower.noesis.v1.PlanExtractionRequest.filter:type_name -> datapower.noesis.v1.Filter
+	49, // 26: datapower.noesis.v1.PlanExtractionRequest.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
+	29, // 27: datapower.noesis.v1.PlanExtractionResponse.splits:type_name -> datapower.noesis.v1.ExtractionSplit
+	65, // 28: datapower.noesis.v1.ExtractionSplit.metadata:type_name -> datapower.noesis.v1.ExtractionSplit.MetadataEntry
+	29, // 29: datapower.noesis.v1.ReadSplitRequest.split:type_name -> datapower.noesis.v1.ExtractionSplit
+	44, // 30: datapower.noesis.v1.ReadSplitRequest.projection:type_name -> datapower.noesis.v1.Projection
+	51, // 31: datapower.noesis.v1.ReadSplitRequest.rate_limit:type_name -> datapower.noesis.v1.RateLimit
+	32, // 32: datapower.noesis.v1.ReadRequest.full_table:type_name -> datapower.noesis.v1.FullTableScan
+	33, // 33: datapower.noesis.v1.ReadRequest.change_stream:type_name -> datapower.noesis.v1.ChangeStream
+	34, // 34: datapower.noesis.v1.ReadRequest.subgraph:type_name -> datapower.noesis.v1.SubgraphRead
+	44, // 35: datapower.noesis.v1.ReadRequest.projection:type_name -> datapower.noesis.v1.Projection
+	51, // 36: datapower.noesis.v1.ReadRequest.rate_limit:type_name -> datapower.noesis.v1.RateLimit
+	50, // 37: datapower.noesis.v1.FullTableScan.resume_from:type_name -> datapower.noesis.v1.Cursor
+	45, // 38: datapower.noesis.v1.FullTableScan.filter:type_name -> datapower.noesis.v1.Filter
+	47, // 39: datapower.noesis.v1.FullTableScan.ordering:type_name -> datapower.noesis.v1.Ordering
+	49, // 40: datapower.noesis.v1.FullTableScan.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
+	50, // 41: datapower.noesis.v1.ChangeStream.from:type_name -> datapower.noesis.v1.Cursor
+	45, // 42: datapower.noesis.v1.ChangeStream.filter:type_name -> datapower.noesis.v1.Filter
+	35, // 43: datapower.noesis.v1.SubgraphRead.heads:type_name -> datapower.noesis.v1.Head
+	52, // 44: datapower.noesis.v1.SubgraphRead.traversal:type_name -> datapower.noesis.v1.Traversal
+	49, // 45: datapower.noesis.v1.SubgraphRead.snapshot:type_name -> datapower.noesis.v1.SnapshotOptions
+	50, // 46: datapower.noesis.v1.SubgraphRead.resume_from:type_name -> datapower.noesis.v1.Cursor
+	53, // 47: datapower.noesis.v1.ReadMessage.schema:type_name -> datapower.noesis.v1.SchemaMsg
+	37, // 48: datapower.noesis.v1.ReadMessage.record:type_name -> datapower.noesis.v1.RecordMsg
+	43, // 49: datapower.noesis.v1.ReadMessage.state:type_name -> datapower.noesis.v1.StateMsg
+	54, // 50: datapower.noesis.v1.ReadMessage.log:type_name -> datapower.noesis.v1.LogMsg
+	55, // 51: datapower.noesis.v1.ReadMessage.metric:type_name -> datapower.noesis.v1.MetricMsg
+	38, // 52: datapower.noesis.v1.RecordMsg.data:type_name -> datapower.noesis.v1.Row
+	4,  // 53: datapower.noesis.v1.RecordMsg.op:type_name -> datapower.noesis.v1.Op
+	66, // 54: datapower.noesis.v1.Row.columns:type_name -> datapower.noesis.v1.Row.ColumnsEntry
+	5,  // 55: datapower.noesis.v1.Value.null_val:type_name -> datapower.noesis.v1.NullValue
+	40, // 56: datapower.noesis.v1.Value.struct_val:type_name -> datapower.noesis.v1.StructValue
+	41, // 57: datapower.noesis.v1.Value.list_val:type_name -> datapower.noesis.v1.ListValue
+	42, // 58: datapower.noesis.v1.Value.map_val:type_name -> datapower.noesis.v1.MapValue
+	67, // 59: datapower.noesis.v1.StructValue.fields:type_name -> datapower.noesis.v1.StructValue.FieldsEntry
+	39, // 60: datapower.noesis.v1.ListValue.elements:type_name -> datapower.noesis.v1.Value
+	68, // 61: datapower.noesis.v1.MapValue.entries:type_name -> datapower.noesis.v1.MapValue.EntriesEntry
+	50, // 62: datapower.noesis.v1.StateMsg.cursor:type_name -> datapower.noesis.v1.Cursor
+	46, // 63: datapower.noesis.v1.Filter.predicates:type_name -> datapower.noesis.v1.Predicate
+	48, // 64: datapower.noesis.v1.Ordering.by:type_name -> datapower.noesis.v1.OrderBy
+	6,  // 65: datapower.noesis.v1.OrderBy.direction:type_name -> datapower.noesis.v1.Direction
+	7,  // 66: datapower.noesis.v1.SnapshotOptions.mode:type_name -> datapower.noesis.v1.ConsistencyMode
+	8,  // 67: datapower.noesis.v1.Traversal.direction:type_name -> datapower.noesis.v1.TraversalDirection
+	16, // 68: datapower.noesis.v1.SchemaMsg.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
+	69, // 69: datapower.noesis.v1.LogMsg.kv:type_name -> datapower.noesis.v1.LogMsg.KvEntry
+	70, // 70: datapower.noesis.v1.MetricMsg.tags:type_name -> datapower.noesis.v1.MetricMsg.TagsEntry
+	39, // 71: datapower.noesis.v1.Row.ColumnsEntry.value:type_name -> datapower.noesis.v1.Value
+	39, // 72: datapower.noesis.v1.StructValue.FieldsEntry.value:type_name -> datapower.noesis.v1.Value
+	39, // 73: datapower.noesis.v1.MapValue.EntriesEntry.value:type_name -> datapower.noesis.v1.Value
+	21, // 74: datapower.noesis.v1.Connector.Check:input_type -> datapower.noesis.v1.CheckRequest
+	9,  // 75: datapower.noesis.v1.Connector.Discover:input_type -> datapower.noesis.v1.DiscoverRequest
+	27, // 76: datapower.noesis.v1.Connector.PlanExtraction:input_type -> datapower.noesis.v1.PlanExtractionRequest
+	23, // 77: datapower.noesis.v1.Connector.Open:input_type -> datapower.noesis.v1.OpenRequest
+	31, // 78: datapower.noesis.v1.Connector.Read:input_type -> datapower.noesis.v1.ReadRequest
+	30, // 79: datapower.noesis.v1.Connector.ReadSplit:input_type -> datapower.noesis.v1.ReadSplitRequest
+	25, // 80: datapower.noesis.v1.Connector.Close:input_type -> datapower.noesis.v1.CloseRequest
+	22, // 81: datapower.noesis.v1.Connector.Check:output_type -> datapower.noesis.v1.CheckResponse
+	10, // 82: datapower.noesis.v1.Connector.Discover:output_type -> datapower.noesis.v1.DiscoverResponse
+	28, // 83: datapower.noesis.v1.Connector.PlanExtraction:output_type -> datapower.noesis.v1.PlanExtractionResponse
+	24, // 84: datapower.noesis.v1.Connector.Open:output_type -> datapower.noesis.v1.OpenResponse
+	36, // 85: datapower.noesis.v1.Connector.Read:output_type -> datapower.noesis.v1.ReadMessage
+	36, // 86: datapower.noesis.v1.Connector.ReadSplit:output_type -> datapower.noesis.v1.ReadMessage
+	26, // 87: datapower.noesis.v1.Connector.Close:output_type -> datapower.noesis.v1.CloseResponse
+	81, // [81:88] is the sub-list for method output_type
+	74, // [74:81] is the sub-list for method input_type
+	74, // [74:74] is the sub-list for extension type_name
+	74, // [74:74] is the sub-list for extension extendee
+	0,  // [0:74] is the sub-list for field type_name
 }
 
 func init() { file_datapower_noesis_v1_connector_proto_init() }
@@ -4003,13 +4563,29 @@ func file_datapower_noesis_v1_connector_proto_init() {
 		(*ReadMessage_Log)(nil),
 		(*ReadMessage_Metric)(nil),
 	}
+	file_datapower_noesis_v1_connector_proto_msgTypes[30].OneofWrappers = []any{
+		(*Value_StringVal)(nil),
+		(*Value_Int64Val)(nil),
+		(*Value_Int32Val)(nil),
+		(*Value_DoubleVal)(nil),
+		(*Value_FloatVal)(nil),
+		(*Value_BoolVal)(nil),
+		(*Value_BytesVal)(nil),
+		(*Value_TimestampMicros)(nil),
+		(*Value_DateDays)(nil),
+		(*Value_TimeMicros)(nil),
+		(*Value_NullVal)(nil),
+		(*Value_StructVal)(nil),
+		(*Value_ListVal)(nil),
+		(*Value_MapVal)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_datapower_noesis_v1_connector_proto_rawDesc), len(file_datapower_noesis_v1_connector_proto_rawDesc)),
-			NumEnums:      8,
-			NumMessages:   54,
+			NumEnums:      9,
+			NumMessages:   62,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

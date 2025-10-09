@@ -1,18 +1,19 @@
-// Sidecar API (gRPC) — Parquetizer Service
+// Sidecar API (gRPC) — Storage Writer Service
 // ------------------------------------------
 // Goal:
 // - Provide a lightweight service that runs alongside connectors in the same pod
 // - Receives streaming data from connectors over localhost
-// - Writes data to Parquet format with efficient compression
-// - Uploads completed Parquet files to object storage
+// - Writes data to storage formats (Parquet, Iceberg, Delta Lake, etc.)
+// - Uploads completed files to object storage
 //
 // Usage:
 // - Connector extracts data and streams it to sidecar via StreamData RPC
-// - Sidecar buffers data, writes Parquet files, and uploads to S3/GCS
+// - Sidecar buffers data, writes to configured format, and uploads to S3/GCS/etc.
 // - Sidecar notifies connector when upload is complete
 //
 // Benefits:
 // - Separation of concerns: connector focuses on extraction, sidecar handles serialization
+// - Storage-agnostic: connector doesn't need to know about Parquet, Iceberg, etc.
 // - Reusable: same sidecar can work with any connector
 // - Efficient: streaming reduces memory footprint
 
@@ -49,7 +50,7 @@ const (
 type SidecarClient interface {
 	// Initialize a new extraction session with schema and output configuration.
 	InitSession(ctx context.Context, in *InitSessionRequest, opts ...grpc.CallOption) (*InitSessionResponse, error)
-	// Stream data records to be written to Parquet.
+	// Stream data records to be written to the configured storage format.
 	// The connector calls this repeatedly with batches of records.
 	StreamData(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[DataBatch, StreamDataResponse], error)
 	// Finalize the session and trigger final file uploads.
@@ -115,7 +116,7 @@ func (c *sidecarClient) GetSessionStatus(ctx context.Context, in *GetSessionStat
 type SidecarServer interface {
 	// Initialize a new extraction session with schema and output configuration.
 	InitSession(context.Context, *InitSessionRequest) (*InitSessionResponse, error)
-	// Stream data records to be written to Parquet.
+	// Stream data records to be written to the configured storage format.
 	// The connector calls this repeatedly with batches of records.
 	StreamData(grpc.ClientStreamingServer[DataBatch, StreamDataResponse]) error
 	// Finalize the session and trigger final file uploads.

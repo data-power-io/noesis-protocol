@@ -121,7 +121,7 @@ public enum SessionState
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return datapower.noesis.v1.SidecarOuterClass.getDescriptor().getEnumTypes().get(2);
+    return datapower.noesis.v1.SidecarOuterClass.getDescriptor().getEnumTypes().get(3);
   }
 
   private static final SessionState[] VALUES = values();

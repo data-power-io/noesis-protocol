@@ -76,7 +76,7 @@ public interface InitSessionRequestOrBuilder extends
 
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -85,7 +85,7 @@ public interface InitSessionRequestOrBuilder extends
   boolean hasStorage();
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -94,7 +94,7 @@ public interface InitSessionRequestOrBuilder extends
   datapower.noesis.v1.StorageConfig getStorage();
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -130,6 +130,60 @@ public interface InitSessionRequestOrBuilder extends
 
   /**
    * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   * @return Whether the icebergConfig field is set.
+   */
+  boolean hasIcebergConfig();
+  /**
+   * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   * @return The icebergConfig.
+   */
+  datapower.noesis.v1.IcebergConfig getIcebergConfig();
+  /**
+   * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   */
+  datapower.noesis.v1.IcebergConfigOrBuilder getIcebergConfigOrBuilder();
+
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   * @return Whether the deltaConfig field is set.
+   */
+  boolean hasDeltaConfig();
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   * @return The deltaConfig.
+   */
+  datapower.noesis.v1.DeltaConfig getDeltaConfig();
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   */
+  datapower.noesis.v1.DeltaConfigOrBuilder getDeltaConfigOrBuilder();
+
+  /**
+   * <pre>
    * Optional: split identifier for this extraction
    * </pre>
    *
@@ -147,4 +201,6 @@ public interface InitSessionRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getSplitIdBytes();
+
+  datapower.noesis.v1.InitSessionRequest.FormatConfigCase getFormatConfigCase();
 }

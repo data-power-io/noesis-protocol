@@ -40,6 +40,26 @@ public final class SidecarOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_datapower_noesis_v1_ParquetConfig_MetadataEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_IcebergConfig_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_IcebergConfig_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_IcebergConfig_TablePropertiesEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_IcebergConfig_TablePropertiesEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_DeltaConfig_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_DeltaConfig_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_DeltaConfig_TablePropertiesEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_DeltaConfig_TablePropertiesEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_datapower_noesis_v1_InitSessionResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -90,83 +110,111 @@ public final class SidecarOuterClass {
     java.lang.String[] descriptorData = {
       "\n!datapower/noesis/v1/sidecar.proto\022\023dat" +
       "apower.noesis.v1\032#datapower/noesis/v1/co" +
-      "nnector.proto\"\270\002\n\022InitSessionRequest\022\035\n\n" +
+      "nnector.proto\"\337\003\n\022InitSessionRequest\022\035\n\n" +
       "session_id\030\001 \001(\tR\tsessionId\022\026\n\006entity\030\002 " +
       "\001(\tR\006entity\022G\n\006schema\030\003 \001(\0132/.datapower." +
       "noesis.v1.StructuredSchemaDescriptorR\006sc" +
       "hema\022<\n\007storage\030\004 \001(\0132\".datapower.noesis" +
-      ".v1.StorageConfigR\007storage\022I\n\016parquet_co" +
+      ".v1.StorageConfigR\007storage\022K\n\016parquet_co" +
       "nfig\030\005 \001(\0132\".datapower.noesis.v1.Parquet" +
-      "ConfigR\rparquetConfig\022\031\n\010split_id\030\006 \001(\tR" +
-      "\007splitId\"\312\002\n\rStorageConfig\0224\n\004type\030\001 \001(\016" +
-      "2 .datapower.noesis.v1.StorageTypeR\004type" +
-      "\022\026\n\006bucket\030\002 \001(\tR\006bucket\022\037\n\013path_prefix\030" +
-      "\003 \001(\tR\npathPrefix\022U\n\013credentials\030\004 \003(\01323" +
-      ".datapower.noesis.v1.StorageConfig.Crede" +
-      "ntialsEntryR\013credentials\022\032\n\010endpoint\030\005 \001" +
-      "(\tR\010endpoint\022\027\n\007use_ssl\030\006 \001(\010R\006useSsl\032>\n" +
-      "\020CredentialsEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005v" +
-      "alue\030\002 \001(\tR\005value:\0028\001\"\325\002\n\rParquetConfig\022" +
-      "G\n\013compression\030\001 \001(\0162%.datapower.noesis." +
-      "v1.CompressionCodecR\013compression\022$\n\016row_" +
-      "group_size\030\002 \001(\005R\014rowGroupSize\022-\n\023max_fi" +
-      "le_size_bytes\030\003 \001(\003R\020maxFileSizeBytes\022\033\n" +
-      "\tpage_size\030\004 \001(\005R\010pageSize\022L\n\010metadata\030\005" +
-      " \003(\01320.datapower.noesis.v1.ParquetConfig" +
-      ".MetadataEntryR\010metadata\032;\n\rMetadataEntr" +
-      "y\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005value\030\002 \001(\tR\005valu" +
-      "e:\0028\001\"h\n\023InitSessionResponse\022\030\n\007success\030" +
-      "\001 \001(\010R\007success\022\030\n\007message\030\002 \001(\tR\007message" +
-      "\022\035\n\nsession_id\030\003 \001(\tR\tsessionId\"\245\001\n\tData" +
-      "Batch\022\035\n\nsession_id\030\001 \001(\tR\tsessionId\0228\n\007" +
-      "records\030\002 \003(\0132\036.datapower.noesis.v1.Reco" +
-      "rdMsgR\007records\022\033\n\tbatch_seq\030\003 \001(\003R\010batch" +
-      "Seq\022\"\n\ris_last_batch\030\004 \001(\010R\013isLastBatch\"" +
-      "\275\001\n\022StreamDataResponse\022\030\n\007success\030\001 \001(\010R" +
-      "\007success\022\030\n\007message\030\002 \001(\tR\007message\022\'\n\017re" +
-      "cords_written\030\003 \001(\003R\016recordsWritten\022#\n\rb" +
-      "ytes_written\030\004 \001(\003R\014bytesWritten\022%\n\016file" +
-      "s_uploaded\030\005 \001(\005R\rfilesUploaded\"X\n\026Final" +
-      "izeSessionRequest\022\035\n\nsession_id\030\001 \001(\tR\ts" +
-      "essionId\022\037\n\013force_flush\030\002 \001(\010R\nforceFlus" +
-      "h\"\206\001\n\027FinalizeSessionResponse\022\030\n\007success" +
-      "\030\001 \001(\010R\007success\022\030\n\007message\030\002 \001(\tR\007messag" +
-      "e\0227\n\005stats\030\003 \001(\0132!.datapower.noesis.v1.S" +
-      "essionStatsR\005stats\"\344\001\n\014SessionStats\0222\n\025t" +
-      "otal_records_written\030\001 \001(\003R\023totalRecords" +
-      "Written\022.\n\023total_bytes_written\030\002 \001(\003R\021to" +
-      "talBytesWritten\0220\n\024total_files_uploaded\030" +
-      "\003 \001(\005R\022totalFilesUploaded\022\035\n\nfile_paths\030" +
-      "\004 \003(\tR\tfilePaths\022\037\n\013duration_ms\030\005 \001(\003R\nd" +
-      "urationMs\"8\n\027GetSessionStatusRequest\022\035\n\n" +
-      "session_id\030\001 \001(\tR\tsessionId\"\341\001\n\030GetSessi" +
-      "onStatusResponse\0227\n\005state\030\001 \001(\0162!.datapo" +
-      "wer.noesis.v1.SessionStateR\005state\0227\n\005sta" +
-      "ts\030\002 \001(\0132!.datapower.noesis.v1.SessionSt" +
-      "atsR\005stats\022!\n\014current_file\030\003 \001(\tR\013curren" +
-      "tFile\0220\n\024current_file_records\030\004 \001(\003R\022cur" +
-      "rentFileRecords*W\n\013StorageType\022\034\n\030STORAG" +
-      "E_TYPE_UNSPECIFIED\020\000\022\006\n\002S3\020\001\022\007\n\003GCS\020\002\022\016\n" +
-      "\nAZURE_BLOB\020\003\022\t\n\005MINIO\020\004*b\n\020CompressionC" +
-      "odec\022\033\n\027COMPRESSION_UNSPECIFIED\020\000\022\010\n\004NON" +
-      "E\020\001\022\n\n\006SNAPPY\020\002\022\010\n\004GZIP\020\003\022\007\n\003LZ4\020\004\022\010\n\004ZS" +
-      "TD\020\005*u\n\014SessionState\022\035\n\031SESSION_STATE_UN" +
-      "SPECIFIED\020\000\022\020\n\014INITIALIZING\020\001\022\013\n\007WRITING" +
-      "\020\002\022\r\n\tUPLOADING\020\003\022\r\n\tFINALIZED\020\004\022\t\n\005ERRO" +
-      "R\020\0052\243\003\n\007Sidecar\022`\n\013InitSession\022\'.datapow" +
-      "er.noesis.v1.InitSessionRequest\032(.datapo" +
-      "wer.noesis.v1.InitSessionResponse\022W\n\nStr" +
-      "eamData\022\036.datapower.noesis.v1.DataBatch\032" +
-      "\'.datapower.noesis.v1.StreamDataResponse" +
-      "(\001\022l\n\017FinalizeSession\022+.datapower.noesis" +
-      ".v1.FinalizeSessionRequest\032,.datapower.n" +
-      "oesis.v1.FinalizeSessionResponse\022o\n\020GetS" +
-      "essionStatus\022,.datapower.noesis.v1.GetSe" +
-      "ssionStatusRequest\032-.datapower.noesis.v1" +
-      ".GetSessionStatusResponseBk\n\023datapower.n" +
-      "oesis.v1P\001ZRgithub.com/data-power-io/noe" +
-      "sis-protocol/languages/go/datapower/noes" +
-      "is/v1;noesisv1b\006proto3"
+      "ConfigH\000R\rparquetConfig\022K\n\016iceberg_confi" +
+      "g\030\007 \001(\0132\".datapower.noesis.v1.IcebergCon" +
+      "figH\000R\ricebergConfig\022E\n\014delta_config\030\010 \001" +
+      "(\0132 .datapower.noesis.v1.DeltaConfigH\000R\013" +
+      "deltaConfig\022\031\n\010split_id\030\006 \001(\tR\007splitIdB\017" +
+      "\n\rformat_config\"\312\002\n\rStorageConfig\0224\n\004typ" +
+      "e\030\001 \001(\0162 .datapower.noesis.v1.StorageTyp" +
+      "eR\004type\022\026\n\006bucket\030\002 \001(\tR\006bucket\022\037\n\013path_" +
+      "prefix\030\003 \001(\tR\npathPrefix\022U\n\013credentials\030" +
+      "\004 \003(\01323.datapower.noesis.v1.StorageConfi" +
+      "g.CredentialsEntryR\013credentials\022\032\n\010endpo" +
+      "int\030\005 \001(\tR\010endpoint\022\027\n\007use_ssl\030\006 \001(\010R\006us" +
+      "eSsl\032>\n\020CredentialsEntry\022\020\n\003key\030\001 \001(\tR\003k" +
+      "ey\022\024\n\005value\030\002 \001(\tR\005value:\0028\001\"\325\002\n\rParquet" +
+      "Config\022G\n\013compression\030\001 \001(\0162%.datapower." +
+      "noesis.v1.CompressionCodecR\013compression\022" +
+      "$\n\016row_group_size\030\002 \001(\005R\014rowGroupSize\022-\n" +
+      "\023max_file_size_bytes\030\003 \001(\003R\020maxFileSizeB" +
+      "ytes\022\033\n\tpage_size\030\004 \001(\005R\010pageSize\022L\n\010met" +
+      "adata\030\005 \003(\01320.datapower.noesis.v1.Parque" +
+      "tConfig.MetadataEntryR\010metadata\032;\n\rMetad" +
+      "ataEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005value\030\002 \001(" +
+      "\tR\005value:\0028\001\"\343\003\n\rIcebergConfig\022\035\n\ntable_" +
+      "name\030\001 \001(\tR\ttableName\022=\n\nwrite_mode\030\002 \001(" +
+      "\0162\036.datapower.noesis.v1.WriteModeR\twrite" +
+      "Mode\022G\n\013compression\030\003 \001(\0162%.datapower.no" +
+      "esis.v1.CompressionCodecR\013compression\0223\n" +
+      "\026target_file_size_bytes\030\004 \001(\003R\023targetFil" +
+      "eSizeBytes\022b\n\020table_properties\030\005 \003(\01327.d" +
+      "atapower.noesis.v1.IcebergConfig.TablePr" +
+      "opertiesEntryR\017tableProperties\022\037\n\013catalo" +
+      "g_uri\030\006 \001(\tR\ncatalogUri\022-\n\022warehouse_loc" +
+      "ation\030\007 \001(\tR\021warehouseLocation\032B\n\024TableP" +
+      "ropertiesEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005valu" +
+      "e\030\002 \001(\tR\005value:\0028\001\"\217\003\n\013DeltaConfig\022\035\n\nta" +
+      "ble_path\030\001 \001(\tR\ttablePath\022=\n\nwrite_mode\030" +
+      "\002 \001(\0162\036.datapower.noesis.v1.WriteModeR\tw" +
+      "riteMode\022G\n\013compression\030\003 \001(\0162%.datapowe" +
+      "r.noesis.v1.CompressionCodecR\013compressio" +
+      "n\0223\n\026target_file_size_bytes\030\004 \001(\003R\023targe" +
+      "tFileSizeBytes\022`\n\020table_properties\030\005 \003(\013" +
+      "25.datapower.noesis.v1.DeltaConfig.Table" +
+      "PropertiesEntryR\017tableProperties\032B\n\024Tabl" +
+      "ePropertiesEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005va" +
+      "lue\030\002 \001(\tR\005value:\0028\001\"h\n\023InitSessionRespo" +
+      "nse\022\030\n\007success\030\001 \001(\010R\007success\022\030\n\007message" +
+      "\030\002 \001(\tR\007message\022\035\n\nsession_id\030\003 \001(\tR\tses" +
+      "sionId\"\245\001\n\tDataBatch\022\035\n\nsession_id\030\001 \001(\t" +
+      "R\tsessionId\0228\n\007records\030\002 \003(\0132\036.datapower" +
+      ".noesis.v1.RecordMsgR\007records\022\033\n\tbatch_s" +
+      "eq\030\003 \001(\003R\010batchSeq\022\"\n\ris_last_batch\030\004 \001(" +
+      "\010R\013isLastBatch\"\275\001\n\022StreamDataResponse\022\030\n" +
+      "\007success\030\001 \001(\010R\007success\022\030\n\007message\030\002 \001(\t" +
+      "R\007message\022\'\n\017records_written\030\003 \001(\003R\016reco" +
+      "rdsWritten\022#\n\rbytes_written\030\004 \001(\003R\014bytes" +
+      "Written\022%\n\016files_uploaded\030\005 \001(\005R\rfilesUp" +
+      "loaded\"X\n\026FinalizeSessionRequest\022\035\n\nsess" +
+      "ion_id\030\001 \001(\tR\tsessionId\022\037\n\013force_flush\030\002" +
+      " \001(\010R\nforceFlush\"\206\001\n\027FinalizeSessionResp" +
+      "onse\022\030\n\007success\030\001 \001(\010R\007success\022\030\n\007messag" +
+      "e\030\002 \001(\tR\007message\0227\n\005stats\030\003 \001(\0132!.datapo" +
+      "wer.noesis.v1.SessionStatsR\005stats\"\344\001\n\014Se" +
+      "ssionStats\0222\n\025total_records_written\030\001 \001(" +
+      "\003R\023totalRecordsWritten\022.\n\023total_bytes_wr" +
+      "itten\030\002 \001(\003R\021totalBytesWritten\0220\n\024total_" +
+      "files_uploaded\030\003 \001(\005R\022totalFilesUploaded" +
+      "\022\035\n\nfile_paths\030\004 \003(\tR\tfilePaths\022\037\n\013durat" +
+      "ion_ms\030\005 \001(\003R\ndurationMs\"8\n\027GetSessionSt" +
+      "atusRequest\022\035\n\nsession_id\030\001 \001(\tR\tsession" +
+      "Id\"\341\001\n\030GetSessionStatusResponse\0227\n\005state" +
+      "\030\001 \001(\0162!.datapower.noesis.v1.SessionStat" +
+      "eR\005state\0227\n\005stats\030\002 \001(\0132!.datapower.noes" +
+      "is.v1.SessionStatsR\005stats\022!\n\014current_fil" +
+      "e\030\003 \001(\tR\013currentFile\0220\n\024current_file_rec" +
+      "ords\030\004 \001(\003R\022currentFileRecords*W\n\013Storag" +
+      "eType\022\034\n\030STORAGE_TYPE_UNSPECIFIED\020\000\022\006\n\002S" +
+      "3\020\001\022\007\n\003GCS\020\002\022\016\n\nAZURE_BLOB\020\003\022\t\n\005MINIO\020\004*" +
+      "M\n\tWriteMode\022\032\n\026WRITE_MODE_UNSPECIFIED\020\000" +
+      "\022\n\n\006APPEND\020\001\022\t\n\005MERGE\020\002\022\r\n\tOVERWRITE\020\003*b" +
+      "\n\020CompressionCodec\022\033\n\027COMPRESSION_UNSPEC" +
+      "IFIED\020\000\022\010\n\004NONE\020\001\022\n\n\006SNAPPY\020\002\022\010\n\004GZIP\020\003\022" +
+      "\007\n\003LZ4\020\004\022\010\n\004ZSTD\020\005*u\n\014SessionState\022\035\n\031SE" +
+      "SSION_STATE_UNSPECIFIED\020\000\022\020\n\014INITIALIZIN" +
+      "G\020\001\022\013\n\007WRITING\020\002\022\r\n\tUPLOADING\020\003\022\r\n\tFINAL" +
+      "IZED\020\004\022\t\n\005ERROR\020\0052\243\003\n\007Sidecar\022`\n\013InitSes" +
+      "sion\022\'.datapower.noesis.v1.InitSessionRe" +
+      "quest\032(.datapower.noesis.v1.InitSessionR" +
+      "esponse\022W\n\nStreamData\022\036.datapower.noesis" +
+      ".v1.DataBatch\032\'.datapower.noesis.v1.Stre" +
+      "amDataResponse(\001\022l\n\017FinalizeSession\022+.da" +
+      "tapower.noesis.v1.FinalizeSessionRequest" +
+      "\032,.datapower.noesis.v1.FinalizeSessionRe" +
+      "sponse\022o\n\020GetSessionStatus\022,.datapower.n" +
+      "oesis.v1.GetSessionStatusRequest\032-.datap" +
+      "ower.noesis.v1.GetSessionStatusResponseB" +
+      "k\n\023datapower.noesis.v1P\001ZRgithub.com/dat" +
+      "a-power-io/noesis-protocol/languages/go/" +
+      "datapower/noesis/v1;noesisv1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -178,7 +226,7 @@ public final class SidecarOuterClass {
     internal_static_datapower_noesis_v1_InitSessionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_InitSessionRequest_descriptor,
-        new java.lang.String[] { "SessionId", "Entity", "Schema", "Storage", "ParquetConfig", "SplitId", });
+        new java.lang.String[] { "SessionId", "Entity", "Schema", "Storage", "ParquetConfig", "IcebergConfig", "DeltaConfig", "SplitId", "FormatConfig", });
     internal_static_datapower_noesis_v1_StorageConfig_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_datapower_noesis_v1_StorageConfig_fieldAccessorTable = new
@@ -203,50 +251,74 @@ public final class SidecarOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_ParquetConfig_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
-    internal_static_datapower_noesis_v1_InitSessionResponse_descriptor =
+    internal_static_datapower_noesis_v1_IcebergConfig_descriptor =
       getDescriptor().getMessageTypes().get(3);
+    internal_static_datapower_noesis_v1_IcebergConfig_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_IcebergConfig_descriptor,
+        new java.lang.String[] { "TableName", "WriteMode", "Compression", "TargetFileSizeBytes", "TableProperties", "CatalogUri", "WarehouseLocation", });
+    internal_static_datapower_noesis_v1_IcebergConfig_TablePropertiesEntry_descriptor =
+      internal_static_datapower_noesis_v1_IcebergConfig_descriptor.getNestedTypes().get(0);
+    internal_static_datapower_noesis_v1_IcebergConfig_TablePropertiesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_IcebergConfig_TablePropertiesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_datapower_noesis_v1_DeltaConfig_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_datapower_noesis_v1_DeltaConfig_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_DeltaConfig_descriptor,
+        new java.lang.String[] { "TablePath", "WriteMode", "Compression", "TargetFileSizeBytes", "TableProperties", });
+    internal_static_datapower_noesis_v1_DeltaConfig_TablePropertiesEntry_descriptor =
+      internal_static_datapower_noesis_v1_DeltaConfig_descriptor.getNestedTypes().get(0);
+    internal_static_datapower_noesis_v1_DeltaConfig_TablePropertiesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_DeltaConfig_TablePropertiesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_datapower_noesis_v1_InitSessionResponse_descriptor =
+      getDescriptor().getMessageTypes().get(5);
     internal_static_datapower_noesis_v1_InitSessionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_InitSessionResponse_descriptor,
         new java.lang.String[] { "Success", "Message", "SessionId", });
     internal_static_datapower_noesis_v1_DataBatch_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_datapower_noesis_v1_DataBatch_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_DataBatch_descriptor,
         new java.lang.String[] { "SessionId", "Records", "BatchSeq", "IsLastBatch", });
     internal_static_datapower_noesis_v1_StreamDataResponse_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_datapower_noesis_v1_StreamDataResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_StreamDataResponse_descriptor,
         new java.lang.String[] { "Success", "Message", "RecordsWritten", "BytesWritten", "FilesUploaded", });
     internal_static_datapower_noesis_v1_FinalizeSessionRequest_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_datapower_noesis_v1_FinalizeSessionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_FinalizeSessionRequest_descriptor,
         new java.lang.String[] { "SessionId", "ForceFlush", });
     internal_static_datapower_noesis_v1_FinalizeSessionResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_datapower_noesis_v1_FinalizeSessionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_FinalizeSessionResponse_descriptor,
         new java.lang.String[] { "Success", "Message", "Stats", });
     internal_static_datapower_noesis_v1_SessionStats_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_datapower_noesis_v1_SessionStats_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_SessionStats_descriptor,
         new java.lang.String[] { "TotalRecordsWritten", "TotalBytesWritten", "TotalFilesUploaded", "FilePaths", "DurationMs", });
     internal_static_datapower_noesis_v1_GetSessionStatusRequest_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_datapower_noesis_v1_GetSessionStatusRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_GetSessionStatusRequest_descriptor,
         new java.lang.String[] { "SessionId", });
     internal_static_datapower_noesis_v1_GetSessionStatusResponse_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_datapower_noesis_v1_GetSessionStatusResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_GetSessionStatusResponse_descriptor,

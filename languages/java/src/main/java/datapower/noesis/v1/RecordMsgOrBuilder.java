@@ -29,60 +29,37 @@ public interface RecordMsgOrBuilder extends
 
   /**
    * <pre>
-   * Primary key serialized (unique within entity)
+   * The actual row data (typed columns)
    * </pre>
    *
-   * <code>string key = 2 [json_name = "key"];</code>
-   * @return The key.
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+   * @return Whether the data field is set.
    */
-  java.lang.String getKey();
+  boolean hasData();
   /**
    * <pre>
-   * Primary key serialized (unique within entity)
+   * The actual row data (typed columns)
    * </pre>
    *
-   * <code>string key = 2 [json_name = "key"];</code>
-   * @return The bytes for key.
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+   * @return The data.
    */
-  com.google.protobuf.ByteString
-      getKeyBytes();
-
+  datapower.noesis.v1.Row getData();
   /**
    * <pre>
-   * Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
+   * The actual row data (typed columns)
    * </pre>
    *
-   * <code>bytes payload = 3 [json_name = "payload"];</code>
-   * @return The payload.
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
    */
-  com.google.protobuf.ByteString getPayload();
-
-  /**
-   * <pre>
-   * Version to validate reader compatibility
-   * </pre>
-   *
-   * <code>string schema_id = 4 [json_name = "schemaId"];</code>
-   * @return The schemaId.
-   */
-  java.lang.String getSchemaId();
-  /**
-   * <pre>
-   * Version to validate reader compatibility
-   * </pre>
-   *
-   * <code>string schema_id = 4 [json_name = "schemaId"];</code>
-   * @return The bytes for schemaId.
-   */
-  com.google.protobuf.ByteString
-      getSchemaIdBytes();
+  datapower.noesis.v1.RowOrBuilder getDataOrBuilder();
 
   /**
    * <pre>
    * UPSERT/DELETE
    * </pre>
    *
-   * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
+   * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
    * @return The enum numeric value on the wire for op.
    */
   int getOpValue();
@@ -91,10 +68,40 @@ public interface RecordMsgOrBuilder extends
    * UPSERT/DELETE
    * </pre>
    *
-   * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
+   * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
    * @return The op.
    */
   datapower.noesis.v1.Op getOp();
+
+  /**
+   * <pre>
+   * Source event timestamp (epoch millis)
+   * </pre>
+   *
+   * <code>int64 event_time_ms = 4 [json_name = "eventTimeMs"];</code>
+   * @return The eventTimeMs.
+   */
+  long getEventTimeMs();
+
+  /**
+   * <pre>
+   * Schema version identifier
+   * </pre>
+   *
+   * <code>string schema_id = 5 [json_name = "schemaId"];</code>
+   * @return The schemaId.
+   */
+  java.lang.String getSchemaId();
+  /**
+   * <pre>
+   * Schema version identifier
+   * </pre>
+   *
+   * <code>string schema_id = 5 [json_name = "schemaId"];</code>
+   * @return The bytes for schemaId.
+   */
+  com.google.protobuf.ByteString
+      getSchemaIdBytes();
 
   /**
    * <pre>
@@ -115,14 +122,4 @@ public interface RecordMsgOrBuilder extends
    */
   com.google.protobuf.ByteString
       getGroupIdBytes();
-
-  /**
-   * <pre>
-   * Logical event time (watermark) in epoch millis
-   * </pre>
-   *
-   * <code>int64 ts_event = 7 [json_name = "tsEvent"];</code>
-   * @return The tsEvent.
-   */
-  long getTsEvent();
 }

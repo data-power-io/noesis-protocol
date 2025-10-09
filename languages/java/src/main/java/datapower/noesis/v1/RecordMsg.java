@@ -4,6 +4,11 @@
 package datapower.noesis.v1;
 
 /**
+ * <pre>
+ * Storage-agnostic record representation.
+ * Simple typed structure that can be written to Parquet, Iceberg, Delta Lake, etc.
+ * </pre>
+ *
  * Protobuf type {@code datapower.noesis.v1.RecordMsg}
  */
 public final class RecordMsg extends
@@ -17,10 +22,8 @@ private static final long serialVersionUID = 0L;
   }
   private RecordMsg() {
     entity_ = "";
-    key_ = "";
-    payload_ = com.google.protobuf.ByteString.EMPTY;
-    schemaId_ = "";
     op_ = 0;
+    schemaId_ = "";
     groupId_ = "";
   }
 
@@ -91,77 +94,94 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int KEY_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object key_ = "";
+  public static final int DATA_FIELD_NUMBER = 2;
+  private datapower.noesis.v1.Row data_;
   /**
    * <pre>
-   * Primary key serialized (unique within entity)
+   * The actual row data (typed columns)
    * </pre>
    *
-   * <code>string key = 2 [json_name = "key"];</code>
-   * @return The key.
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+   * @return Whether the data field is set.
    */
   @java.lang.Override
-  public java.lang.String getKey() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      key_ = s;
-      return s;
-    }
+  public boolean hasData() {
+    return data_ != null;
   }
   /**
    * <pre>
-   * Primary key serialized (unique within entity)
+   * The actual row data (typed columns)
    * </pre>
    *
-   * <code>string key = 2 [json_name = "key"];</code>
-   * @return The bytes for key.
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+   * @return The data.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getKeyBytes() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      key_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public datapower.noesis.v1.Row getData() {
+    return data_ == null ? datapower.noesis.v1.Row.getDefaultInstance() : data_;
+  }
+  /**
+   * <pre>
+   * The actual row data (typed columns)
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+   */
+  @java.lang.Override
+  public datapower.noesis.v1.RowOrBuilder getDataOrBuilder() {
+    return data_ == null ? datapower.noesis.v1.Row.getDefaultInstance() : data_;
   }
 
-  public static final int PAYLOAD_FIELD_NUMBER = 3;
-  private com.google.protobuf.ByteString payload_ = com.google.protobuf.ByteString.EMPTY;
+  public static final int OP_FIELD_NUMBER = 3;
+  private int op_ = 0;
   /**
    * <pre>
-   * Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
+   * UPSERT/DELETE
    * </pre>
    *
-   * <code>bytes payload = 3 [json_name = "payload"];</code>
-   * @return The payload.
+   * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+   * @return The enum numeric value on the wire for op.
    */
-  @java.lang.Override
-  public com.google.protobuf.ByteString getPayload() {
-    return payload_;
+  @java.lang.Override public int getOpValue() {
+    return op_;
+  }
+  /**
+   * <pre>
+   * UPSERT/DELETE
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+   * @return The op.
+   */
+  @java.lang.Override public datapower.noesis.v1.Op getOp() {
+    datapower.noesis.v1.Op result = datapower.noesis.v1.Op.forNumber(op_);
+    return result == null ? datapower.noesis.v1.Op.UNRECOGNIZED : result;
   }
 
-  public static final int SCHEMA_ID_FIELD_NUMBER = 4;
+  public static final int EVENT_TIME_MS_FIELD_NUMBER = 4;
+  private long eventTimeMs_ = 0L;
+  /**
+   * <pre>
+   * Source event timestamp (epoch millis)
+   * </pre>
+   *
+   * <code>int64 event_time_ms = 4 [json_name = "eventTimeMs"];</code>
+   * @return The eventTimeMs.
+   */
+  @java.lang.Override
+  public long getEventTimeMs() {
+    return eventTimeMs_;
+  }
+
+  public static final int SCHEMA_ID_FIELD_NUMBER = 5;
   @SuppressWarnings("serial")
   private volatile java.lang.Object schemaId_ = "";
   /**
    * <pre>
-   * Version to validate reader compatibility
+   * Schema version identifier
    * </pre>
    *
-   * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+   * <code>string schema_id = 5 [json_name = "schemaId"];</code>
    * @return The schemaId.
    */
   @java.lang.Override
@@ -179,10 +199,10 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Version to validate reader compatibility
+   * Schema version identifier
    * </pre>
    *
-   * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+   * <code>string schema_id = 5 [json_name = "schemaId"];</code>
    * @return The bytes for schemaId.
    */
   @java.lang.Override
@@ -198,32 +218,6 @@ private static final long serialVersionUID = 0L;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
-  }
-
-  public static final int OP_FIELD_NUMBER = 5;
-  private int op_ = 0;
-  /**
-   * <pre>
-   * UPSERT/DELETE
-   * </pre>
-   *
-   * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-   * @return The enum numeric value on the wire for op.
-   */
-  @java.lang.Override public int getOpValue() {
-    return op_;
-  }
-  /**
-   * <pre>
-   * UPSERT/DELETE
-   * </pre>
-   *
-   * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-   * @return The op.
-   */
-  @java.lang.Override public datapower.noesis.v1.Op getOp() {
-    datapower.noesis.v1.Op result = datapower.noesis.v1.Op.forNumber(op_);
-    return result == null ? datapower.noesis.v1.Op.UNRECOGNIZED : result;
   }
 
   public static final int GROUP_ID_FIELD_NUMBER = 6;
@@ -273,21 +267,6 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int TS_EVENT_FIELD_NUMBER = 7;
-  private long tsEvent_ = 0L;
-  /**
-   * <pre>
-   * Logical event time (watermark) in epoch millis
-   * </pre>
-   *
-   * <code>int64 ts_event = 7 [json_name = "tsEvent"];</code>
-   * @return The tsEvent.
-   */
-  @java.lang.Override
-  public long getTsEvent() {
-    return tsEvent_;
-  }
-
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -305,23 +284,20 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(entity_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, entity_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
-    }
-    if (!payload_.isEmpty()) {
-      output.writeBytes(3, payload_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(schemaId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, schemaId_);
+    if (data_ != null) {
+      output.writeMessage(2, getData());
     }
     if (op_ != datapower.noesis.v1.Op.OP_UNSPECIFIED.getNumber()) {
-      output.writeEnum(5, op_);
+      output.writeEnum(3, op_);
+    }
+    if (eventTimeMs_ != 0L) {
+      output.writeInt64(4, eventTimeMs_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(schemaId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, schemaId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(groupId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 6, groupId_);
-    }
-    if (tsEvent_ != 0L) {
-      output.writeInt64(7, tsEvent_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -335,26 +311,23 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(entity_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, entity_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
-    }
-    if (!payload_.isEmpty()) {
+    if (data_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(3, payload_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(schemaId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, schemaId_);
+        .computeMessageSize(2, getData());
     }
     if (op_ != datapower.noesis.v1.Op.OP_UNSPECIFIED.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(5, op_);
+        .computeEnumSize(3, op_);
+    }
+    if (eventTimeMs_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(4, eventTimeMs_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(schemaId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, schemaId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(groupId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, groupId_);
-    }
-    if (tsEvent_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(7, tsEvent_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -373,17 +346,18 @@ private static final long serialVersionUID = 0L;
 
     if (!getEntity()
         .equals(other.getEntity())) return false;
-    if (!getKey()
-        .equals(other.getKey())) return false;
-    if (!getPayload()
-        .equals(other.getPayload())) return false;
+    if (hasData() != other.hasData()) return false;
+    if (hasData()) {
+      if (!getData()
+          .equals(other.getData())) return false;
+    }
+    if (op_ != other.op_) return false;
+    if (getEventTimeMs()
+        != other.getEventTimeMs()) return false;
     if (!getSchemaId()
         .equals(other.getSchemaId())) return false;
-    if (op_ != other.op_) return false;
     if (!getGroupId()
         .equals(other.getGroupId())) return false;
-    if (getTsEvent()
-        != other.getTsEvent()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -397,19 +371,19 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ENTITY_FIELD_NUMBER;
     hash = (53 * hash) + getEntity().hashCode();
-    hash = (37 * hash) + KEY_FIELD_NUMBER;
-    hash = (53 * hash) + getKey().hashCode();
-    hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
-    hash = (53 * hash) + getPayload().hashCode();
-    hash = (37 * hash) + SCHEMA_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getSchemaId().hashCode();
+    if (hasData()) {
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
+    }
     hash = (37 * hash) + OP_FIELD_NUMBER;
     hash = (53 * hash) + op_;
+    hash = (37 * hash) + EVENT_TIME_MS_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getEventTimeMs());
+    hash = (37 * hash) + SCHEMA_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getSchemaId().hashCode();
     hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
     hash = (53 * hash) + getGroupId().hashCode();
-    hash = (37 * hash) + TS_EVENT_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getTsEvent());
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -508,6 +482,11 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   * Storage-agnostic record representation.
+   * Simple typed structure that can be written to Parquet, Iceberg, Delta Lake, etc.
+   * </pre>
+   *
    * Protobuf type {@code datapower.noesis.v1.RecordMsg}
    */
   public static final class Builder extends
@@ -542,12 +521,15 @@ private static final long serialVersionUID = 0L;
       super.clear();
       bitField0_ = 0;
       entity_ = "";
-      key_ = "";
-      payload_ = com.google.protobuf.ByteString.EMPTY;
-      schemaId_ = "";
+      data_ = null;
+      if (dataBuilder_ != null) {
+        dataBuilder_.dispose();
+        dataBuilder_ = null;
+      }
       op_ = 0;
+      eventTimeMs_ = 0L;
+      schemaId_ = "";
       groupId_ = "";
-      tsEvent_ = 0L;
       return this;
     }
 
@@ -585,22 +567,21 @@ private static final long serialVersionUID = 0L;
         result.entity_ = entity_;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.key_ = key_;
+        result.data_ = dataBuilder_ == null
+            ? data_
+            : dataBuilder_.build();
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.payload_ = payload_;
+        result.op_ = op_;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.schemaId_ = schemaId_;
+        result.eventTimeMs_ = eventTimeMs_;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.op_ = op_;
+        result.schemaId_ = schemaId_;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
         result.groupId_ = groupId_;
-      }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
-        result.tsEvent_ = tsEvent_;
       }
     }
 
@@ -653,29 +634,24 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000001;
         onChanged();
       }
-      if (!other.getKey().isEmpty()) {
-        key_ = other.key_;
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
-      if (other.getPayload() != com.google.protobuf.ByteString.EMPTY) {
-        setPayload(other.getPayload());
-      }
-      if (!other.getSchemaId().isEmpty()) {
-        schemaId_ = other.schemaId_;
-        bitField0_ |= 0x00000008;
-        onChanged();
+      if (other.hasData()) {
+        mergeData(other.getData());
       }
       if (other.op_ != 0) {
         setOpValue(other.getOpValue());
+      }
+      if (other.getEventTimeMs() != 0L) {
+        setEventTimeMs(other.getEventTimeMs());
+      }
+      if (!other.getSchemaId().isEmpty()) {
+        schemaId_ = other.schemaId_;
+        bitField0_ |= 0x00000010;
+        onChanged();
       }
       if (!other.getGroupId().isEmpty()) {
         groupId_ = other.groupId_;
         bitField0_ |= 0x00000020;
         onChanged();
-      }
-      if (other.getTsEvent() != 0L) {
-        setTsEvent(other.getTsEvent());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -709,35 +685,32 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 10
             case 18: {
-              key_ = input.readStringRequireUtf8();
+              input.readMessage(
+                  getDataFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000002;
               break;
             } // case 18
-            case 26: {
-              payload_ = input.readBytes();
+            case 24: {
+              op_ = input.readEnum();
               bitField0_ |= 0x00000004;
               break;
-            } // case 26
-            case 34: {
-              schemaId_ = input.readStringRequireUtf8();
+            } // case 24
+            case 32: {
+              eventTimeMs_ = input.readInt64();
               bitField0_ |= 0x00000008;
               break;
-            } // case 34
-            case 40: {
-              op_ = input.readEnum();
+            } // case 32
+            case 42: {
+              schemaId_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000010;
               break;
-            } // case 40
+            } // case 42
             case 50: {
               groupId_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000020;
               break;
             } // case 50
-            case 56: {
-              tsEvent_ = input.readInt64();
-              bitField0_ |= 0x00000040;
-              break;
-            } // case 56
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -847,138 +820,274 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object key_ = "";
+    private datapower.noesis.v1.Row data_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.Row, datapower.noesis.v1.Row.Builder, datapower.noesis.v1.RowOrBuilder> dataBuilder_;
     /**
      * <pre>
-     * Primary key serialized (unique within entity)
+     * The actual row data (typed columns)
      * </pre>
      *
-     * <code>string key = 2 [json_name = "key"];</code>
-     * @return The key.
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     * @return Whether the data field is set.
      */
-    public java.lang.String getKey() {
-      java.lang.Object ref = key_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        key_ = s;
-        return s;
+    public boolean hasData() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <pre>
+     * The actual row data (typed columns)
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     * @return The data.
+     */
+    public datapower.noesis.v1.Row getData() {
+      if (dataBuilder_ == null) {
+        return data_ == null ? datapower.noesis.v1.Row.getDefaultInstance() : data_;
       } else {
-        return (java.lang.String) ref;
+        return dataBuilder_.getMessage();
       }
     }
     /**
      * <pre>
-     * Primary key serialized (unique within entity)
+     * The actual row data (typed columns)
      * </pre>
      *
-     * <code>string key = 2 [json_name = "key"];</code>
-     * @return The bytes for key.
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
      */
-    public com.google.protobuf.ByteString
-        getKeyBytes() {
-      java.lang.Object ref = key_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        key_ = b;
-        return b;
+    public Builder setData(datapower.noesis.v1.Row value) {
+      if (dataBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        data_ = value;
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        dataBuilder_.setMessage(value);
       }
-    }
-    /**
-     * <pre>
-     * Primary key serialized (unique within entity)
-     * </pre>
-     *
-     * <code>string key = 2 [json_name = "key"];</code>
-     * @param value The key to set.
-     * @return This builder for chaining.
-     */
-    public Builder setKey(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      key_ = value;
       bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Primary key serialized (unique within entity)
+     * The actual row data (typed columns)
      * </pre>
      *
-     * <code>string key = 2 [json_name = "key"];</code>
-     * @return This builder for chaining.
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
      */
-    public Builder clearKey() {
-      key_ = getDefaultInstance().getKey();
+    public Builder setData(
+        datapower.noesis.v1.Row.Builder builderForValue) {
+      if (dataBuilder_ == null) {
+        data_ = builderForValue.build();
+      } else {
+        dataBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The actual row data (typed columns)
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     */
+    public Builder mergeData(datapower.noesis.v1.Row value) {
+      if (dataBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          data_ != null &&
+          data_ != datapower.noesis.v1.Row.getDefaultInstance()) {
+          getDataBuilder().mergeFrom(value);
+        } else {
+          data_ = value;
+        }
+      } else {
+        dataBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The actual row data (typed columns)
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     */
+    public Builder clearData() {
       bitField0_ = (bitField0_ & ~0x00000002);
+      data_ = null;
+      if (dataBuilder_ != null) {
+        dataBuilder_.dispose();
+        dataBuilder_ = null;
+      }
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Primary key serialized (unique within entity)
+     * The actual row data (typed columns)
      * </pre>
      *
-     * <code>string key = 2 [json_name = "key"];</code>
-     * @param value The bytes for key to set.
-     * @return This builder for chaining.
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
      */
-    public Builder setKeyBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      key_ = value;
+    public datapower.noesis.v1.Row.Builder getDataBuilder() {
       bitField0_ |= 0x00000002;
       onChanged();
-      return this;
+      return getDataFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The actual row data (typed columns)
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     */
+    public datapower.noesis.v1.RowOrBuilder getDataOrBuilder() {
+      if (dataBuilder_ != null) {
+        return dataBuilder_.getMessageOrBuilder();
+      } else {
+        return data_ == null ?
+            datapower.noesis.v1.Row.getDefaultInstance() : data_;
+      }
+    }
+    /**
+     * <pre>
+     * The actual row data (typed columns)
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Row data = 2 [json_name = "data"];</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.Row, datapower.noesis.v1.Row.Builder, datapower.noesis.v1.RowOrBuilder> 
+        getDataFieldBuilder() {
+      if (dataBuilder_ == null) {
+        dataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            datapower.noesis.v1.Row, datapower.noesis.v1.Row.Builder, datapower.noesis.v1.RowOrBuilder>(
+                getData(),
+                getParentForChildren(),
+                isClean());
+        data_ = null;
+      }
+      return dataBuilder_;
     }
 
-    private com.google.protobuf.ByteString payload_ = com.google.protobuf.ByteString.EMPTY;
+    private int op_ = 0;
     /**
      * <pre>
-     * Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
+     * UPSERT/DELETE
      * </pre>
      *
-     * <code>bytes payload = 3 [json_name = "payload"];</code>
-     * @return The payload.
+     * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+     * @return The enum numeric value on the wire for op.
      */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getPayload() {
-      return payload_;
+    @java.lang.Override public int getOpValue() {
+      return op_;
     }
     /**
      * <pre>
-     * Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
+     * UPSERT/DELETE
      * </pre>
      *
-     * <code>bytes payload = 3 [json_name = "payload"];</code>
-     * @param value The payload to set.
+     * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+     * @param value The enum numeric value on the wire for op to set.
      * @return This builder for chaining.
      */
-    public Builder setPayload(com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      payload_ = value;
+    public Builder setOpValue(int value) {
+      op_ = value;
       bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
+     * UPSERT/DELETE
      * </pre>
      *
-     * <code>bytes payload = 3 [json_name = "payload"];</code>
+     * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+     * @return The op.
+     */
+    @java.lang.Override
+    public datapower.noesis.v1.Op getOp() {
+      datapower.noesis.v1.Op result = datapower.noesis.v1.Op.forNumber(op_);
+      return result == null ? datapower.noesis.v1.Op.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     * UPSERT/DELETE
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+     * @param value The op to set.
      * @return This builder for chaining.
      */
-    public Builder clearPayload() {
+    public Builder setOp(datapower.noesis.v1.Op value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x00000004;
+      op_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * UPSERT/DELETE
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.Op op = 3 [json_name = "op"];</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearOp() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      payload_ = getDefaultInstance().getPayload();
+      op_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private long eventTimeMs_ ;
+    /**
+     * <pre>
+     * Source event timestamp (epoch millis)
+     * </pre>
+     *
+     * <code>int64 event_time_ms = 4 [json_name = "eventTimeMs"];</code>
+     * @return The eventTimeMs.
+     */
+    @java.lang.Override
+    public long getEventTimeMs() {
+      return eventTimeMs_;
+    }
+    /**
+     * <pre>
+     * Source event timestamp (epoch millis)
+     * </pre>
+     *
+     * <code>int64 event_time_ms = 4 [json_name = "eventTimeMs"];</code>
+     * @param value The eventTimeMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEventTimeMs(long value) {
+
+      eventTimeMs_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Source event timestamp (epoch millis)
+     * </pre>
+     *
+     * <code>int64 event_time_ms = 4 [json_name = "eventTimeMs"];</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearEventTimeMs() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      eventTimeMs_ = 0L;
       onChanged();
       return this;
     }
@@ -986,10 +1095,10 @@ private static final long serialVersionUID = 0L;
     private java.lang.Object schemaId_ = "";
     /**
      * <pre>
-     * Version to validate reader compatibility
+     * Schema version identifier
      * </pre>
      *
-     * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+     * <code>string schema_id = 5 [json_name = "schemaId"];</code>
      * @return The schemaId.
      */
     public java.lang.String getSchemaId() {
@@ -1006,10 +1115,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Version to validate reader compatibility
+     * Schema version identifier
      * </pre>
      *
-     * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+     * <code>string schema_id = 5 [json_name = "schemaId"];</code>
      * @return The bytes for schemaId.
      */
     public com.google.protobuf.ByteString
@@ -1027,10 +1136,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Version to validate reader compatibility
+     * Schema version identifier
      * </pre>
      *
-     * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+     * <code>string schema_id = 5 [json_name = "schemaId"];</code>
      * @param value The schemaId to set.
      * @return This builder for chaining.
      */
@@ -1038,30 +1147,30 @@ private static final long serialVersionUID = 0L;
         java.lang.String value) {
       if (value == null) { throw new NullPointerException(); }
       schemaId_ = value;
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Version to validate reader compatibility
+     * Schema version identifier
      * </pre>
      *
-     * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+     * <code>string schema_id = 5 [json_name = "schemaId"];</code>
      * @return This builder for chaining.
      */
     public Builder clearSchemaId() {
       schemaId_ = getDefaultInstance().getSchemaId();
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Version to validate reader compatibility
+     * Schema version identifier
      * </pre>
      *
-     * <code>string schema_id = 4 [json_name = "schemaId"];</code>
+     * <code>string schema_id = 5 [json_name = "schemaId"];</code>
      * @param value The bytes for schemaId to set.
      * @return This builder for chaining.
      */
@@ -1070,80 +1179,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) { throw new NullPointerException(); }
       checkByteStringIsUtf8(value);
       schemaId_ = value;
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-
-    private int op_ = 0;
-    /**
-     * <pre>
-     * UPSERT/DELETE
-     * </pre>
-     *
-     * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-     * @return The enum numeric value on the wire for op.
-     */
-    @java.lang.Override public int getOpValue() {
-      return op_;
-    }
-    /**
-     * <pre>
-     * UPSERT/DELETE
-     * </pre>
-     *
-     * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-     * @param value The enum numeric value on the wire for op to set.
-     * @return This builder for chaining.
-     */
-    public Builder setOpValue(int value) {
-      op_ = value;
       bitField0_ |= 0x00000010;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * UPSERT/DELETE
-     * </pre>
-     *
-     * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-     * @return The op.
-     */
-    @java.lang.Override
-    public datapower.noesis.v1.Op getOp() {
-      datapower.noesis.v1.Op result = datapower.noesis.v1.Op.forNumber(op_);
-      return result == null ? datapower.noesis.v1.Op.UNRECOGNIZED : result;
-    }
-    /**
-     * <pre>
-     * UPSERT/DELETE
-     * </pre>
-     *
-     * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-     * @param value The op to set.
-     * @return This builder for chaining.
-     */
-    public Builder setOp(datapower.noesis.v1.Op value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      bitField0_ |= 0x00000010;
-      op_ = value.getNumber();
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * UPSERT/DELETE
-     * </pre>
-     *
-     * <code>.datapower.noesis.v1.Op op = 5 [json_name = "op"];</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearOp() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      op_ = 0;
       onChanged();
       return this;
     }
@@ -1236,50 +1272,6 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       groupId_ = value;
       bitField0_ |= 0x00000020;
-      onChanged();
-      return this;
-    }
-
-    private long tsEvent_ ;
-    /**
-     * <pre>
-     * Logical event time (watermark) in epoch millis
-     * </pre>
-     *
-     * <code>int64 ts_event = 7 [json_name = "tsEvent"];</code>
-     * @return The tsEvent.
-     */
-    @java.lang.Override
-    public long getTsEvent() {
-      return tsEvent_;
-    }
-    /**
-     * <pre>
-     * Logical event time (watermark) in epoch millis
-     * </pre>
-     *
-     * <code>int64 ts_event = 7 [json_name = "tsEvent"];</code>
-     * @param value The tsEvent to set.
-     * @return This builder for chaining.
-     */
-    public Builder setTsEvent(long value) {
-
-      tsEvent_ = value;
-      bitField0_ |= 0x00000040;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * Logical event time (watermark) in epoch millis
-     * </pre>
-     *
-     * <code>int64 ts_event = 7 [json_name = "tsEvent"];</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearTsEvent() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      tsEvent_ = 0L;
       onChanged();
       return this;
     }

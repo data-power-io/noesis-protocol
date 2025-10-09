@@ -1,18 +1,19 @@
-// Sidecar API (gRPC) — Parquetizer Service
+// Sidecar API (gRPC) — Storage Writer Service
 // ------------------------------------------
 // Goal:
 // - Provide a lightweight service that runs alongside connectors in the same pod
 // - Receives streaming data from connectors over localhost
-// - Writes data to Parquet format with efficient compression
-// - Uploads completed Parquet files to object storage
+// - Writes data to storage formats (Parquet, Iceberg, Delta Lake, etc.)
+// - Uploads completed files to object storage
 //
 // Usage:
 // - Connector extracts data and streams it to sidecar via StreamData RPC
-// - Sidecar buffers data, writes Parquet files, and uploads to S3/GCS
+// - Sidecar buffers data, writes to configured format, and uploads to S3/GCS/etc.
 // - Sidecar notifies connector when upload is complete
 //
 // Benefits:
 // - Separation of concerns: connector focuses on extraction, sidecar handles serialization
+// - Storage-agnostic: connector doesn't need to know about Parquet, Iceberg, etc.
 // - Reusable: same sidecar can work with any connector
 // - Efficient: streaming reduces memory footprint
 
@@ -33,7 +34,7 @@ service Sidecar {
   // Initialize a new extraction session with schema and output configuration.
   rpc InitSession(InitSessionRequest) returns (InitSessionResponse);
 
-  // Stream data records to be written to Parquet.
+  // Stream data records to be written to the configured storage format.
   // The connector calls this repeatedly with batches of records.
   rpc StreamData(stream DataBatch) returns (StreamDataResponse);
 
@@ -52,8 +53,15 @@ message InitSessionRequest {
   string session_id = 1;                // Unique session identifier
   string entity = 2;                    // Entity being extracted (e.g., "customers")
   StructuredSchemaDescriptor schema = 3;// Schema for the data
-  StorageConfig storage = 4;            // Where to upload Parquet files
-  ParquetConfig parquet_config = 5;     // Parquet file settings
+  StorageConfig storage = 4;            // Where to upload files (S3, GCS, etc.)
+
+  // Storage format configuration (choose one)
+  oneof format_config {
+    ParquetConfig parquet_config = 5;   // Parquet file settings
+    IcebergConfig iceberg_config = 7;   // Iceberg table settings
+    DeltaConfig delta_config = 8;       // Delta Lake table settings
+  }
+
   string split_id = 6;                  // Optional: split identifier for this extraction
 }
 
@@ -74,12 +82,40 @@ enum StorageType {
   MINIO = 4;
 }
 
+// Parquet format configuration
 message ParquetConfig {
   CompressionCodec compression = 1;     // Compression algorithm
   int32 row_group_size = 2;             // Rows per row group (default 100k)
   int64 max_file_size_bytes = 3;        // Max file size before rotation (default 128MB)
   int32 page_size = 4;                  // Page size in bytes (default 1MB)
   map<string, string> metadata = 5;     // Custom file metadata
+}
+
+// Iceberg format configuration
+message IcebergConfig {
+  string table_name = 1;                // Iceberg table name (catalog.namespace.table)
+  WriteMode write_mode = 2;             // APPEND, MERGE, OVERWRITE
+  CompressionCodec compression = 3;     // Compression algorithm
+  int64 target_file_size_bytes = 4;     // Target data file size (default 128MB)
+  map<string, string> table_properties = 5; // Iceberg table properties
+  string catalog_uri = 6;               // Iceberg catalog URI (e.g., Hive metastore, Glue, REST)
+  string warehouse_location = 7;        // Warehouse location (S3/GCS path)
+}
+
+// Delta Lake format configuration
+message DeltaConfig {
+  string table_path = 1;                // Delta table path (S3/GCS/HDFS path)
+  WriteMode write_mode = 2;             // APPEND, MERGE, OVERWRITE
+  CompressionCodec compression = 3;     // Compression algorithm
+  int64 target_file_size_bytes = 4;     // Target data file size (default 128MB)
+  map<string, string> table_properties = 5; // Delta table properties
+}
+
+enum WriteMode {
+  WRITE_MODE_UNSPECIFIED = 0;
+  APPEND = 1;           // Append new data
+  MERGE = 2;            // Merge/upsert based on RecordMsg.op (CDC mode)
+  OVERWRITE = 3;        // Replace all data (batch mode)
 }
 
 enum CompressionCodec {
@@ -115,7 +151,7 @@ message StreamDataResponse {
   string message = 2;                   // Error message if success=false
   int64 records_written = 3;            // Total records written so far
   int64 bytes_written = 4;              // Total bytes written so far
-  int32 files_uploaded = 5;             // Number of Parquet files uploaded so far
+  int32 files_uploaded = 5;             // Number of data files uploaded so far
 }
 
 // ===========================

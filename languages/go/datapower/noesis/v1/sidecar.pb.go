@@ -1,18 +1,19 @@
-// Sidecar API (gRPC) — Parquetizer Service
+// Sidecar API (gRPC) — Storage Writer Service
 // ------------------------------------------
 // Goal:
 // - Provide a lightweight service that runs alongside connectors in the same pod
 // - Receives streaming data from connectors over localhost
-// - Writes data to Parquet format with efficient compression
-// - Uploads completed Parquet files to object storage
+// - Writes data to storage formats (Parquet, Iceberg, Delta Lake, etc.)
+// - Uploads completed files to object storage
 //
 // Usage:
 // - Connector extracts data and streams it to sidecar via StreamData RPC
-// - Sidecar buffers data, writes Parquet files, and uploads to S3/GCS
+// - Sidecar buffers data, writes to configured format, and uploads to S3/GCS/etc.
 // - Sidecar notifies connector when upload is complete
 //
 // Benefits:
 // - Separation of concerns: connector focuses on extraction, sidecar handles serialization
+// - Storage-agnostic: connector doesn't need to know about Parquet, Iceberg, etc.
 // - Reusable: same sidecar can work with any connector
 // - Efficient: streaming reduces memory footprint
 
@@ -94,6 +95,58 @@ func (StorageType) EnumDescriptor() ([]byte, []int) {
 	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{0}
 }
 
+type WriteMode int32
+
+const (
+	WriteMode_WRITE_MODE_UNSPECIFIED WriteMode = 0
+	WriteMode_APPEND                 WriteMode = 1 // Append new data
+	WriteMode_MERGE                  WriteMode = 2 // Merge/upsert based on RecordMsg.op (CDC mode)
+	WriteMode_OVERWRITE              WriteMode = 3 // Replace all data (batch mode)
+)
+
+// Enum value maps for WriteMode.
+var (
+	WriteMode_name = map[int32]string{
+		0: "WRITE_MODE_UNSPECIFIED",
+		1: "APPEND",
+		2: "MERGE",
+		3: "OVERWRITE",
+	}
+	WriteMode_value = map[string]int32{
+		"WRITE_MODE_UNSPECIFIED": 0,
+		"APPEND":                 1,
+		"MERGE":                  2,
+		"OVERWRITE":              3,
+	}
+)
+
+func (x WriteMode) Enum() *WriteMode {
+	p := new(WriteMode)
+	*p = x
+	return p
+}
+
+func (x WriteMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (WriteMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_datapower_noesis_v1_sidecar_proto_enumTypes[1].Descriptor()
+}
+
+func (WriteMode) Type() protoreflect.EnumType {
+	return &file_datapower_noesis_v1_sidecar_proto_enumTypes[1]
+}
+
+func (x WriteMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use WriteMode.Descriptor instead.
+func (WriteMode) EnumDescriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{1}
+}
+
 type CompressionCodec int32
 
 const (
@@ -136,11 +189,11 @@ func (x CompressionCodec) String() string {
 }
 
 func (CompressionCodec) Descriptor() protoreflect.EnumDescriptor {
-	return file_datapower_noesis_v1_sidecar_proto_enumTypes[1].Descriptor()
+	return file_datapower_noesis_v1_sidecar_proto_enumTypes[2].Descriptor()
 }
 
 func (CompressionCodec) Type() protoreflect.EnumType {
-	return &file_datapower_noesis_v1_sidecar_proto_enumTypes[1]
+	return &file_datapower_noesis_v1_sidecar_proto_enumTypes[2]
 }
 
 func (x CompressionCodec) Number() protoreflect.EnumNumber {
@@ -149,7 +202,7 @@ func (x CompressionCodec) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CompressionCodec.Descriptor instead.
 func (CompressionCodec) EnumDescriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{1}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{2}
 }
 
 type SessionState int32
@@ -194,11 +247,11 @@ func (x SessionState) String() string {
 }
 
 func (SessionState) Descriptor() protoreflect.EnumDescriptor {
-	return file_datapower_noesis_v1_sidecar_proto_enumTypes[2].Descriptor()
+	return file_datapower_noesis_v1_sidecar_proto_enumTypes[3].Descriptor()
 }
 
 func (SessionState) Type() protoreflect.EnumType {
-	return &file_datapower_noesis_v1_sidecar_proto_enumTypes[2]
+	return &file_datapower_noesis_v1_sidecar_proto_enumTypes[3]
 }
 
 func (x SessionState) Number() protoreflect.EnumNumber {
@@ -207,17 +260,24 @@ func (x SessionState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SessionState.Descriptor instead.
 func (SessionState) EnumDescriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{2}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{3}
 }
 
 type InitSessionRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	SessionId     string                      `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`             // Unique session identifier
-	Entity        string                      `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`                                    // Entity being extracted (e.g., "customers")
-	Schema        *StructuredSchemaDescriptor `protobuf:"bytes,3,opt,name=schema,proto3" json:"schema,omitempty"`                                    // Schema for the data
-	Storage       *StorageConfig              `protobuf:"bytes,4,opt,name=storage,proto3" json:"storage,omitempty"`                                  // Where to upload Parquet files
-	ParquetConfig *ParquetConfig              `protobuf:"bytes,5,opt,name=parquet_config,json=parquetConfig,proto3" json:"parquet_config,omitempty"` // Parquet file settings
-	SplitId       string                      `protobuf:"bytes,6,opt,name=split_id,json=splitId,proto3" json:"split_id,omitempty"`                   // Optional: split identifier for this extraction
+	state     protoimpl.MessageState      `protogen:"open.v1"`
+	SessionId string                      `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"` // Unique session identifier
+	Entity    string                      `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`                        // Entity being extracted (e.g., "customers")
+	Schema    *StructuredSchemaDescriptor `protobuf:"bytes,3,opt,name=schema,proto3" json:"schema,omitempty"`                        // Schema for the data
+	Storage   *StorageConfig              `protobuf:"bytes,4,opt,name=storage,proto3" json:"storage,omitempty"`                      // Where to upload files (S3, GCS, etc.)
+	// Storage format configuration (choose one)
+	//
+	// Types that are valid to be assigned to FormatConfig:
+	//
+	//	*InitSessionRequest_ParquetConfig
+	//	*InitSessionRequest_IcebergConfig
+	//	*InitSessionRequest_DeltaConfig
+	FormatConfig  isInitSessionRequest_FormatConfig `protobuf_oneof:"format_config"`
+	SplitId       string                            `protobuf:"bytes,6,opt,name=split_id,json=splitId,proto3" json:"split_id,omitempty"` // Optional: split identifier for this extraction
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -280,9 +340,36 @@ func (x *InitSessionRequest) GetStorage() *StorageConfig {
 	return nil
 }
 
+func (x *InitSessionRequest) GetFormatConfig() isInitSessionRequest_FormatConfig {
+	if x != nil {
+		return x.FormatConfig
+	}
+	return nil
+}
+
 func (x *InitSessionRequest) GetParquetConfig() *ParquetConfig {
 	if x != nil {
-		return x.ParquetConfig
+		if x, ok := x.FormatConfig.(*InitSessionRequest_ParquetConfig); ok {
+			return x.ParquetConfig
+		}
+	}
+	return nil
+}
+
+func (x *InitSessionRequest) GetIcebergConfig() *IcebergConfig {
+	if x != nil {
+		if x, ok := x.FormatConfig.(*InitSessionRequest_IcebergConfig); ok {
+			return x.IcebergConfig
+		}
+	}
+	return nil
+}
+
+func (x *InitSessionRequest) GetDeltaConfig() *DeltaConfig {
+	if x != nil {
+		if x, ok := x.FormatConfig.(*InitSessionRequest_DeltaConfig); ok {
+			return x.DeltaConfig
+		}
 	}
 	return nil
 }
@@ -293,6 +380,28 @@ func (x *InitSessionRequest) GetSplitId() string {
 	}
 	return ""
 }
+
+type isInitSessionRequest_FormatConfig interface {
+	isInitSessionRequest_FormatConfig()
+}
+
+type InitSessionRequest_ParquetConfig struct {
+	ParquetConfig *ParquetConfig `protobuf:"bytes,5,opt,name=parquet_config,json=parquetConfig,proto3,oneof"` // Parquet file settings
+}
+
+type InitSessionRequest_IcebergConfig struct {
+	IcebergConfig *IcebergConfig `protobuf:"bytes,7,opt,name=iceberg_config,json=icebergConfig,proto3,oneof"` // Iceberg table settings
+}
+
+type InitSessionRequest_DeltaConfig struct {
+	DeltaConfig *DeltaConfig `protobuf:"bytes,8,opt,name=delta_config,json=deltaConfig,proto3,oneof"` // Delta Lake table settings
+}
+
+func (*InitSessionRequest_ParquetConfig) isInitSessionRequest_FormatConfig() {}
+
+func (*InitSessionRequest_IcebergConfig) isInitSessionRequest_FormatConfig() {}
+
+func (*InitSessionRequest_DeltaConfig) isInitSessionRequest_FormatConfig() {}
 
 type StorageConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -378,6 +487,7 @@ func (x *StorageConfig) GetUseSsl() bool {
 	return false
 }
 
+// Parquet format configuration
 type ParquetConfig struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Compression      CompressionCodec       `protobuf:"varint,1,opt,name=compression,proto3,enum=datapower.noesis.v1.CompressionCodec" json:"compression,omitempty"`                          // Compression algorithm
@@ -454,6 +564,176 @@ func (x *ParquetConfig) GetMetadata() map[string]string {
 	return nil
 }
 
+// Iceberg format configuration
+type IcebergConfig struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	TableName           string                 `protobuf:"bytes,1,opt,name=table_name,json=tableName,proto3" json:"table_name,omitempty"`                                                                                             // Iceberg table name (catalog.namespace.table)
+	WriteMode           WriteMode              `protobuf:"varint,2,opt,name=write_mode,json=writeMode,proto3,enum=datapower.noesis.v1.WriteMode" json:"write_mode,omitempty"`                                                         // APPEND, MERGE, OVERWRITE
+	Compression         CompressionCodec       `protobuf:"varint,3,opt,name=compression,proto3,enum=datapower.noesis.v1.CompressionCodec" json:"compression,omitempty"`                                                               // Compression algorithm
+	TargetFileSizeBytes int64                  `protobuf:"varint,4,opt,name=target_file_size_bytes,json=targetFileSizeBytes,proto3" json:"target_file_size_bytes,omitempty"`                                                          // Target data file size (default 128MB)
+	TableProperties     map[string]string      `protobuf:"bytes,5,rep,name=table_properties,json=tableProperties,proto3" json:"table_properties,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // Iceberg table properties
+	CatalogUri          string                 `protobuf:"bytes,6,opt,name=catalog_uri,json=catalogUri,proto3" json:"catalog_uri,omitempty"`                                                                                          // Iceberg catalog URI (e.g., Hive metastore, Glue, REST)
+	WarehouseLocation   string                 `protobuf:"bytes,7,opt,name=warehouse_location,json=warehouseLocation,proto3" json:"warehouse_location,omitempty"`                                                                     // Warehouse location (S3/GCS path)
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *IcebergConfig) Reset() {
+	*x = IcebergConfig{}
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IcebergConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IcebergConfig) ProtoMessage() {}
+
+func (x *IcebergConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IcebergConfig.ProtoReflect.Descriptor instead.
+func (*IcebergConfig) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *IcebergConfig) GetTableName() string {
+	if x != nil {
+		return x.TableName
+	}
+	return ""
+}
+
+func (x *IcebergConfig) GetWriteMode() WriteMode {
+	if x != nil {
+		return x.WriteMode
+	}
+	return WriteMode_WRITE_MODE_UNSPECIFIED
+}
+
+func (x *IcebergConfig) GetCompression() CompressionCodec {
+	if x != nil {
+		return x.Compression
+	}
+	return CompressionCodec_COMPRESSION_UNSPECIFIED
+}
+
+func (x *IcebergConfig) GetTargetFileSizeBytes() int64 {
+	if x != nil {
+		return x.TargetFileSizeBytes
+	}
+	return 0
+}
+
+func (x *IcebergConfig) GetTableProperties() map[string]string {
+	if x != nil {
+		return x.TableProperties
+	}
+	return nil
+}
+
+func (x *IcebergConfig) GetCatalogUri() string {
+	if x != nil {
+		return x.CatalogUri
+	}
+	return ""
+}
+
+func (x *IcebergConfig) GetWarehouseLocation() string {
+	if x != nil {
+		return x.WarehouseLocation
+	}
+	return ""
+}
+
+// Delta Lake format configuration
+type DeltaConfig struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	TablePath           string                 `protobuf:"bytes,1,opt,name=table_path,json=tablePath,proto3" json:"table_path,omitempty"`                                                                                             // Delta table path (S3/GCS/HDFS path)
+	WriteMode           WriteMode              `protobuf:"varint,2,opt,name=write_mode,json=writeMode,proto3,enum=datapower.noesis.v1.WriteMode" json:"write_mode,omitempty"`                                                         // APPEND, MERGE, OVERWRITE
+	Compression         CompressionCodec       `protobuf:"varint,3,opt,name=compression,proto3,enum=datapower.noesis.v1.CompressionCodec" json:"compression,omitempty"`                                                               // Compression algorithm
+	TargetFileSizeBytes int64                  `protobuf:"varint,4,opt,name=target_file_size_bytes,json=targetFileSizeBytes,proto3" json:"target_file_size_bytes,omitempty"`                                                          // Target data file size (default 128MB)
+	TableProperties     map[string]string      `protobuf:"bytes,5,rep,name=table_properties,json=tableProperties,proto3" json:"table_properties,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // Delta table properties
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *DeltaConfig) Reset() {
+	*x = DeltaConfig{}
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeltaConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeltaConfig) ProtoMessage() {}
+
+func (x *DeltaConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeltaConfig.ProtoReflect.Descriptor instead.
+func (*DeltaConfig) Descriptor() ([]byte, []int) {
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *DeltaConfig) GetTablePath() string {
+	if x != nil {
+		return x.TablePath
+	}
+	return ""
+}
+
+func (x *DeltaConfig) GetWriteMode() WriteMode {
+	if x != nil {
+		return x.WriteMode
+	}
+	return WriteMode_WRITE_MODE_UNSPECIFIED
+}
+
+func (x *DeltaConfig) GetCompression() CompressionCodec {
+	if x != nil {
+		return x.Compression
+	}
+	return CompressionCodec_COMPRESSION_UNSPECIFIED
+}
+
+func (x *DeltaConfig) GetTargetFileSizeBytes() int64 {
+	if x != nil {
+		return x.TargetFileSizeBytes
+	}
+	return 0
+}
+
+func (x *DeltaConfig) GetTableProperties() map[string]string {
+	if x != nil {
+		return x.TableProperties
+	}
+	return nil
+}
+
 type InitSessionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -465,7 +745,7 @@ type InitSessionResponse struct {
 
 func (x *InitSessionResponse) Reset() {
 	*x = InitSessionResponse{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[3]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -477,7 +757,7 @@ func (x *InitSessionResponse) String() string {
 func (*InitSessionResponse) ProtoMessage() {}
 
 func (x *InitSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[3]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -490,7 +770,7 @@ func (x *InitSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitSessionResponse.ProtoReflect.Descriptor instead.
 func (*InitSessionResponse) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{3}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *InitSessionResponse) GetSuccess() bool {
@@ -528,7 +808,7 @@ type DataBatch struct {
 
 func (x *DataBatch) Reset() {
 	*x = DataBatch{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[4]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -540,7 +820,7 @@ func (x *DataBatch) String() string {
 func (*DataBatch) ProtoMessage() {}
 
 func (x *DataBatch) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[4]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -553,7 +833,7 @@ func (x *DataBatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DataBatch.ProtoReflect.Descriptor instead.
 func (*DataBatch) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{4}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DataBatch) GetSessionId() string {
@@ -590,14 +870,14 @@ type StreamDataResponse struct {
 	Message        string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`                                      // Error message if success=false
 	RecordsWritten int64                  `protobuf:"varint,3,opt,name=records_written,json=recordsWritten,proto3" json:"records_written,omitempty"` // Total records written so far
 	BytesWritten   int64                  `protobuf:"varint,4,opt,name=bytes_written,json=bytesWritten,proto3" json:"bytes_written,omitempty"`       // Total bytes written so far
-	FilesUploaded  int32                  `protobuf:"varint,5,opt,name=files_uploaded,json=filesUploaded,proto3" json:"files_uploaded,omitempty"`    // Number of Parquet files uploaded so far
+	FilesUploaded  int32                  `protobuf:"varint,5,opt,name=files_uploaded,json=filesUploaded,proto3" json:"files_uploaded,omitempty"`    // Number of data files uploaded so far
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *StreamDataResponse) Reset() {
 	*x = StreamDataResponse{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[5]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -609,7 +889,7 @@ func (x *StreamDataResponse) String() string {
 func (*StreamDataResponse) ProtoMessage() {}
 
 func (x *StreamDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[5]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -622,7 +902,7 @@ func (x *StreamDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamDataResponse.ProtoReflect.Descriptor instead.
 func (*StreamDataResponse) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{5}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *StreamDataResponse) GetSuccess() bool {
@@ -670,7 +950,7 @@ type FinalizeSessionRequest struct {
 
 func (x *FinalizeSessionRequest) Reset() {
 	*x = FinalizeSessionRequest{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[6]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -682,7 +962,7 @@ func (x *FinalizeSessionRequest) String() string {
 func (*FinalizeSessionRequest) ProtoMessage() {}
 
 func (x *FinalizeSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[6]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -695,7 +975,7 @@ func (x *FinalizeSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FinalizeSessionRequest.ProtoReflect.Descriptor instead.
 func (*FinalizeSessionRequest) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{6}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *FinalizeSessionRequest) GetSessionId() string {
@@ -723,7 +1003,7 @@ type FinalizeSessionResponse struct {
 
 func (x *FinalizeSessionResponse) Reset() {
 	*x = FinalizeSessionResponse{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[7]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -735,7 +1015,7 @@ func (x *FinalizeSessionResponse) String() string {
 func (*FinalizeSessionResponse) ProtoMessage() {}
 
 func (x *FinalizeSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[7]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -748,7 +1028,7 @@ func (x *FinalizeSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FinalizeSessionResponse.ProtoReflect.Descriptor instead.
 func (*FinalizeSessionResponse) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{7}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *FinalizeSessionResponse) GetSuccess() bool {
@@ -785,7 +1065,7 @@ type SessionStats struct {
 
 func (x *SessionStats) Reset() {
 	*x = SessionStats{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[8]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -797,7 +1077,7 @@ func (x *SessionStats) String() string {
 func (*SessionStats) ProtoMessage() {}
 
 func (x *SessionStats) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[8]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -810,7 +1090,7 @@ func (x *SessionStats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SessionStats.ProtoReflect.Descriptor instead.
 func (*SessionStats) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{8}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SessionStats) GetTotalRecordsWritten() int64 {
@@ -857,7 +1137,7 @@ type GetSessionStatusRequest struct {
 
 func (x *GetSessionStatusRequest) Reset() {
 	*x = GetSessionStatusRequest{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[9]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -869,7 +1149,7 @@ func (x *GetSessionStatusRequest) String() string {
 func (*GetSessionStatusRequest) ProtoMessage() {}
 
 func (x *GetSessionStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[9]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -882,7 +1162,7 @@ func (x *GetSessionStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetSessionStatusRequest) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{9}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSessionStatusRequest) GetSessionId() string {
@@ -904,7 +1184,7 @@ type GetSessionStatusResponse struct {
 
 func (x *GetSessionStatusResponse) Reset() {
 	*x = GetSessionStatusResponse{}
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[10]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -916,7 +1196,7 @@ func (x *GetSessionStatusResponse) String() string {
 func (*GetSessionStatusResponse) ProtoMessage() {}
 
 func (x *GetSessionStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[10]
+	mi := &file_datapower_noesis_v1_sidecar_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -929,7 +1209,7 @@ func (x *GetSessionStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetSessionStatusResponse) Descriptor() ([]byte, []int) {
-	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{10}
+	return file_datapower_noesis_v1_sidecar_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSessionStatusResponse) GetState() SessionState {
@@ -964,15 +1244,18 @@ var File_datapower_noesis_v1_sidecar_proto protoreflect.FileDescriptor
 
 const file_datapower_noesis_v1_sidecar_proto_rawDesc = "" +
 	"\n" +
-	"!datapower/noesis/v1/sidecar.proto\x12\x13datapower.noesis.v1\x1a#datapower/noesis/v1/connector.proto\"\xb8\x02\n" +
+	"!datapower/noesis/v1/sidecar.proto\x12\x13datapower.noesis.v1\x1a#datapower/noesis/v1/connector.proto\"\xdf\x03\n" +
 	"\x12InitSessionRequest\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x16\n" +
 	"\x06entity\x18\x02 \x01(\tR\x06entity\x12G\n" +
 	"\x06schema\x18\x03 \x01(\v2/.datapower.noesis.v1.StructuredSchemaDescriptorR\x06schema\x12<\n" +
-	"\astorage\x18\x04 \x01(\v2\".datapower.noesis.v1.StorageConfigR\astorage\x12I\n" +
-	"\x0eparquet_config\x18\x05 \x01(\v2\".datapower.noesis.v1.ParquetConfigR\rparquetConfig\x12\x19\n" +
-	"\bsplit_id\x18\x06 \x01(\tR\asplitId\"\xca\x02\n" +
+	"\astorage\x18\x04 \x01(\v2\".datapower.noesis.v1.StorageConfigR\astorage\x12K\n" +
+	"\x0eparquet_config\x18\x05 \x01(\v2\".datapower.noesis.v1.ParquetConfigH\x00R\rparquetConfig\x12K\n" +
+	"\x0eiceberg_config\x18\a \x01(\v2\".datapower.noesis.v1.IcebergConfigH\x00R\ricebergConfig\x12E\n" +
+	"\fdelta_config\x18\b \x01(\v2 .datapower.noesis.v1.DeltaConfigH\x00R\vdeltaConfig\x12\x19\n" +
+	"\bsplit_id\x18\x06 \x01(\tR\asplitIdB\x0f\n" +
+	"\rformat_config\"\xca\x02\n" +
 	"\rStorageConfig\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .datapower.noesis.v1.StorageTypeR\x04type\x12\x16\n" +
 	"\x06bucket\x18\x02 \x01(\tR\x06bucket\x12\x1f\n" +
@@ -991,6 +1274,31 @@ const file_datapower_noesis_v1_sidecar_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12L\n" +
 	"\bmetadata\x18\x05 \x03(\v20.datapower.noesis.v1.ParquetConfig.MetadataEntryR\bmetadata\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x03\n" +
+	"\rIcebergConfig\x12\x1d\n" +
+	"\n" +
+	"table_name\x18\x01 \x01(\tR\ttableName\x12=\n" +
+	"\n" +
+	"write_mode\x18\x02 \x01(\x0e2\x1e.datapower.noesis.v1.WriteModeR\twriteMode\x12G\n" +
+	"\vcompression\x18\x03 \x01(\x0e2%.datapower.noesis.v1.CompressionCodecR\vcompression\x123\n" +
+	"\x16target_file_size_bytes\x18\x04 \x01(\x03R\x13targetFileSizeBytes\x12b\n" +
+	"\x10table_properties\x18\x05 \x03(\v27.datapower.noesis.v1.IcebergConfig.TablePropertiesEntryR\x0ftableProperties\x12\x1f\n" +
+	"\vcatalog_uri\x18\x06 \x01(\tR\n" +
+	"catalogUri\x12-\n" +
+	"\x12warehouse_location\x18\a \x01(\tR\x11warehouseLocation\x1aB\n" +
+	"\x14TablePropertiesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8f\x03\n" +
+	"\vDeltaConfig\x12\x1d\n" +
+	"\n" +
+	"table_path\x18\x01 \x01(\tR\ttablePath\x12=\n" +
+	"\n" +
+	"write_mode\x18\x02 \x01(\x0e2\x1e.datapower.noesis.v1.WriteModeR\twriteMode\x12G\n" +
+	"\vcompression\x18\x03 \x01(\x0e2%.datapower.noesis.v1.CompressionCodecR\vcompression\x123\n" +
+	"\x16target_file_size_bytes\x18\x04 \x01(\x03R\x13targetFileSizeBytes\x12`\n" +
+	"\x10table_properties\x18\x05 \x03(\v25.datapower.noesis.v1.DeltaConfig.TablePropertiesEntryR\x0ftableProperties\x1aB\n" +
+	"\x14TablePropertiesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"h\n" +
 	"\x13InitSessionResponse\x12\x18\n" +
@@ -1041,7 +1349,13 @@ const file_datapower_noesis_v1_sidecar_proto_rawDesc = "" +
 	"\x03GCS\x10\x02\x12\x0e\n" +
 	"\n" +
 	"AZURE_BLOB\x10\x03\x12\t\n" +
-	"\x05MINIO\x10\x04*b\n" +
+	"\x05MINIO\x10\x04*M\n" +
+	"\tWriteMode\x12\x1a\n" +
+	"\x16WRITE_MODE_UNSPECIFIED\x10\x00\x12\n" +
+	"\n" +
+	"\x06APPEND\x10\x01\x12\t\n" +
+	"\x05MERGE\x10\x02\x12\r\n" +
+	"\tOVERWRITE\x10\x03*b\n" +
 	"\x10CompressionCodec\x12\x1b\n" +
 	"\x17COMPRESSION_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NONE\x10\x01\x12\n" +
@@ -1077,53 +1391,66 @@ func file_datapower_noesis_v1_sidecar_proto_rawDescGZIP() []byte {
 	return file_datapower_noesis_v1_sidecar_proto_rawDescData
 }
 
-var file_datapower_noesis_v1_sidecar_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_datapower_noesis_v1_sidecar_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_datapower_noesis_v1_sidecar_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_datapower_noesis_v1_sidecar_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_datapower_noesis_v1_sidecar_proto_goTypes = []any{
 	(StorageType)(0),                   // 0: datapower.noesis.v1.StorageType
-	(CompressionCodec)(0),              // 1: datapower.noesis.v1.CompressionCodec
-	(SessionState)(0),                  // 2: datapower.noesis.v1.SessionState
-	(*InitSessionRequest)(nil),         // 3: datapower.noesis.v1.InitSessionRequest
-	(*StorageConfig)(nil),              // 4: datapower.noesis.v1.StorageConfig
-	(*ParquetConfig)(nil),              // 5: datapower.noesis.v1.ParquetConfig
-	(*InitSessionResponse)(nil),        // 6: datapower.noesis.v1.InitSessionResponse
-	(*DataBatch)(nil),                  // 7: datapower.noesis.v1.DataBatch
-	(*StreamDataResponse)(nil),         // 8: datapower.noesis.v1.StreamDataResponse
-	(*FinalizeSessionRequest)(nil),     // 9: datapower.noesis.v1.FinalizeSessionRequest
-	(*FinalizeSessionResponse)(nil),    // 10: datapower.noesis.v1.FinalizeSessionResponse
-	(*SessionStats)(nil),               // 11: datapower.noesis.v1.SessionStats
-	(*GetSessionStatusRequest)(nil),    // 12: datapower.noesis.v1.GetSessionStatusRequest
-	(*GetSessionStatusResponse)(nil),   // 13: datapower.noesis.v1.GetSessionStatusResponse
-	nil,                                // 14: datapower.noesis.v1.StorageConfig.CredentialsEntry
-	nil,                                // 15: datapower.noesis.v1.ParquetConfig.MetadataEntry
-	(*StructuredSchemaDescriptor)(nil), // 16: datapower.noesis.v1.StructuredSchemaDescriptor
-	(*RecordMsg)(nil),                  // 17: datapower.noesis.v1.RecordMsg
+	(WriteMode)(0),                     // 1: datapower.noesis.v1.WriteMode
+	(CompressionCodec)(0),              // 2: datapower.noesis.v1.CompressionCodec
+	(SessionState)(0),                  // 3: datapower.noesis.v1.SessionState
+	(*InitSessionRequest)(nil),         // 4: datapower.noesis.v1.InitSessionRequest
+	(*StorageConfig)(nil),              // 5: datapower.noesis.v1.StorageConfig
+	(*ParquetConfig)(nil),              // 6: datapower.noesis.v1.ParquetConfig
+	(*IcebergConfig)(nil),              // 7: datapower.noesis.v1.IcebergConfig
+	(*DeltaConfig)(nil),                // 8: datapower.noesis.v1.DeltaConfig
+	(*InitSessionResponse)(nil),        // 9: datapower.noesis.v1.InitSessionResponse
+	(*DataBatch)(nil),                  // 10: datapower.noesis.v1.DataBatch
+	(*StreamDataResponse)(nil),         // 11: datapower.noesis.v1.StreamDataResponse
+	(*FinalizeSessionRequest)(nil),     // 12: datapower.noesis.v1.FinalizeSessionRequest
+	(*FinalizeSessionResponse)(nil),    // 13: datapower.noesis.v1.FinalizeSessionResponse
+	(*SessionStats)(nil),               // 14: datapower.noesis.v1.SessionStats
+	(*GetSessionStatusRequest)(nil),    // 15: datapower.noesis.v1.GetSessionStatusRequest
+	(*GetSessionStatusResponse)(nil),   // 16: datapower.noesis.v1.GetSessionStatusResponse
+	nil,                                // 17: datapower.noesis.v1.StorageConfig.CredentialsEntry
+	nil,                                // 18: datapower.noesis.v1.ParquetConfig.MetadataEntry
+	nil,                                // 19: datapower.noesis.v1.IcebergConfig.TablePropertiesEntry
+	nil,                                // 20: datapower.noesis.v1.DeltaConfig.TablePropertiesEntry
+	(*StructuredSchemaDescriptor)(nil), // 21: datapower.noesis.v1.StructuredSchemaDescriptor
+	(*RecordMsg)(nil),                  // 22: datapower.noesis.v1.RecordMsg
 }
 var file_datapower_noesis_v1_sidecar_proto_depIdxs = []int32{
-	16, // 0: datapower.noesis.v1.InitSessionRequest.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
-	4,  // 1: datapower.noesis.v1.InitSessionRequest.storage:type_name -> datapower.noesis.v1.StorageConfig
-	5,  // 2: datapower.noesis.v1.InitSessionRequest.parquet_config:type_name -> datapower.noesis.v1.ParquetConfig
-	0,  // 3: datapower.noesis.v1.StorageConfig.type:type_name -> datapower.noesis.v1.StorageType
-	14, // 4: datapower.noesis.v1.StorageConfig.credentials:type_name -> datapower.noesis.v1.StorageConfig.CredentialsEntry
-	1,  // 5: datapower.noesis.v1.ParquetConfig.compression:type_name -> datapower.noesis.v1.CompressionCodec
-	15, // 6: datapower.noesis.v1.ParquetConfig.metadata:type_name -> datapower.noesis.v1.ParquetConfig.MetadataEntry
-	17, // 7: datapower.noesis.v1.DataBatch.records:type_name -> datapower.noesis.v1.RecordMsg
-	11, // 8: datapower.noesis.v1.FinalizeSessionResponse.stats:type_name -> datapower.noesis.v1.SessionStats
-	2,  // 9: datapower.noesis.v1.GetSessionStatusResponse.state:type_name -> datapower.noesis.v1.SessionState
-	11, // 10: datapower.noesis.v1.GetSessionStatusResponse.stats:type_name -> datapower.noesis.v1.SessionStats
-	3,  // 11: datapower.noesis.v1.Sidecar.InitSession:input_type -> datapower.noesis.v1.InitSessionRequest
-	7,  // 12: datapower.noesis.v1.Sidecar.StreamData:input_type -> datapower.noesis.v1.DataBatch
-	9,  // 13: datapower.noesis.v1.Sidecar.FinalizeSession:input_type -> datapower.noesis.v1.FinalizeSessionRequest
-	12, // 14: datapower.noesis.v1.Sidecar.GetSessionStatus:input_type -> datapower.noesis.v1.GetSessionStatusRequest
-	6,  // 15: datapower.noesis.v1.Sidecar.InitSession:output_type -> datapower.noesis.v1.InitSessionResponse
-	8,  // 16: datapower.noesis.v1.Sidecar.StreamData:output_type -> datapower.noesis.v1.StreamDataResponse
-	10, // 17: datapower.noesis.v1.Sidecar.FinalizeSession:output_type -> datapower.noesis.v1.FinalizeSessionResponse
-	13, // 18: datapower.noesis.v1.Sidecar.GetSessionStatus:output_type -> datapower.noesis.v1.GetSessionStatusResponse
-	15, // [15:19] is the sub-list for method output_type
-	11, // [11:15] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	21, // 0: datapower.noesis.v1.InitSessionRequest.schema:type_name -> datapower.noesis.v1.StructuredSchemaDescriptor
+	5,  // 1: datapower.noesis.v1.InitSessionRequest.storage:type_name -> datapower.noesis.v1.StorageConfig
+	6,  // 2: datapower.noesis.v1.InitSessionRequest.parquet_config:type_name -> datapower.noesis.v1.ParquetConfig
+	7,  // 3: datapower.noesis.v1.InitSessionRequest.iceberg_config:type_name -> datapower.noesis.v1.IcebergConfig
+	8,  // 4: datapower.noesis.v1.InitSessionRequest.delta_config:type_name -> datapower.noesis.v1.DeltaConfig
+	0,  // 5: datapower.noesis.v1.StorageConfig.type:type_name -> datapower.noesis.v1.StorageType
+	17, // 6: datapower.noesis.v1.StorageConfig.credentials:type_name -> datapower.noesis.v1.StorageConfig.CredentialsEntry
+	2,  // 7: datapower.noesis.v1.ParquetConfig.compression:type_name -> datapower.noesis.v1.CompressionCodec
+	18, // 8: datapower.noesis.v1.ParquetConfig.metadata:type_name -> datapower.noesis.v1.ParquetConfig.MetadataEntry
+	1,  // 9: datapower.noesis.v1.IcebergConfig.write_mode:type_name -> datapower.noesis.v1.WriteMode
+	2,  // 10: datapower.noesis.v1.IcebergConfig.compression:type_name -> datapower.noesis.v1.CompressionCodec
+	19, // 11: datapower.noesis.v1.IcebergConfig.table_properties:type_name -> datapower.noesis.v1.IcebergConfig.TablePropertiesEntry
+	1,  // 12: datapower.noesis.v1.DeltaConfig.write_mode:type_name -> datapower.noesis.v1.WriteMode
+	2,  // 13: datapower.noesis.v1.DeltaConfig.compression:type_name -> datapower.noesis.v1.CompressionCodec
+	20, // 14: datapower.noesis.v1.DeltaConfig.table_properties:type_name -> datapower.noesis.v1.DeltaConfig.TablePropertiesEntry
+	22, // 15: datapower.noesis.v1.DataBatch.records:type_name -> datapower.noesis.v1.RecordMsg
+	14, // 16: datapower.noesis.v1.FinalizeSessionResponse.stats:type_name -> datapower.noesis.v1.SessionStats
+	3,  // 17: datapower.noesis.v1.GetSessionStatusResponse.state:type_name -> datapower.noesis.v1.SessionState
+	14, // 18: datapower.noesis.v1.GetSessionStatusResponse.stats:type_name -> datapower.noesis.v1.SessionStats
+	4,  // 19: datapower.noesis.v1.Sidecar.InitSession:input_type -> datapower.noesis.v1.InitSessionRequest
+	10, // 20: datapower.noesis.v1.Sidecar.StreamData:input_type -> datapower.noesis.v1.DataBatch
+	12, // 21: datapower.noesis.v1.Sidecar.FinalizeSession:input_type -> datapower.noesis.v1.FinalizeSessionRequest
+	15, // 22: datapower.noesis.v1.Sidecar.GetSessionStatus:input_type -> datapower.noesis.v1.GetSessionStatusRequest
+	9,  // 23: datapower.noesis.v1.Sidecar.InitSession:output_type -> datapower.noesis.v1.InitSessionResponse
+	11, // 24: datapower.noesis.v1.Sidecar.StreamData:output_type -> datapower.noesis.v1.StreamDataResponse
+	13, // 25: datapower.noesis.v1.Sidecar.FinalizeSession:output_type -> datapower.noesis.v1.FinalizeSessionResponse
+	16, // 26: datapower.noesis.v1.Sidecar.GetSessionStatus:output_type -> datapower.noesis.v1.GetSessionStatusResponse
+	23, // [23:27] is the sub-list for method output_type
+	19, // [19:23] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_datapower_noesis_v1_sidecar_proto_init() }
@@ -1132,13 +1459,18 @@ func file_datapower_noesis_v1_sidecar_proto_init() {
 		return
 	}
 	file_datapower_noesis_v1_connector_proto_init()
+	file_datapower_noesis_v1_sidecar_proto_msgTypes[0].OneofWrappers = []any{
+		(*InitSessionRequest_ParquetConfig)(nil),
+		(*InitSessionRequest_IcebergConfig)(nil),
+		(*InitSessionRequest_DeltaConfig)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_datapower_noesis_v1_sidecar_proto_rawDesc), len(file_datapower_noesis_v1_sidecar_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   13,
+			NumEnums:      4,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

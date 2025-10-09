@@ -210,6 +210,46 @@ public final class ConnectorOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_datapower_noesis_v1_RecordMsg_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_Row_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_Row_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_Row_ColumnsEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_Row_ColumnsEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_Value_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_Value_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_StructValue_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_StructValue_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_StructValue_FieldsEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_StructValue_FieldsEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_ListValue_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_ListValue_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_MapValue_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_MapValue_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_datapower_noesis_v1_MapValue_EntriesEntry_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_datapower_noesis_v1_MapValue_EntriesEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_datapower_noesis_v1_StateMsg_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -469,92 +509,122 @@ public final class ConnectorOuterClass {
       "StateMsgH\000R\005state\022/\n\003log\030\004 \001(\0132\033.datapow" +
       "er.noesis.v1.LogMsgH\000R\003log\0228\n\006metric\030\005 \001" +
       "(\0132\036.datapower.noesis.v1.MetricMsgH\000R\006me" +
-      "tricB\005\n\003msg\"\313\001\n\tRecordMsg\022\026\n\006entity\030\001 \001(" +
-      "\tR\006entity\022\020\n\003key\030\002 \001(\tR\003key\022\030\n\007payload\030\003" +
-      " \001(\014R\007payload\022\033\n\tschema_id\030\004 \001(\tR\010schema" +
-      "Id\022\'\n\002op\030\005 \001(\0162\027.datapower.noesis.v1.OpR" +
-      "\002op\022\031\n\010group_id\030\006 \001(\tR\007groupId\022\031\n\010ts_eve" +
-      "nt\030\007 \001(\003R\007tsEvent\"x\n\010StateMsg\0223\n\006cursor\030" +
-      "\001 \001(\0132\033.datapower.noesis.v1.CursorR\006curs" +
-      "or\022\034\n\twatermark\030\002 \001(\003R\twatermark\022\031\n\010grou" +
-      "p_id\030\003 \001(\tR\007groupId\"&\n\nProjection\022\030\n\007col" +
-      "umns\030\001 \003(\tR\007columns\"h\n\006Filter\022\036\n\nexpress" +
-      "ion\030\001 \001(\tR\nexpression\022>\n\npredicates\030\002 \003(" +
-      "\0132\036.datapower.noesis.v1.PredicateR\npredi" +
-      "cates\"I\n\tPredicate\022\024\n\005field\030\001 \001(\tR\005field" +
-      "\022\016\n\002op\030\002 \001(\tR\002op\022\026\n\006values\030\003 \003(\tR\006values" +
-      "\"8\n\010Ordering\022,\n\002by\030\001 \003(\0132\034.datapower.noe" +
-      "sis.v1.OrderByR\002by\"_\n\007OrderBy\022\026\n\006column\030" +
-      "\001 \001(\tR\006column\022<\n\tdirection\030\002 \001(\0162\036.datap" +
-      "ower.noesis.v1.DirectionR\tdirection\"`\n\017S" +
-      "napshotOptions\0228\n\004mode\030\001 \001(\0162$.datapower" +
-      ".noesis.v1.ConsistencyModeR\004mode\022\023\n\005as_o" +
-      "f\030\002 \001(\tR\004asOf\"\036\n\006Cursor\022\024\n\005token\030\001 \001(\014R\005" +
-      "token\"?\n\tRateLimit\022\020\n\003qps\030\001 \001(\005R\003qps\022 \n\013" +
-      "parallelism\030\002 \001(\005R\013parallelism\"\212\002\n\tTrave" +
-      "rsal\0222\n\025allowed_link_entities\030\001 \003(\tR\023all" +
-      "owedLinkEntities\022\033\n\tmax_depth\030\002 \001(\005R\010max" +
-      "Depth\022E\n\tdirection\030\003 \001(\0162\'.datapower.noe" +
-      "sis.v1.TraversalDirectionR\tdirection\022#\n\r" +
-      "allow_revisit\030\004 \001(\010R\014allowRevisit\022@\n\034str" +
-      "ict_referential_integrity\030\005 \001(\010R\032strictR" +
-      "eferentialIntegrity\"l\n\tSchemaMsg\022\026\n\006enti" +
-      "ty\030\001 \001(\tR\006entity\022G\n\006schema\030\002 \001(\0132/.datap" +
-      "ower.noesis.v1.StructuredSchemaDescripto" +
-      "rR\006schema\"\244\001\n\006LogMsg\022\024\n\005level\030\001 \001(\tR\005lev" +
-      "el\022\030\n\007message\030\002 \001(\tR\007message\0223\n\002kv\030\003 \003(\013" +
-      "2#.datapower.noesis.v1.LogMsg.KvEntryR\002k" +
-      "v\0325\n\007KvEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005value\030" +
-      "\002 \001(\tR\005value:\0028\001\"\254\001\n\tMetricMsg\022\022\n\004name\030\001" +
-      " \001(\tR\004name\022\024\n\005value\030\002 \001(\001R\005value\022<\n\004tags" +
-      "\030\003 \003(\0132(.datapower.noesis.v1.MetricMsg.T" +
-      "agsEntryR\004tags\0327\n\tTagsEntry\022\020\n\003key\030\001 \001(\t" +
-      "R\003key\022\024\n\005value\030\002 \001(\tR\005value:\0028\001*6\n\nEntit" +
-      "yKind\022\024\n\020KIND_UNSPECIFIED\020\000\022\010\n\004NODE\020\001\022\010\n" +
-      "\004LINK\020\002*\340\003\n\tFieldType\022\032\n\026FIELD_TYPE_UNSP" +
-      "ECIFIED\020\000\022\025\n\021FIELD_TYPE_STRING\020\001\022\026\n\022FIEL" +
-      "D_TYPE_INTEGER\020\002\022\025\n\021FIELD_TYPE_BIGINT\020\003\022" +
-      "\027\n\023FIELD_TYPE_SMALLINT\020\004\022\026\n\022FIELD_TYPE_D" +
-      "ECIMAL\020\005\022\024\n\020FIELD_TYPE_FLOAT\020\006\022\025\n\021FIELD_" +
-      "TYPE_DOUBLE\020\007\022\026\n\022FIELD_TYPE_BOOLEAN\020\010\022\023\n" +
-      "\017FIELD_TYPE_DATE\020\t\022\023\n\017FIELD_TYPE_TIME\020\n\022" +
-      "\030\n\024FIELD_TYPE_TIMESTAMP\020\013\022 \n\034FIELD_TYPE_" +
-      "TIMESTAMP_WITH_TZ\020\014\022\023\n\017FIELD_TYPE_JSON\020\r" +
-      "\022\024\n\020FIELD_TYPE_JSONB\020\016\022\023\n\017FIELD_TYPE_UUI" +
-      "D\020\017\022\025\n\021FIELD_TYPE_BINARY\020\020\022\023\n\017FIELD_TYPE" +
-      "_TEXT\020\021\022\023\n\017FIELD_TYPE_ENUM\020\022\022\024\n\020FIELD_TY" +
-      "PE_ARRAY\020\023*x\n\016ConstraintType\022\037\n\033CONSTRAI" +
-      "NT_TYPE_UNSPECIFIED\020\000\022\017\n\013PRIMARY_KEY\020\001\022\017" +
-      "\n\013FOREIGN_KEY\020\002\022\n\n\006UNIQUE\020\003\022\t\n\005CHECK\020\004\022\014" +
-      "\n\010NOT_NULL\020\005*_\n\nCursorType\022\033\n\027CURSOR_TYP" +
-      "E_UNSPECIFIED\020\000\022\r\n\tTIMESTAMP\020\001\022\020\n\014INCREM" +
-      "ENTING\020\002\022\007\n\003LSN\020\003\022\n\n\006OPAQUE\020\004*0\n\002Op\022\022\n\016O" +
-      "P_UNSPECIFIED\020\000\022\n\n\006UPSERT\020\001\022\n\n\006DELETE\020\002*" +
-      "3\n\tDirection\022\023\n\017DIR_UNSPECIFIED\020\000\022\007\n\003ASC" +
-      "\020\001\022\010\n\004DESC\020\002*k\n\017ConsistencyMode\022\033\n\027CONSI" +
-      "STENCY_UNSPECIFIED\020\000\022\022\n\016READ_COMMITTED\020\001" +
-      "\022\023\n\017REPEATABLE_READ\020\002\022\022\n\016SNAPSHOT_AS_OF\020" +
-      "\003*S\n\022TraversalDirection\022\030\n\024TRAV_DIR_UNSP" +
-      "ECIFIED\020\000\022\014\n\010OUTBOUND\020\001\022\013\n\007INBOUND\020\002\022\010\n\004" +
-      "BOTH\020\0032\342\004\n\tConnector\022N\n\005Check\022!.datapowe" +
-      "r.noesis.v1.CheckRequest\032\".datapower.noe" +
-      "sis.v1.CheckResponse\022W\n\010Discover\022$.datap" +
-      "ower.noesis.v1.DiscoverRequest\032%.datapow" +
-      "er.noesis.v1.DiscoverResponse\022i\n\016PlanExt" +
-      "raction\022*.datapower.noesis.v1.PlanExtrac" +
-      "tionRequest\032+.datapower.noesis.v1.PlanEx" +
-      "tractionResponse\022K\n\004Open\022 .datapower.noe" +
-      "sis.v1.OpenRequest\032!.datapower.noesis.v1" +
-      ".OpenResponse\022L\n\004Read\022 .datapower.noesis" +
-      ".v1.ReadRequest\032 .datapower.noesis.v1.Re" +
-      "adMessage0\001\022V\n\tReadSplit\022%.datapower.noe" +
-      "sis.v1.ReadSplitRequest\032 .datapower.noes" +
-      "is.v1.ReadMessage0\001\022N\n\005Close\022!.datapower" +
-      ".noesis.v1.CloseRequest\032\".datapower.noes" +
-      "is.v1.CloseResponseBk\n\023datapower.noesis." +
-      "v1P\001ZRgithub.com/data-power-io/noesis-pr" +
-      "otocol/languages/go/datapower/noesis/v1;" +
-      "noesisv1b\006proto3"
+      "tricB\005\n\003msg\"\326\001\n\tRecordMsg\022\026\n\006entity\030\001 \001(" +
+      "\tR\006entity\022,\n\004data\030\002 \001(\0132\030.datapower.noes" +
+      "is.v1.RowR\004data\022\'\n\002op\030\003 \001(\0162\027.datapower." +
+      "noesis.v1.OpR\002op\022\"\n\revent_time_ms\030\004 \001(\003R" +
+      "\013eventTimeMs\022\033\n\tschema_id\030\005 \001(\tR\010schemaI" +
+      "d\022\031\n\010group_id\030\006 \001(\tR\007groupId\"\236\001\n\003Row\022?\n\007" +
+      "columns\030\001 \003(\0132%.datapower.noesis.v1.Row." +
+      "ColumnsEntryR\007columns\032V\n\014ColumnsEntry\022\020\n" +
+      "\003key\030\001 \001(\tR\003key\0220\n\005value\030\002 \001(\0132\032.datapow" +
+      "er.noesis.v1.ValueR\005value:\0028\001\"\320\004\n\005Value\022" +
+      "\037\n\nstring_val\030\001 \001(\tH\000R\tstringVal\022\035\n\tint6" +
+      "4_val\030\002 \001(\003H\000R\010int64Val\022\035\n\tint32_val\030\003 \001" +
+      "(\005H\000R\010int32Val\022\037\n\ndouble_val\030\004 \001(\001H\000R\tdo" +
+      "ubleVal\022\035\n\tfloat_val\030\005 \001(\002H\000R\010floatVal\022\033" +
+      "\n\010bool_val\030\006 \001(\010H\000R\007boolVal\022\035\n\tbytes_val" +
+      "\030\007 \001(\014H\000R\010bytesVal\022+\n\020timestamp_micros\030\n" +
+      " \001(\003H\000R\017timestampMicros\022\035\n\tdate_days\030\013 \001" +
+      "(\005H\000R\010dateDays\022!\n\013time_micros\030\014 \001(\003H\000R\nt" +
+      "imeMicros\022;\n\010null_val\030\024 \001(\0162\036.datapower." +
+      "noesis.v1.NullValueH\000R\007nullVal\022A\n\nstruct" +
+      "_val\030\025 \001(\0132 .datapower.noesis.v1.StructV" +
+      "alueH\000R\tstructVal\022;\n\010list_val\030\026 \001(\0132\036.da" +
+      "tapower.noesis.v1.ListValueH\000R\007listVal\0228" +
+      "\n\007map_val\030\027 \001(\0132\035.datapower.noesis.v1.Ma" +
+      "pValueH\000R\006mapValB\006\n\004kind\"\252\001\n\013StructValue" +
+      "\022D\n\006fields\030\001 \003(\0132,.datapower.noesis.v1.S" +
+      "tructValue.FieldsEntryR\006fields\032U\n\013Fields" +
+      "Entry\022\020\n\003key\030\001 \001(\tR\003key\0220\n\005value\030\002 \001(\0132\032" +
+      ".datapower.noesis.v1.ValueR\005value:\0028\001\"C\n" +
+      "\tListValue\0226\n\010elements\030\001 \003(\0132\032.datapower" +
+      ".noesis.v1.ValueR\010elements\"\250\001\n\010MapValue\022" +
+      "D\n\007entries\030\001 \003(\0132*.datapower.noesis.v1.M" +
+      "apValue.EntriesEntryR\007entries\032V\n\014Entries" +
+      "Entry\022\020\n\003key\030\001 \001(\tR\003key\0220\n\005value\030\002 \001(\0132\032" +
+      ".datapower.noesis.v1.ValueR\005value:\0028\001\"x\n" +
+      "\010StateMsg\0223\n\006cursor\030\001 \001(\0132\033.datapower.no" +
+      "esis.v1.CursorR\006cursor\022\034\n\twatermark\030\002 \001(" +
+      "\003R\twatermark\022\031\n\010group_id\030\003 \001(\tR\007groupId\"" +
+      "&\n\nProjection\022\030\n\007columns\030\001 \003(\tR\007columns\"" +
+      "h\n\006Filter\022\036\n\nexpression\030\001 \001(\tR\nexpressio" +
+      "n\022>\n\npredicates\030\002 \003(\0132\036.datapower.noesis" +
+      ".v1.PredicateR\npredicates\"I\n\tPredicate\022\024" +
+      "\n\005field\030\001 \001(\tR\005field\022\016\n\002op\030\002 \001(\tR\002op\022\026\n\006" +
+      "values\030\003 \003(\tR\006values\"8\n\010Ordering\022,\n\002by\030\001" +
+      " \003(\0132\034.datapower.noesis.v1.OrderByR\002by\"_" +
+      "\n\007OrderBy\022\026\n\006column\030\001 \001(\tR\006column\022<\n\tdir" +
+      "ection\030\002 \001(\0162\036.datapower.noesis.v1.Direc" +
+      "tionR\tdirection\"`\n\017SnapshotOptions\0228\n\004mo" +
+      "de\030\001 \001(\0162$.datapower.noesis.v1.Consisten" +
+      "cyModeR\004mode\022\023\n\005as_of\030\002 \001(\tR\004asOf\"\036\n\006Cur" +
+      "sor\022\024\n\005token\030\001 \001(\014R\005token\"?\n\tRateLimit\022\020" +
+      "\n\003qps\030\001 \001(\005R\003qps\022 \n\013parallelism\030\002 \001(\005R\013p" +
+      "arallelism\"\212\002\n\tTraversal\0222\n\025allowed_link" +
+      "_entities\030\001 \003(\tR\023allowedLinkEntities\022\033\n\t" +
+      "max_depth\030\002 \001(\005R\010maxDepth\022E\n\tdirection\030\003" +
+      " \001(\0162\'.datapower.noesis.v1.TraversalDire" +
+      "ctionR\tdirection\022#\n\rallow_revisit\030\004 \001(\010R" +
+      "\014allowRevisit\022@\n\034strict_referential_inte" +
+      "grity\030\005 \001(\010R\032strictReferentialIntegrity\"" +
+      "l\n\tSchemaMsg\022\026\n\006entity\030\001 \001(\tR\006entity\022G\n\006" +
+      "schema\030\002 \001(\0132/.datapower.noesis.v1.Struc" +
+      "turedSchemaDescriptorR\006schema\"\244\001\n\006LogMsg" +
+      "\022\024\n\005level\030\001 \001(\tR\005level\022\030\n\007message\030\002 \001(\tR" +
+      "\007message\0223\n\002kv\030\003 \003(\0132#.datapower.noesis." +
+      "v1.LogMsg.KvEntryR\002kv\0325\n\007KvEntry\022\020\n\003key\030" +
+      "\001 \001(\tR\003key\022\024\n\005value\030\002 \001(\tR\005value:\0028\001\"\254\001\n" +
+      "\tMetricMsg\022\022\n\004name\030\001 \001(\tR\004name\022\024\n\005value\030" +
+      "\002 \001(\001R\005value\022<\n\004tags\030\003 \003(\0132(.datapower.n" +
+      "oesis.v1.MetricMsg.TagsEntryR\004tags\0327\n\tTa" +
+      "gsEntry\022\020\n\003key\030\001 \001(\tR\003key\022\024\n\005value\030\002 \001(\t" +
+      "R\005value:\0028\001*6\n\nEntityKind\022\024\n\020KIND_UNSPEC" +
+      "IFIED\020\000\022\010\n\004NODE\020\001\022\010\n\004LINK\020\002*\340\003\n\tFieldTyp" +
+      "e\022\032\n\026FIELD_TYPE_UNSPECIFIED\020\000\022\025\n\021FIELD_T" +
+      "YPE_STRING\020\001\022\026\n\022FIELD_TYPE_INTEGER\020\002\022\025\n\021" +
+      "FIELD_TYPE_BIGINT\020\003\022\027\n\023FIELD_TYPE_SMALLI" +
+      "NT\020\004\022\026\n\022FIELD_TYPE_DECIMAL\020\005\022\024\n\020FIELD_TY" +
+      "PE_FLOAT\020\006\022\025\n\021FIELD_TYPE_DOUBLE\020\007\022\026\n\022FIE" +
+      "LD_TYPE_BOOLEAN\020\010\022\023\n\017FIELD_TYPE_DATE\020\t\022\023" +
+      "\n\017FIELD_TYPE_TIME\020\n\022\030\n\024FIELD_TYPE_TIMEST" +
+      "AMP\020\013\022 \n\034FIELD_TYPE_TIMESTAMP_WITH_TZ\020\014\022" +
+      "\023\n\017FIELD_TYPE_JSON\020\r\022\024\n\020FIELD_TYPE_JSONB" +
+      "\020\016\022\023\n\017FIELD_TYPE_UUID\020\017\022\025\n\021FIELD_TYPE_BI" +
+      "NARY\020\020\022\023\n\017FIELD_TYPE_TEXT\020\021\022\023\n\017FIELD_TYP" +
+      "E_ENUM\020\022\022\024\n\020FIELD_TYPE_ARRAY\020\023*x\n\016Constr" +
+      "aintType\022\037\n\033CONSTRAINT_TYPE_UNSPECIFIED\020" +
+      "\000\022\017\n\013PRIMARY_KEY\020\001\022\017\n\013FOREIGN_KEY\020\002\022\n\n\006U" +
+      "NIQUE\020\003\022\t\n\005CHECK\020\004\022\014\n\010NOT_NULL\020\005*_\n\nCurs" +
+      "orType\022\033\n\027CURSOR_TYPE_UNSPECIFIED\020\000\022\r\n\tT" +
+      "IMESTAMP\020\001\022\020\n\014INCREMENTING\020\002\022\007\n\003LSN\020\003\022\n\n" +
+      "\006OPAQUE\020\004*0\n\002Op\022\022\n\016OP_UNSPECIFIED\020\000\022\n\n\006U" +
+      "PSERT\020\001\022\n\n\006DELETE\020\002*\033\n\tNullValue\022\016\n\nNULL" +
+      "_VALUE\020\000*3\n\tDirection\022\023\n\017DIR_UNSPECIFIED" +
+      "\020\000\022\007\n\003ASC\020\001\022\010\n\004DESC\020\002*k\n\017ConsistencyMode" +
+      "\022\033\n\027CONSISTENCY_UNSPECIFIED\020\000\022\022\n\016READ_CO" +
+      "MMITTED\020\001\022\023\n\017REPEATABLE_READ\020\002\022\022\n\016SNAPSH" +
+      "OT_AS_OF\020\003*S\n\022TraversalDirection\022\030\n\024TRAV" +
+      "_DIR_UNSPECIFIED\020\000\022\014\n\010OUTBOUND\020\001\022\013\n\007INBO" +
+      "UND\020\002\022\010\n\004BOTH\020\0032\342\004\n\tConnector\022N\n\005Check\022!" +
+      ".datapower.noesis.v1.CheckRequest\032\".data" +
+      "power.noesis.v1.CheckResponse\022W\n\010Discove" +
+      "r\022$.datapower.noesis.v1.DiscoverRequest\032" +
+      "%.datapower.noesis.v1.DiscoverResponse\022i" +
+      "\n\016PlanExtraction\022*.datapower.noesis.v1.P" +
+      "lanExtractionRequest\032+.datapower.noesis." +
+      "v1.PlanExtractionResponse\022K\n\004Open\022 .data" +
+      "power.noesis.v1.OpenRequest\032!.datapower." +
+      "noesis.v1.OpenResponse\022L\n\004Read\022 .datapow" +
+      "er.noesis.v1.ReadRequest\032 .datapower.noe" +
+      "sis.v1.ReadMessage0\001\022V\n\tReadSplit\022%.data" +
+      "power.noesis.v1.ReadSplitRequest\032 .datap" +
+      "ower.noesis.v1.ReadMessage0\001\022N\n\005Close\022!." +
+      "datapower.noesis.v1.CloseRequest\032\".datap" +
+      "ower.noesis.v1.CloseResponseBk\n\023datapowe" +
+      "r.noesis.v1P\001ZRgithub.com/data-power-io/" +
+      "noesis-protocol/languages/go/datapower/n" +
+      "oesis/v1;noesisv1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -793,75 +863,123 @@ public final class ConnectorOuterClass {
     internal_static_datapower_noesis_v1_RecordMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_RecordMsg_descriptor,
-        new java.lang.String[] { "Entity", "Key", "Payload", "SchemaId", "Op", "GroupId", "TsEvent", });
-    internal_static_datapower_noesis_v1_StateMsg_descriptor =
+        new java.lang.String[] { "Entity", "Data", "Op", "EventTimeMs", "SchemaId", "GroupId", });
+    internal_static_datapower_noesis_v1_Row_descriptor =
       getDescriptor().getMessageTypes().get(29);
+    internal_static_datapower_noesis_v1_Row_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_Row_descriptor,
+        new java.lang.String[] { "Columns", });
+    internal_static_datapower_noesis_v1_Row_ColumnsEntry_descriptor =
+      internal_static_datapower_noesis_v1_Row_descriptor.getNestedTypes().get(0);
+    internal_static_datapower_noesis_v1_Row_ColumnsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_Row_ColumnsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_datapower_noesis_v1_Value_descriptor =
+      getDescriptor().getMessageTypes().get(30);
+    internal_static_datapower_noesis_v1_Value_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_Value_descriptor,
+        new java.lang.String[] { "StringVal", "Int64Val", "Int32Val", "DoubleVal", "FloatVal", "BoolVal", "BytesVal", "TimestampMicros", "DateDays", "TimeMicros", "NullVal", "StructVal", "ListVal", "MapVal", "Kind", });
+    internal_static_datapower_noesis_v1_StructValue_descriptor =
+      getDescriptor().getMessageTypes().get(31);
+    internal_static_datapower_noesis_v1_StructValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_StructValue_descriptor,
+        new java.lang.String[] { "Fields", });
+    internal_static_datapower_noesis_v1_StructValue_FieldsEntry_descriptor =
+      internal_static_datapower_noesis_v1_StructValue_descriptor.getNestedTypes().get(0);
+    internal_static_datapower_noesis_v1_StructValue_FieldsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_StructValue_FieldsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_datapower_noesis_v1_ListValue_descriptor =
+      getDescriptor().getMessageTypes().get(32);
+    internal_static_datapower_noesis_v1_ListValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_ListValue_descriptor,
+        new java.lang.String[] { "Elements", });
+    internal_static_datapower_noesis_v1_MapValue_descriptor =
+      getDescriptor().getMessageTypes().get(33);
+    internal_static_datapower_noesis_v1_MapValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_MapValue_descriptor,
+        new java.lang.String[] { "Entries", });
+    internal_static_datapower_noesis_v1_MapValue_EntriesEntry_descriptor =
+      internal_static_datapower_noesis_v1_MapValue_descriptor.getNestedTypes().get(0);
+    internal_static_datapower_noesis_v1_MapValue_EntriesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_datapower_noesis_v1_MapValue_EntriesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_datapower_noesis_v1_StateMsg_descriptor =
+      getDescriptor().getMessageTypes().get(34);
     internal_static_datapower_noesis_v1_StateMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_StateMsg_descriptor,
         new java.lang.String[] { "Cursor", "Watermark", "GroupId", });
     internal_static_datapower_noesis_v1_Projection_descriptor =
-      getDescriptor().getMessageTypes().get(30);
+      getDescriptor().getMessageTypes().get(35);
     internal_static_datapower_noesis_v1_Projection_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Projection_descriptor,
         new java.lang.String[] { "Columns", });
     internal_static_datapower_noesis_v1_Filter_descriptor =
-      getDescriptor().getMessageTypes().get(31);
+      getDescriptor().getMessageTypes().get(36);
     internal_static_datapower_noesis_v1_Filter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Filter_descriptor,
         new java.lang.String[] { "Expression", "Predicates", });
     internal_static_datapower_noesis_v1_Predicate_descriptor =
-      getDescriptor().getMessageTypes().get(32);
+      getDescriptor().getMessageTypes().get(37);
     internal_static_datapower_noesis_v1_Predicate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Predicate_descriptor,
         new java.lang.String[] { "Field", "Op", "Values", });
     internal_static_datapower_noesis_v1_Ordering_descriptor =
-      getDescriptor().getMessageTypes().get(33);
+      getDescriptor().getMessageTypes().get(38);
     internal_static_datapower_noesis_v1_Ordering_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Ordering_descriptor,
         new java.lang.String[] { "By", });
     internal_static_datapower_noesis_v1_OrderBy_descriptor =
-      getDescriptor().getMessageTypes().get(34);
+      getDescriptor().getMessageTypes().get(39);
     internal_static_datapower_noesis_v1_OrderBy_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_OrderBy_descriptor,
         new java.lang.String[] { "Column", "Direction", });
     internal_static_datapower_noesis_v1_SnapshotOptions_descriptor =
-      getDescriptor().getMessageTypes().get(35);
+      getDescriptor().getMessageTypes().get(40);
     internal_static_datapower_noesis_v1_SnapshotOptions_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_SnapshotOptions_descriptor,
         new java.lang.String[] { "Mode", "AsOf", });
     internal_static_datapower_noesis_v1_Cursor_descriptor =
-      getDescriptor().getMessageTypes().get(36);
+      getDescriptor().getMessageTypes().get(41);
     internal_static_datapower_noesis_v1_Cursor_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Cursor_descriptor,
         new java.lang.String[] { "Token", });
     internal_static_datapower_noesis_v1_RateLimit_descriptor =
-      getDescriptor().getMessageTypes().get(37);
+      getDescriptor().getMessageTypes().get(42);
     internal_static_datapower_noesis_v1_RateLimit_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_RateLimit_descriptor,
         new java.lang.String[] { "Qps", "Parallelism", });
     internal_static_datapower_noesis_v1_Traversal_descriptor =
-      getDescriptor().getMessageTypes().get(38);
+      getDescriptor().getMessageTypes().get(43);
     internal_static_datapower_noesis_v1_Traversal_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_Traversal_descriptor,
         new java.lang.String[] { "AllowedLinkEntities", "MaxDepth", "Direction", "AllowRevisit", "StrictReferentialIntegrity", });
     internal_static_datapower_noesis_v1_SchemaMsg_descriptor =
-      getDescriptor().getMessageTypes().get(39);
+      getDescriptor().getMessageTypes().get(44);
     internal_static_datapower_noesis_v1_SchemaMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_SchemaMsg_descriptor,
         new java.lang.String[] { "Entity", "Schema", });
     internal_static_datapower_noesis_v1_LogMsg_descriptor =
-      getDescriptor().getMessageTypes().get(40);
+      getDescriptor().getMessageTypes().get(45);
     internal_static_datapower_noesis_v1_LogMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_LogMsg_descriptor,
@@ -873,7 +991,7 @@ public final class ConnectorOuterClass {
         internal_static_datapower_noesis_v1_LogMsg_KvEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_datapower_noesis_v1_MetricMsg_descriptor =
-      getDescriptor().getMessageTypes().get(41);
+      getDescriptor().getMessageTypes().get(46);
     internal_static_datapower_noesis_v1_MetricMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_datapower_noesis_v1_MetricMsg_descriptor,

@@ -4,6 +4,10 @@
 package datapower.noesis.v1;
 
 /**
+ * <pre>
+ * Parquet format configuration
+ * </pre>
+ *
  * Protobuf type {@code datapower.noesis.v1.ParquetConfig}
  */
 public final class ParquetConfig extends
@@ -430,6 +434,10 @@ java.lang.String defaultValue) {
     return builder;
   }
   /**
+   * <pre>
+   * Parquet format configuration
+   * </pre>
+   *
    * Protobuf type {@code datapower.noesis.v1.ParquetConfig}
    */
   public static final class Builder extends

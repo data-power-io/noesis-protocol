@@ -131,7 +131,7 @@ private static final long serialVersionUID = 0L;
   private int filesUploaded_ = 0;
   /**
    * <pre>
-   * Number of Parquet files uploaded so far
+   * Number of data files uploaded so far
    * </pre>
    *
    * <code>int32 files_uploaded = 5 [json_name = "filesUploaded"];</code>
@@ -778,7 +778,7 @@ private static final long serialVersionUID = 0L;
     private int filesUploaded_ ;
     /**
      * <pre>
-     * Number of Parquet files uploaded so far
+     * Number of data files uploaded so far
      * </pre>
      *
      * <code>int32 files_uploaded = 5 [json_name = "filesUploaded"];</code>
@@ -790,7 +790,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Number of Parquet files uploaded so far
+     * Number of data files uploaded so far
      * </pre>
      *
      * <code>int32 files_uploaded = 5 [json_name = "filesUploaded"];</code>
@@ -806,7 +806,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Number of Parquet files uploaded so far
+     * Number of data files uploaded so far
      * </pre>
      *
      * <code>int32 files_uploaded = 5 [json_name = "filesUploaded"];</code>

@@ -199,7 +199,7 @@ public final class SidecarGrpc {
 
     /**
      * <pre>
-     * Stream data records to be written to Parquet.
+     * Stream data records to be written to the configured storage format.
      * The connector calls this repeatedly with batches of records.
      * </pre>
      */
@@ -289,7 +289,7 @@ public final class SidecarGrpc {
 
     /**
      * <pre>
-     * Stream data records to be written to Parquet.
+     * Stream data records to be written to the configured storage format.
      * The connector calls this repeatedly with batches of records.
      * </pre>
      */

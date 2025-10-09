@@ -55,7 +55,7 @@ public interface StreamDataResponseOrBuilder extends
 
   /**
    * <pre>
-   * Number of Parquet files uploaded so far
+   * Number of data files uploaded so far
    * </pre>
    *
    * <code>int32 files_uploaded = 5 [json_name = "filesUploaded"];</code>

@@ -121,7 +121,7 @@ public enum CompressionCodec
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return datapower.noesis.v1.SidecarOuterClass.getDescriptor().getEnumTypes().get(1);
+    return datapower.noesis.v1.SidecarOuterClass.getDescriptor().getEnumTypes().get(2);
   }
 
   private static final CompressionCodec[] VALUES = values();

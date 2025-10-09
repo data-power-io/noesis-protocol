@@ -103,7 +103,7 @@ public enum TraversalDirection
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return datapower.noesis.v1.ConnectorOuterClass.getDescriptor().getEnumTypes().get(7);
+    return datapower.noesis.v1.ConnectorOuterClass.getDescriptor().getEnumTypes().get(8);
   }
 
   private static final TraversalDirection[] VALUES = values();

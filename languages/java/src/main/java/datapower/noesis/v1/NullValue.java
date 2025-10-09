@@ -4,53 +4,25 @@
 package datapower.noesis.v1;
 
 /**
- * Protobuf enum {@code datapower.noesis.v1.ConsistencyMode}
+ * <pre>
+ * Null marker
+ * </pre>
+ *
+ * Protobuf enum {@code datapower.noesis.v1.NullValue}
  */
-public enum ConsistencyMode
+public enum NullValue
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
-   * <code>CONSISTENCY_UNSPECIFIED = 0;</code>
+   * <code>NULL_VALUE = 0;</code>
    */
-  CONSISTENCY_UNSPECIFIED(0),
-  /**
-   * <code>READ_COMMITTED = 1;</code>
-   */
-  READ_COMMITTED(1),
-  /**
-   * <code>REPEATABLE_READ = 2;</code>
-   */
-  REPEATABLE_READ(2),
-  /**
-   * <pre>
-   * Point-in-time ("AS OF") if supported
-   * </pre>
-   *
-   * <code>SNAPSHOT_AS_OF = 3;</code>
-   */
-  SNAPSHOT_AS_OF(3),
+  NULL_VALUE(0),
   UNRECOGNIZED(-1),
   ;
 
   /**
-   * <code>CONSISTENCY_UNSPECIFIED = 0;</code>
+   * <code>NULL_VALUE = 0;</code>
    */
-  public static final int CONSISTENCY_UNSPECIFIED_VALUE = 0;
-  /**
-   * <code>READ_COMMITTED = 1;</code>
-   */
-  public static final int READ_COMMITTED_VALUE = 1;
-  /**
-   * <code>REPEATABLE_READ = 2;</code>
-   */
-  public static final int REPEATABLE_READ_VALUE = 2;
-  /**
-   * <pre>
-   * Point-in-time ("AS OF") if supported
-   * </pre>
-   *
-   * <code>SNAPSHOT_AS_OF = 3;</code>
-   */
-  public static final int SNAPSHOT_AS_OF_VALUE = 3;
+  public static final int NULL_VALUE_VALUE = 0;
 
 
   public final int getNumber() {
@@ -67,7 +39,7 @@ public enum ConsistencyMode
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
-  public static ConsistencyMode valueOf(int value) {
+  public static NullValue valueOf(int value) {
     return forNumber(value);
   }
 
@@ -75,25 +47,22 @@ public enum ConsistencyMode
    * @param value The numeric wire value of the corresponding enum entry.
    * @return The enum associated with the given numeric wire value.
    */
-  public static ConsistencyMode forNumber(int value) {
+  public static NullValue forNumber(int value) {
     switch (value) {
-      case 0: return CONSISTENCY_UNSPECIFIED;
-      case 1: return READ_COMMITTED;
-      case 2: return REPEATABLE_READ;
-      case 3: return SNAPSHOT_AS_OF;
+      case 0: return NULL_VALUE;
       default: return null;
     }
   }
 
-  public static com.google.protobuf.Internal.EnumLiteMap<ConsistencyMode>
+  public static com.google.protobuf.Internal.EnumLiteMap<NullValue>
       internalGetValueMap() {
     return internalValueMap;
   }
   private static final com.google.protobuf.Internal.EnumLiteMap<
-      ConsistencyMode> internalValueMap =
-        new com.google.protobuf.Internal.EnumLiteMap<ConsistencyMode>() {
-          public ConsistencyMode findValueByNumber(int number) {
-            return ConsistencyMode.forNumber(number);
+      NullValue> internalValueMap =
+        new com.google.protobuf.Internal.EnumLiteMap<NullValue>() {
+          public NullValue findValueByNumber(int number) {
+            return NullValue.forNumber(number);
           }
         };
 
@@ -111,12 +80,12 @@ public enum ConsistencyMode
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return datapower.noesis.v1.ConnectorOuterClass.getDescriptor().getEnumTypes().get(7);
+    return datapower.noesis.v1.ConnectorOuterClass.getDescriptor().getEnumTypes().get(5);
   }
 
-  private static final ConsistencyMode[] VALUES = values();
+  private static final NullValue[] VALUES = values();
 
-  public static ConsistencyMode valueOf(
+  public static NullValue valueOf(
       com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
     if (desc.getType() != getDescriptor()) {
       throw new java.lang.IllegalArgumentException(
@@ -130,10 +99,10 @@ public enum ConsistencyMode
 
   private final int value;
 
-  private ConsistencyMode(int value) {
+  private NullValue(int value) {
     this.value = value;
   }
 
-  // @@protoc_insertion_point(enum_scope:datapower.noesis.v1.ConsistencyMode)
+  // @@protoc_insertion_point(enum_scope:datapower.noesis.v1.NullValue)
 }
 

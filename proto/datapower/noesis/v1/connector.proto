@@ -370,14 +370,69 @@ enum Op {
   DELETE = 2;
 }
 
+// Storage-agnostic record representation.
+// Simple typed structure that can be written to Parquet, Iceberg, Delta Lake, etc.
 message RecordMsg {
   string entity = 1;                    // e.g., "Part" or "BOMLink"
-  string key = 2;                       // Primary key serialized (unique within entity)
-  bytes payload = 3;                    // Row payload (Arrow/Avro/JSON — choice must match StructuredSchemaDescriptor)
-  string schema_id = 4;                 // Version to validate reader compatibility
-  Op op = 5;                            // UPSERT/DELETE
+  Row data = 2;                         // The actual row data (typed columns)
+  Op op = 3;                            // UPSERT/DELETE
+  int64 event_time_ms = 4;              // Source event timestamp (epoch millis)
+  string schema_id = 5;                 // Schema version identifier
   string group_id = 6;                  // For subgraph: group all records belonging to the same head
-  int64 ts_event = 7;                   // Logical event time (watermark) in epoch millis
+}
+
+// Simple row representation - maps directly to storage formats.
+// Each column is a named, typed value.
+message Row {
+  map<string, Value> columns = 1;       // Column name -> typed value
+}
+
+// Typed value supporting common database types.
+// Designed to map cleanly to Parquet, Arrow, and SQL types.
+message Value {
+  oneof kind {
+    // Primitive types
+    string string_val = 1;
+    int64 int64_val = 2;
+    int32 int32_val = 3;
+    double double_val = 4;
+    float float_val = 5;
+    bool bool_val = 6;
+    bytes bytes_val = 7;
+
+    // Temporal types (microseconds precision)
+    int64 timestamp_micros = 10;        // Timestamp: microseconds since Unix epoch
+    int32 date_days = 11;               // Date: days since Unix epoch (1970-01-01)
+    int64 time_micros = 12;             // Time: microseconds since midnight
+
+    // Special values
+    NullValue null_val = 20;
+
+    // Nested types (for complex schemas)
+    StructValue struct_val = 21;        // Nested struct/object
+    ListValue list_val = 22;            // Array/list
+    MapValue map_val = 23;              // Map/dictionary
+  }
+}
+
+// Null marker
+enum NullValue {
+  NULL_VALUE = 0;
+}
+
+// Struct/object value (nested fields)
+message StructValue {
+  map<string, Value> fields = 1;
+}
+
+// List/array value (repeated elements)
+message ListValue {
+  repeated Value elements = 1;
+}
+
+// Map/dictionary value (key-value pairs)
+message MapValue {
+  map<string, Value> entries = 1;
 }
 
 message StateMsg {

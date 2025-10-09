@@ -41,6 +41,50 @@ private static final long serialVersionUID = 0L;
             datapower.noesis.v1.InitSessionRequest.class, datapower.noesis.v1.InitSessionRequest.Builder.class);
   }
 
+  private int formatConfigCase_ = 0;
+  @SuppressWarnings("serial")
+  private java.lang.Object formatConfig_;
+  public enum FormatConfigCase
+      implements com.google.protobuf.Internal.EnumLite,
+          com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+    PARQUET_CONFIG(5),
+    ICEBERG_CONFIG(7),
+    DELTA_CONFIG(8),
+    FORMATCONFIG_NOT_SET(0);
+    private final int value;
+    private FormatConfigCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static FormatConfigCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static FormatConfigCase forNumber(int value) {
+      switch (value) {
+        case 5: return PARQUET_CONFIG;
+        case 7: return ICEBERG_CONFIG;
+        case 8: return DELTA_CONFIG;
+        case 0: return FORMATCONFIG_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  public FormatConfigCase
+  getFormatConfigCase() {
+    return FormatConfigCase.forNumber(
+        formatConfigCase_);
+  }
+
   public static final int SESSION_ID_FIELD_NUMBER = 1;
   @SuppressWarnings("serial")
   private volatile java.lang.Object sessionId_ = "";
@@ -177,7 +221,7 @@ private static final long serialVersionUID = 0L;
   private datapower.noesis.v1.StorageConfig storage_;
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -189,7 +233,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -201,7 +245,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Where to upload Parquet files
+   * Where to upload files (S3, GCS, etc.)
    * </pre>
    *
    * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -212,7 +256,6 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int PARQUET_CONFIG_FIELD_NUMBER = 5;
-  private datapower.noesis.v1.ParquetConfig parquetConfig_;
   /**
    * <pre>
    * Parquet file settings
@@ -223,7 +266,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public boolean hasParquetConfig() {
-    return parquetConfig_ != null;
+    return formatConfigCase_ == 5;
   }
   /**
    * <pre>
@@ -235,7 +278,10 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public datapower.noesis.v1.ParquetConfig getParquetConfig() {
-    return parquetConfig_ == null ? datapower.noesis.v1.ParquetConfig.getDefaultInstance() : parquetConfig_;
+    if (formatConfigCase_ == 5) {
+       return (datapower.noesis.v1.ParquetConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.ParquetConfig.getDefaultInstance();
   }
   /**
    * <pre>
@@ -246,7 +292,96 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public datapower.noesis.v1.ParquetConfigOrBuilder getParquetConfigOrBuilder() {
-    return parquetConfig_ == null ? datapower.noesis.v1.ParquetConfig.getDefaultInstance() : parquetConfig_;
+    if (formatConfigCase_ == 5) {
+       return (datapower.noesis.v1.ParquetConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.ParquetConfig.getDefaultInstance();
+  }
+
+  public static final int ICEBERG_CONFIG_FIELD_NUMBER = 7;
+  /**
+   * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   * @return Whether the icebergConfig field is set.
+   */
+  @java.lang.Override
+  public boolean hasIcebergConfig() {
+    return formatConfigCase_ == 7;
+  }
+  /**
+   * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   * @return The icebergConfig.
+   */
+  @java.lang.Override
+  public datapower.noesis.v1.IcebergConfig getIcebergConfig() {
+    if (formatConfigCase_ == 7) {
+       return (datapower.noesis.v1.IcebergConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * Iceberg table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+   */
+  @java.lang.Override
+  public datapower.noesis.v1.IcebergConfigOrBuilder getIcebergConfigOrBuilder() {
+    if (formatConfigCase_ == 7) {
+       return (datapower.noesis.v1.IcebergConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+  }
+
+  public static final int DELTA_CONFIG_FIELD_NUMBER = 8;
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   * @return Whether the deltaConfig field is set.
+   */
+  @java.lang.Override
+  public boolean hasDeltaConfig() {
+    return formatConfigCase_ == 8;
+  }
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   * @return The deltaConfig.
+   */
+  @java.lang.Override
+  public datapower.noesis.v1.DeltaConfig getDeltaConfig() {
+    if (formatConfigCase_ == 8) {
+       return (datapower.noesis.v1.DeltaConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.DeltaConfig.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * Delta Lake table settings
+   * </pre>
+   *
+   * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+   */
+  @java.lang.Override
+  public datapower.noesis.v1.DeltaConfigOrBuilder getDeltaConfigOrBuilder() {
+    if (formatConfigCase_ == 8) {
+       return (datapower.noesis.v1.DeltaConfig) formatConfig_;
+    }
+    return datapower.noesis.v1.DeltaConfig.getDefaultInstance();
   }
 
   public static final int SPLIT_ID_FIELD_NUMBER = 6;
@@ -322,11 +457,17 @@ private static final long serialVersionUID = 0L;
     if (storage_ != null) {
       output.writeMessage(4, getStorage());
     }
-    if (parquetConfig_ != null) {
-      output.writeMessage(5, getParquetConfig());
+    if (formatConfigCase_ == 5) {
+      output.writeMessage(5, (datapower.noesis.v1.ParquetConfig) formatConfig_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(splitId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 6, splitId_);
+    }
+    if (formatConfigCase_ == 7) {
+      output.writeMessage(7, (datapower.noesis.v1.IcebergConfig) formatConfig_);
+    }
+    if (formatConfigCase_ == 8) {
+      output.writeMessage(8, (datapower.noesis.v1.DeltaConfig) formatConfig_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -351,12 +492,20 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, getStorage());
     }
-    if (parquetConfig_ != null) {
+    if (formatConfigCase_ == 5) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, getParquetConfig());
+        .computeMessageSize(5, (datapower.noesis.v1.ParquetConfig) formatConfig_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(splitId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, splitId_);
+    }
+    if (formatConfigCase_ == 7) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(7, (datapower.noesis.v1.IcebergConfig) formatConfig_);
+    }
+    if (formatConfigCase_ == 8) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(8, (datapower.noesis.v1.DeltaConfig) formatConfig_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -387,13 +536,25 @@ private static final long serialVersionUID = 0L;
       if (!getStorage()
           .equals(other.getStorage())) return false;
     }
-    if (hasParquetConfig() != other.hasParquetConfig()) return false;
-    if (hasParquetConfig()) {
-      if (!getParquetConfig()
-          .equals(other.getParquetConfig())) return false;
-    }
     if (!getSplitId()
         .equals(other.getSplitId())) return false;
+    if (!getFormatConfigCase().equals(other.getFormatConfigCase())) return false;
+    switch (formatConfigCase_) {
+      case 5:
+        if (!getParquetConfig()
+            .equals(other.getParquetConfig())) return false;
+        break;
+      case 7:
+        if (!getIcebergConfig()
+            .equals(other.getIcebergConfig())) return false;
+        break;
+      case 8:
+        if (!getDeltaConfig()
+            .equals(other.getDeltaConfig())) return false;
+        break;
+      case 0:
+      default:
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -417,12 +578,24 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + STORAGE_FIELD_NUMBER;
       hash = (53 * hash) + getStorage().hashCode();
     }
-    if (hasParquetConfig()) {
-      hash = (37 * hash) + PARQUET_CONFIG_FIELD_NUMBER;
-      hash = (53 * hash) + getParquetConfig().hashCode();
-    }
     hash = (37 * hash) + SPLIT_ID_FIELD_NUMBER;
     hash = (53 * hash) + getSplitId().hashCode();
+    switch (formatConfigCase_) {
+      case 5:
+        hash = (37 * hash) + PARQUET_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getParquetConfig().hashCode();
+        break;
+      case 7:
+        hash = (37 * hash) + ICEBERG_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getIcebergConfig().hashCode();
+        break;
+      case 8:
+        hash = (37 * hash) + DELTA_CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getDeltaConfig().hashCode();
+        break;
+      case 0:
+      default:
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -566,12 +739,18 @@ private static final long serialVersionUID = 0L;
         storageBuilder_.dispose();
         storageBuilder_ = null;
       }
-      parquetConfig_ = null;
       if (parquetConfigBuilder_ != null) {
-        parquetConfigBuilder_.dispose();
-        parquetConfigBuilder_ = null;
+        parquetConfigBuilder_.clear();
+      }
+      if (icebergConfigBuilder_ != null) {
+        icebergConfigBuilder_.clear();
+      }
+      if (deltaConfigBuilder_ != null) {
+        deltaConfigBuilder_.clear();
       }
       splitId_ = "";
+      formatConfigCase_ = 0;
+      formatConfig_ = null;
       return this;
     }
 
@@ -599,6 +778,7 @@ private static final long serialVersionUID = 0L;
     public datapower.noesis.v1.InitSessionRequest buildPartial() {
       datapower.noesis.v1.InitSessionRequest result = new datapower.noesis.v1.InitSessionRequest(this);
       if (bitField0_ != 0) { buildPartial0(result); }
+      buildPartialOneofs(result);
       onBuilt();
       return result;
     }
@@ -621,13 +801,25 @@ private static final long serialVersionUID = 0L;
             ? storage_
             : storageBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.parquetConfig_ = parquetConfigBuilder_ == null
-            ? parquetConfig_
-            : parquetConfigBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
+      if (((from_bitField0_ & 0x00000080) != 0)) {
         result.splitId_ = splitId_;
+      }
+    }
+
+    private void buildPartialOneofs(datapower.noesis.v1.InitSessionRequest result) {
+      result.formatConfigCase_ = formatConfigCase_;
+      result.formatConfig_ = this.formatConfig_;
+      if (formatConfigCase_ == 5 &&
+          parquetConfigBuilder_ != null) {
+        result.formatConfig_ = parquetConfigBuilder_.build();
+      }
+      if (formatConfigCase_ == 7 &&
+          icebergConfigBuilder_ != null) {
+        result.formatConfig_ = icebergConfigBuilder_.build();
+      }
+      if (formatConfigCase_ == 8 &&
+          deltaConfigBuilder_ != null) {
+        result.formatConfig_ = deltaConfigBuilder_.build();
       }
     }
 
@@ -691,13 +883,27 @@ private static final long serialVersionUID = 0L;
       if (other.hasStorage()) {
         mergeStorage(other.getStorage());
       }
-      if (other.hasParquetConfig()) {
-        mergeParquetConfig(other.getParquetConfig());
-      }
       if (!other.getSplitId().isEmpty()) {
         splitId_ = other.splitId_;
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000080;
         onChanged();
+      }
+      switch (other.getFormatConfigCase()) {
+        case PARQUET_CONFIG: {
+          mergeParquetConfig(other.getParquetConfig());
+          break;
+        }
+        case ICEBERG_CONFIG: {
+          mergeIcebergConfig(other.getIcebergConfig());
+          break;
+        }
+        case DELTA_CONFIG: {
+          mergeDeltaConfig(other.getDeltaConfig());
+          break;
+        }
+        case FORMATCONFIG_NOT_SET: {
+          break;
+        }
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -753,14 +959,28 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getParquetConfigFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000010;
+              formatConfigCase_ = 5;
               break;
             } // case 42
             case 50: {
               splitId_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000020;
+              bitField0_ |= 0x00000080;
               break;
             } // case 50
+            case 58: {
+              input.readMessage(
+                  getIcebergConfigFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              formatConfigCase_ = 7;
+              break;
+            } // case 58
+            case 66: {
+              input.readMessage(
+                  getDeltaConfigFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              formatConfigCase_ = 8;
+              break;
+            } // case 66
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -776,6 +996,21 @@ private static final long serialVersionUID = 0L;
       } // finally
       return this;
     }
+    private int formatConfigCase_ = 0;
+    private java.lang.Object formatConfig_;
+    public FormatConfigCase
+        getFormatConfigCase() {
+      return FormatConfigCase.forNumber(
+          formatConfigCase_);
+    }
+
+    public Builder clearFormatConfig() {
+      formatConfigCase_ = 0;
+      formatConfig_ = null;
+      onChanged();
+      return this;
+    }
+
     private int bitField0_;
 
     private java.lang.Object sessionId_ = "";
@@ -1122,7 +1357,7 @@ private static final long serialVersionUID = 0L;
         datapower.noesis.v1.StorageConfig, datapower.noesis.v1.StorageConfig.Builder, datapower.noesis.v1.StorageConfigOrBuilder> storageBuilder_;
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1133,7 +1368,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1148,7 +1383,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1168,7 +1403,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1186,7 +1421,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1209,7 +1444,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1226,7 +1461,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1238,7 +1473,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1253,7 +1488,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Where to upload Parquet files
+     * Where to upload files (S3, GCS, etc.)
      * </pre>
      *
      * <code>.datapower.noesis.v1.StorageConfig storage = 4 [json_name = "storage"];</code>
@@ -1272,7 +1507,6 @@ private static final long serialVersionUID = 0L;
       return storageBuilder_;
     }
 
-    private datapower.noesis.v1.ParquetConfig parquetConfig_;
     private com.google.protobuf.SingleFieldBuilderV3<
         datapower.noesis.v1.ParquetConfig, datapower.noesis.v1.ParquetConfig.Builder, datapower.noesis.v1.ParquetConfigOrBuilder> parquetConfigBuilder_;
     /**
@@ -1283,8 +1517,9 @@ private static final long serialVersionUID = 0L;
      * <code>.datapower.noesis.v1.ParquetConfig parquet_config = 5 [json_name = "parquetConfig"];</code>
      * @return Whether the parquetConfig field is set.
      */
+    @java.lang.Override
     public boolean hasParquetConfig() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return formatConfigCase_ == 5;
     }
     /**
      * <pre>
@@ -1294,11 +1529,18 @@ private static final long serialVersionUID = 0L;
      * <code>.datapower.noesis.v1.ParquetConfig parquet_config = 5 [json_name = "parquetConfig"];</code>
      * @return The parquetConfig.
      */
+    @java.lang.Override
     public datapower.noesis.v1.ParquetConfig getParquetConfig() {
       if (parquetConfigBuilder_ == null) {
-        return parquetConfig_ == null ? datapower.noesis.v1.ParquetConfig.getDefaultInstance() : parquetConfig_;
+        if (formatConfigCase_ == 5) {
+          return (datapower.noesis.v1.ParquetConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.ParquetConfig.getDefaultInstance();
       } else {
-        return parquetConfigBuilder_.getMessage();
+        if (formatConfigCase_ == 5) {
+          return parquetConfigBuilder_.getMessage();
+        }
+        return datapower.noesis.v1.ParquetConfig.getDefaultInstance();
       }
     }
     /**
@@ -1313,12 +1555,12 @@ private static final long serialVersionUID = 0L;
         if (value == null) {
           throw new NullPointerException();
         }
-        parquetConfig_ = value;
+        formatConfig_ = value;
+        onChanged();
       } else {
         parquetConfigBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000010;
-      onChanged();
+      formatConfigCase_ = 5;
       return this;
     }
     /**
@@ -1331,12 +1573,12 @@ private static final long serialVersionUID = 0L;
     public Builder setParquetConfig(
         datapower.noesis.v1.ParquetConfig.Builder builderForValue) {
       if (parquetConfigBuilder_ == null) {
-        parquetConfig_ = builderForValue.build();
+        formatConfig_ = builderForValue.build();
+        onChanged();
       } else {
         parquetConfigBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000010;
-      onChanged();
+      formatConfigCase_ = 5;
       return this;
     }
     /**
@@ -1348,18 +1590,22 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeParquetConfig(datapower.noesis.v1.ParquetConfig value) {
       if (parquetConfigBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) != 0) &&
-          parquetConfig_ != null &&
-          parquetConfig_ != datapower.noesis.v1.ParquetConfig.getDefaultInstance()) {
-          getParquetConfigBuilder().mergeFrom(value);
+        if (formatConfigCase_ == 5 &&
+            formatConfig_ != datapower.noesis.v1.ParquetConfig.getDefaultInstance()) {
+          formatConfig_ = datapower.noesis.v1.ParquetConfig.newBuilder((datapower.noesis.v1.ParquetConfig) formatConfig_)
+              .mergeFrom(value).buildPartial();
         } else {
-          parquetConfig_ = value;
+          formatConfig_ = value;
         }
+        onChanged();
       } else {
-        parquetConfigBuilder_.mergeFrom(value);
+        if (formatConfigCase_ == 5) {
+          parquetConfigBuilder_.mergeFrom(value);
+        } else {
+          parquetConfigBuilder_.setMessage(value);
+        }
       }
-      bitField0_ |= 0x00000010;
-      onChanged();
+      formatConfigCase_ = 5;
       return this;
     }
     /**
@@ -1370,13 +1616,19 @@ private static final long serialVersionUID = 0L;
      * <code>.datapower.noesis.v1.ParquetConfig parquet_config = 5 [json_name = "parquetConfig"];</code>
      */
     public Builder clearParquetConfig() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      parquetConfig_ = null;
-      if (parquetConfigBuilder_ != null) {
-        parquetConfigBuilder_.dispose();
-        parquetConfigBuilder_ = null;
+      if (parquetConfigBuilder_ == null) {
+        if (formatConfigCase_ == 5) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+          onChanged();
+        }
+      } else {
+        if (formatConfigCase_ == 5) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+        }
+        parquetConfigBuilder_.clear();
       }
-      onChanged();
       return this;
     }
     /**
@@ -1387,8 +1639,6 @@ private static final long serialVersionUID = 0L;
      * <code>.datapower.noesis.v1.ParquetConfig parquet_config = 5 [json_name = "parquetConfig"];</code>
      */
     public datapower.noesis.v1.ParquetConfig.Builder getParquetConfigBuilder() {
-      bitField0_ |= 0x00000010;
-      onChanged();
       return getParquetConfigFieldBuilder().getBuilder();
     }
     /**
@@ -1398,12 +1648,15 @@ private static final long serialVersionUID = 0L;
      *
      * <code>.datapower.noesis.v1.ParquetConfig parquet_config = 5 [json_name = "parquetConfig"];</code>
      */
+    @java.lang.Override
     public datapower.noesis.v1.ParquetConfigOrBuilder getParquetConfigOrBuilder() {
-      if (parquetConfigBuilder_ != null) {
+      if ((formatConfigCase_ == 5) && (parquetConfigBuilder_ != null)) {
         return parquetConfigBuilder_.getMessageOrBuilder();
       } else {
-        return parquetConfig_ == null ?
-            datapower.noesis.v1.ParquetConfig.getDefaultInstance() : parquetConfig_;
+        if (formatConfigCase_ == 5) {
+          return (datapower.noesis.v1.ParquetConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.ParquetConfig.getDefaultInstance();
       }
     }
     /**
@@ -1417,14 +1670,375 @@ private static final long serialVersionUID = 0L;
         datapower.noesis.v1.ParquetConfig, datapower.noesis.v1.ParquetConfig.Builder, datapower.noesis.v1.ParquetConfigOrBuilder> 
         getParquetConfigFieldBuilder() {
       if (parquetConfigBuilder_ == null) {
+        if (!(formatConfigCase_ == 5)) {
+          formatConfig_ = datapower.noesis.v1.ParquetConfig.getDefaultInstance();
+        }
         parquetConfigBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             datapower.noesis.v1.ParquetConfig, datapower.noesis.v1.ParquetConfig.Builder, datapower.noesis.v1.ParquetConfigOrBuilder>(
-                getParquetConfig(),
+                (datapower.noesis.v1.ParquetConfig) formatConfig_,
                 getParentForChildren(),
                 isClean());
-        parquetConfig_ = null;
+        formatConfig_ = null;
       }
+      formatConfigCase_ = 5;
+      onChanged();
       return parquetConfigBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.IcebergConfig, datapower.noesis.v1.IcebergConfig.Builder, datapower.noesis.v1.IcebergConfigOrBuilder> icebergConfigBuilder_;
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     * @return Whether the icebergConfig field is set.
+     */
+    @java.lang.Override
+    public boolean hasIcebergConfig() {
+      return formatConfigCase_ == 7;
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     * @return The icebergConfig.
+     */
+    @java.lang.Override
+    public datapower.noesis.v1.IcebergConfig getIcebergConfig() {
+      if (icebergConfigBuilder_ == null) {
+        if (formatConfigCase_ == 7) {
+          return (datapower.noesis.v1.IcebergConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+      } else {
+        if (formatConfigCase_ == 7) {
+          return icebergConfigBuilder_.getMessage();
+        }
+        return datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    public Builder setIcebergConfig(datapower.noesis.v1.IcebergConfig value) {
+      if (icebergConfigBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        formatConfig_ = value;
+        onChanged();
+      } else {
+        icebergConfigBuilder_.setMessage(value);
+      }
+      formatConfigCase_ = 7;
+      return this;
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    public Builder setIcebergConfig(
+        datapower.noesis.v1.IcebergConfig.Builder builderForValue) {
+      if (icebergConfigBuilder_ == null) {
+        formatConfig_ = builderForValue.build();
+        onChanged();
+      } else {
+        icebergConfigBuilder_.setMessage(builderForValue.build());
+      }
+      formatConfigCase_ = 7;
+      return this;
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    public Builder mergeIcebergConfig(datapower.noesis.v1.IcebergConfig value) {
+      if (icebergConfigBuilder_ == null) {
+        if (formatConfigCase_ == 7 &&
+            formatConfig_ != datapower.noesis.v1.IcebergConfig.getDefaultInstance()) {
+          formatConfig_ = datapower.noesis.v1.IcebergConfig.newBuilder((datapower.noesis.v1.IcebergConfig) formatConfig_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          formatConfig_ = value;
+        }
+        onChanged();
+      } else {
+        if (formatConfigCase_ == 7) {
+          icebergConfigBuilder_.mergeFrom(value);
+        } else {
+          icebergConfigBuilder_.setMessage(value);
+        }
+      }
+      formatConfigCase_ = 7;
+      return this;
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    public Builder clearIcebergConfig() {
+      if (icebergConfigBuilder_ == null) {
+        if (formatConfigCase_ == 7) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+          onChanged();
+        }
+      } else {
+        if (formatConfigCase_ == 7) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+        }
+        icebergConfigBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    public datapower.noesis.v1.IcebergConfig.Builder getIcebergConfigBuilder() {
+      return getIcebergConfigFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    @java.lang.Override
+    public datapower.noesis.v1.IcebergConfigOrBuilder getIcebergConfigOrBuilder() {
+      if ((formatConfigCase_ == 7) && (icebergConfigBuilder_ != null)) {
+        return icebergConfigBuilder_.getMessageOrBuilder();
+      } else {
+        if (formatConfigCase_ == 7) {
+          return (datapower.noesis.v1.IcebergConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Iceberg table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.IcebergConfig iceberg_config = 7 [json_name = "icebergConfig"];</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.IcebergConfig, datapower.noesis.v1.IcebergConfig.Builder, datapower.noesis.v1.IcebergConfigOrBuilder> 
+        getIcebergConfigFieldBuilder() {
+      if (icebergConfigBuilder_ == null) {
+        if (!(formatConfigCase_ == 7)) {
+          formatConfig_ = datapower.noesis.v1.IcebergConfig.getDefaultInstance();
+        }
+        icebergConfigBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            datapower.noesis.v1.IcebergConfig, datapower.noesis.v1.IcebergConfig.Builder, datapower.noesis.v1.IcebergConfigOrBuilder>(
+                (datapower.noesis.v1.IcebergConfig) formatConfig_,
+                getParentForChildren(),
+                isClean());
+        formatConfig_ = null;
+      }
+      formatConfigCase_ = 7;
+      onChanged();
+      return icebergConfigBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.DeltaConfig, datapower.noesis.v1.DeltaConfig.Builder, datapower.noesis.v1.DeltaConfigOrBuilder> deltaConfigBuilder_;
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     * @return Whether the deltaConfig field is set.
+     */
+    @java.lang.Override
+    public boolean hasDeltaConfig() {
+      return formatConfigCase_ == 8;
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     * @return The deltaConfig.
+     */
+    @java.lang.Override
+    public datapower.noesis.v1.DeltaConfig getDeltaConfig() {
+      if (deltaConfigBuilder_ == null) {
+        if (formatConfigCase_ == 8) {
+          return (datapower.noesis.v1.DeltaConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.DeltaConfig.getDefaultInstance();
+      } else {
+        if (formatConfigCase_ == 8) {
+          return deltaConfigBuilder_.getMessage();
+        }
+        return datapower.noesis.v1.DeltaConfig.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    public Builder setDeltaConfig(datapower.noesis.v1.DeltaConfig value) {
+      if (deltaConfigBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        formatConfig_ = value;
+        onChanged();
+      } else {
+        deltaConfigBuilder_.setMessage(value);
+      }
+      formatConfigCase_ = 8;
+      return this;
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    public Builder setDeltaConfig(
+        datapower.noesis.v1.DeltaConfig.Builder builderForValue) {
+      if (deltaConfigBuilder_ == null) {
+        formatConfig_ = builderForValue.build();
+        onChanged();
+      } else {
+        deltaConfigBuilder_.setMessage(builderForValue.build());
+      }
+      formatConfigCase_ = 8;
+      return this;
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    public Builder mergeDeltaConfig(datapower.noesis.v1.DeltaConfig value) {
+      if (deltaConfigBuilder_ == null) {
+        if (formatConfigCase_ == 8 &&
+            formatConfig_ != datapower.noesis.v1.DeltaConfig.getDefaultInstance()) {
+          formatConfig_ = datapower.noesis.v1.DeltaConfig.newBuilder((datapower.noesis.v1.DeltaConfig) formatConfig_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          formatConfig_ = value;
+        }
+        onChanged();
+      } else {
+        if (formatConfigCase_ == 8) {
+          deltaConfigBuilder_.mergeFrom(value);
+        } else {
+          deltaConfigBuilder_.setMessage(value);
+        }
+      }
+      formatConfigCase_ = 8;
+      return this;
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    public Builder clearDeltaConfig() {
+      if (deltaConfigBuilder_ == null) {
+        if (formatConfigCase_ == 8) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+          onChanged();
+        }
+      } else {
+        if (formatConfigCase_ == 8) {
+          formatConfigCase_ = 0;
+          formatConfig_ = null;
+        }
+        deltaConfigBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    public datapower.noesis.v1.DeltaConfig.Builder getDeltaConfigBuilder() {
+      return getDeltaConfigFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    @java.lang.Override
+    public datapower.noesis.v1.DeltaConfigOrBuilder getDeltaConfigOrBuilder() {
+      if ((formatConfigCase_ == 8) && (deltaConfigBuilder_ != null)) {
+        return deltaConfigBuilder_.getMessageOrBuilder();
+      } else {
+        if (formatConfigCase_ == 8) {
+          return (datapower.noesis.v1.DeltaConfig) formatConfig_;
+        }
+        return datapower.noesis.v1.DeltaConfig.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Delta Lake table settings
+     * </pre>
+     *
+     * <code>.datapower.noesis.v1.DeltaConfig delta_config = 8 [json_name = "deltaConfig"];</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        datapower.noesis.v1.DeltaConfig, datapower.noesis.v1.DeltaConfig.Builder, datapower.noesis.v1.DeltaConfigOrBuilder> 
+        getDeltaConfigFieldBuilder() {
+      if (deltaConfigBuilder_ == null) {
+        if (!(formatConfigCase_ == 8)) {
+          formatConfig_ = datapower.noesis.v1.DeltaConfig.getDefaultInstance();
+        }
+        deltaConfigBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            datapower.noesis.v1.DeltaConfig, datapower.noesis.v1.DeltaConfig.Builder, datapower.noesis.v1.DeltaConfigOrBuilder>(
+                (datapower.noesis.v1.DeltaConfig) formatConfig_,
+                getParentForChildren(),
+                isClean());
+        formatConfig_ = null;
+      }
+      formatConfigCase_ = 8;
+      onChanged();
+      return deltaConfigBuilder_;
     }
 
     private java.lang.Object splitId_ = "";
@@ -1482,7 +2096,7 @@ private static final long serialVersionUID = 0L;
         java.lang.String value) {
       if (value == null) { throw new NullPointerException(); }
       splitId_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1496,7 +2110,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder clearSplitId() {
       splitId_ = getDefaultInstance().getSplitId();
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000080);
       onChanged();
       return this;
     }
@@ -1514,7 +2128,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) { throw new NullPointerException(); }
       checkByteStringIsUtf8(value);
       splitId_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
